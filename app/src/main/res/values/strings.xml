@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">地球 Online</string>
+    <string name="dashboard_title">地球 Online</string>
+    <string name="life_rpg_subtitle">你的人生 RPG 正在進行中</string>
+    <string name="loading">載入中…</string>
+    <string name="photos_label">拍照記錄</string>
+    <string name="take_photo">拍照記錄</string>
+    <string name="photo_saved">照片已儲存</string>
+    <string name="achievement_wall">成就牆</string>
+    <string name="unlocked_badge">已解鎖！</string>
+    <string name="achievement_unlocked">成就解鎖！</string>
+    <string name="reward_points_format">+%d 點數</string>
+    <string name="food_confirm_title">食物確認</string>
+    <string name="food_confirm_message">這是食物嗎？\n\n請僅記錄餐點以解鎖成就</string>
+    <string name="food_confirm_yes">是，這是食物</string>
+    <string name="food_confirm_no">不是</string>
+</resources>
