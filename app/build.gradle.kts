@@ -100,6 +100,12 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
 
+    // ExifInterface
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
+    // ML Kit Image Labeling
+    implementation("com.google.mlkit:image-labeling:17.0.8")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")

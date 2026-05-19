@@ -9,14 +9,22 @@ data class AchievementDisplayItem(
 )
 
 data class DashboardUiState(
-    val totalPhotos: Long = 0L,
+    val totalCheckins: Long = 0L,
     val achievements: List<AchievementDisplayItem> = emptyList(),
     val isLoading: Boolean = true,
-    val showFoodConfirmDialog: Boolean = false
+    val showCheckinConfirmDialog: Boolean = false,
+    val pendingLocation: Pair<Double, Double>? = null,
+    val pendingAddress: String = "",
+    val pendingEvidenceAchievementId: String? = null,
+    val pendingEvidencePhotoPath: String? = null,
+    val analyzedLabels: List<String> = emptyList()
 )
 
 sealed class DashboardEvent {
-    data class PhotoTaken(val success: Boolean) : DashboardEvent()
-    data object FoodConfirmed : DashboardEvent()
-    data object FoodRejected : DashboardEvent()
+    data object CheckInConfirmed : DashboardEvent()
+    data object CheckInRejected : DashboardEvent()
+    data class ManualConfirm(val achievementId: String) : DashboardEvent()
+    data class EvidencePhotoTaken(val achievementId: String, val success: Boolean) : DashboardEvent()
+    data object EvidenceConfirmed : DashboardEvent()
+    data object EvidenceRejected : DashboardEvent()
 }

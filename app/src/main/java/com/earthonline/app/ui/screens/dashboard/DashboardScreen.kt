@@ -2,8 +2,10 @@ package com.earthonline.app.ui.screens.dashboard
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +19,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,9 +41,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +58,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
+import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
+import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
+import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -59,11 +71,17 @@ import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextPrimaryDark
 import com.earthonline.app.ui.theme.TextSecondaryDark
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    onTakePhoto: () -> Unit
+    onCheckIn: () -> Unit,
+    onTakeEvidencePhoto: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -88,6 +106,40 @@ fun DashboardScreen(
         }
         return
     }
+
+    var selectedAchievement by remember { mutableStateOf<AchievementDisplayItem?>(null) }
+
+    val tabTitles = listOf(
+        "📍 打卡", "🗺️ 探索", "🎓 職涯", "🎭 日常", "🏆 史詩", "🩺 健康", "🚗 交通"
+    )
+
+    val checkinItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.LOCATION_CHECKIN_COUNT.value
+    }
+    val exploreItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("explore_")
+    }
+    val careerItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("career_")
+    }
+    val dailyItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("daily_")
+    }
+    val epicItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("epic_")
+    }
+    val healthItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("health_")
+    }
+    val transportItems = uiState.achievements.filter {
+        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("transport_")
+    }
+
+    val pagerItems = listOf(checkinItems, exploreItems, careerItems, dailyItems, epicItems, healthItems, transportItems)
+
+    val pagerState = rememberPagerState(pageCount = { pagerItems.size })
+    val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -141,20 +193,20 @@ fun DashboardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            Icons.Filled.PhotoCamera,
+                            Icons.Filled.LocationOn,
                             null,
-                            tint = AccentOrange,
+                            tint = EmeraldGreen,
                             modifier = Modifier.size(36.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "${uiState.totalPhotos}",
+                            text = "${uiState.totalCheckins}",
                             style = MaterialTheme.typography.headlineMedium,
-                            color = AccentOrange,
+                            color = EmeraldGreen,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = stringResource(R.string.photos_label),
+                            text = stringResource(R.string.checkin_label),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondaryDark
                         )
@@ -164,17 +216,17 @@ fun DashboardScreen(
 
             item {
                 Button(
-                    onClick = onTakePhoto,
+                    onClick = onCheckIn,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
                     shape = RoundedCornerShape(14.dp)
                 ) {
-                    Icon(Icons.Filled.PhotoCamera, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                    Icon(Icons.Filled.LocationOn, null, tint = Color.White, modifier = Modifier.size(22.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        stringResource(R.string.take_photo),
+                        stringResource(R.string.checkin_label),
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -192,8 +244,88 @@ fun DashboardScreen(
                 )
             }
 
-            items(uiState.achievements) { item ->
-                AchievementCard(item = item)
+            item {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    items(tabTitles.size) { index ->
+                        val isSelected = selectedTabIndex == index
+                        val categoryItems = pagerItems[index]
+                        val unlockedCount = categoryItems.count { it.progress.isUnlocked }
+                        val totalCount = categoryItems.size
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable {
+                                coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                            }
+                        ) {
+                            Text(
+                                text = tabTitles[index],
+                                color = if (isSelected) Gold else Color.White.copy(alpha = 0.55f),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "$unlockedCount/$totalCount",
+                                color = if (isSelected) Gold.copy(alpha = 0.7f) else Color.White.copy(alpha = 0.35f),
+                                fontSize = 10.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            if (isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(24.dp)
+                                        .height(3.dp)
+                                        .background(Gold, RoundedCornerShape(2.dp))
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.height(3.dp))
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(600.dp)
+                ) { page ->
+                    val pageItems = pagerItems[page]
+                    if (pageItems.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.not_unlocked_yet),
+                                color = TextSecondaryDark
+                            )
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            pageItems.forEach { item ->
+                                AchievementCard(
+                                    item = item,
+                                    onClick = { selectedAchievement = item }
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                }
             }
 
             item {
@@ -211,36 +343,107 @@ fun DashboardScreen(
             )
         }
 
-        if (uiState.showFoodConfirmDialog) {
+        selectedAchievement?.let { item ->
+            AchievementDetailDialog(
+                item = item,
+                onDismiss = { selectedAchievement = null },
+                onTakeEvidencePhoto = {
+                    selectedAchievement = null
+                    onTakeEvidencePhoto(item.definition.achievementId)
+                },
+                onManualConfirm = {
+                    viewModel.onEvent(DashboardEvent.ManualConfirm(item.definition.achievementId))
+                    selectedAchievement = null
+                }
+            )
+        }
+
+        if (uiState.showCheckinConfirmDialog) {
             AlertDialog(
-                onDismissRequest = { viewModel.onEvent(DashboardEvent.FoodRejected) },
+                onDismissRequest = { viewModel.onEvent(DashboardEvent.CheckInRejected) },
                 title = {
                     Text(
-                        stringResource(R.string.food_confirm_title),
+                        stringResource(R.string.checkin_confirm_title),
                         fontWeight = FontWeight.Bold,
                         color = Gold
                     )
                 },
                 text = {
-                    Text(
-                        stringResource(R.string.food_confirm_message),
-                        color = TextSecondaryDark
-                    )
+                    Column {
+                        Text(
+                            text = uiState.pendingAddress,
+                            color = TextSecondaryDark
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "${getString(R.string.checkin_action)}?",
+                            color = TextSecondaryDark
+                        )
+                    }
                 },
                 confirmButton = {
                     Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.FoodConfirmed) },
+                        onClick = { viewModel.onEvent(DashboardEvent.CheckInConfirmed) },
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
                     ) {
-                        Text(stringResource(R.string.food_confirm_yes), color = Color.White)
+                        Text(stringResource(R.string.checkin_confirm_yes), color = Color.White)
                     }
                 },
                 dismissButton = {
                     Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.FoodRejected) },
+                        onClick = { viewModel.onEvent(DashboardEvent.CheckInRejected) },
                         colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
                     ) {
                         Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
+                    }
+                },
+                containerColor = Color(0xFF1E1E3A),
+                shape = RoundedCornerShape(16.dp)
+            )
+        }
+
+        if (uiState.pendingEvidenceAchievementId != null && uiState.pendingEvidencePhotoPath != null) {
+            AlertDialog(
+                onDismissRequest = { viewModel.onEvent(DashboardEvent.EvidenceRejected) },
+                title = {
+                    Text(
+                        stringResource(R.string.evidence_confirm_title),
+                        fontWeight = FontWeight.Bold,
+                        color = Gold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            stringResource(R.string.evidence_confirm_message),
+                            color = TextSecondaryDark
+                        )
+                        if (uiState.analyzedLabels.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            uiState.analyzedLabels.forEach { label ->
+                                Text(
+                                    text = "• $label",
+                                    color = TextSecondaryDark,
+                                    fontSize = 13.sp
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { viewModel.onEvent(DashboardEvent.EvidenceConfirmed) },
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
+                    ) {
+                        Text(stringResource(R.string.evidence_confirm_btn), color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { viewModel.onEvent(DashboardEvent.EvidenceRejected) },
+                        colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
+                    ) {
+                        Text(stringResource(R.string.evidence_retry_btn), color = TextSecondaryDark)
                     }
                 },
                 containerColor = Color(0xFF1E1E3A),
@@ -251,7 +454,10 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun AchievementCard(item: AchievementDisplayItem) {
+private fun AchievementCard(
+    item: AchievementDisplayItem,
+    onClick: () -> Unit
+) {
     val isUnlocked = item.progress.isUnlocked
     val progress = item.progress.currentProgress
     val goal = item.definition.triggerGoal
@@ -275,7 +481,8 @@ private fun AchievementCard(item: AchievementDisplayItem) {
             .then(
                 if (isUnlocked) Modifier.border(1.dp, borderColor, RoundedCornerShape(12.dp))
                 else Modifier
-            ),
+            )
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = cardColor),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -336,4 +543,121 @@ private fun AchievementCard(item: AchievementDisplayItem) {
             }
         }
     }
+}
+
+@Composable
+private fun AchievementDetailDialog(
+    item: AchievementDisplayItem,
+    onDismiss: () -> Unit,
+    onTakeEvidencePhoto: () -> Unit,
+    onManualConfirm: () -> Unit
+) {
+    val isUnlocked = item.progress.isUnlocked
+    val progress = item.progress.currentProgress
+    val goal = item.definition.triggerGoal
+    val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
+    val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value
+
+    val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = item.definition.title,
+                fontWeight = FontWeight.Bold,
+                color = if (isUnlocked) Gold else TextPrimaryDark
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = item.definition.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondaryDark
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                LinearProgressIndicator(
+                    progress = progressFraction,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = if (isUnlocked) Gold else EmeraldGreen,
+                    trackColor = AchievementLocked.copy(alpha = 0.3f)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = if (isUnlocked) stringResource(R.string.unlocked_badge) else "$progress / $goal",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isUnlocked) Gold else TextSecondaryDark
+                )
+                if (isUnlocked && item.progress.unlockedDate != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "${stringResource(R.string.unlock_time_label)}: ${dateFormat.format(Date(item.progress.unlockedDate))}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Gold.copy(alpha = 0.7f)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.not_unlocked_yet),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TextSecondaryDark
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.reward_points_format, item.definition.rewardPoints),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Gold,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        },
+        confirmButton = {
+            if (isManual && !isUnlocked) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = onTakeEvidencePhoto,
+                        colors = ButtonDefaults.buttonColors(containerColor = Gold)
+                    ) {
+                        Text(stringResource(R.string.evidence_take_photo), color = Color(0xFF1A1A2E))
+                    }
+                    Button(
+                        onClick = onManualConfirm,
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
+                    ) {
+                        Text(stringResource(R.string.manual_confirm_btn), color = Color.White)
+                    }
+                }
+            } else {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = CardDark)
+                ) {
+                    Text(
+                        if (isUnlocked) stringResource(R.string.unlocked_badge) else getString(R.string.loading),
+                        color = TextSecondaryDark
+                    )
+                }
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
+            ) {
+                Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
+            }
+        },
+        containerColor = Color(0xFF1E1E3A),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+@Composable
+private fun getString(resId: Int): String {
+    return stringResource(resId)
 }

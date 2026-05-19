@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.earthonline.app.data.local.AppDatabase
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
+import com.earthonline.app.data.local.dao.AchievementEvidenceDao
+import com.earthonline.app.data.local.dao.CheckInRecordDao
 import com.earthonline.app.data.local.dao.UserAchievementProgressDao
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,8 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "earth_online.db"
-        ).build()
+        ).fallbackToDestructiveMigration()
+         .build()
     }
 
     @Provides
@@ -34,5 +37,15 @@ object DatabaseModule {
     @Provides
     fun provideUserAchievementProgressDao(database: AppDatabase): UserAchievementProgressDao {
         return database.userAchievementProgressDao()
+    }
+
+    @Provides
+    fun provideCheckInRecordDao(database: AppDatabase): CheckInRecordDao {
+        return database.checkInRecordDao()
+    }
+
+    @Provides
+    fun provideAchievementEvidenceDao(database: AppDatabase): AchievementEvidenceDao {
+        return database.achievementEvidenceDao()
     }
 }

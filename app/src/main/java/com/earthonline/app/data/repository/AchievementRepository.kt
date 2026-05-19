@@ -1,8 +1,12 @@
 package com.earthonline.app.data.repository
 
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
+import com.earthonline.app.data.local.dao.AchievementEvidenceDao
+import com.earthonline.app.data.local.dao.CheckInRecordDao
 import com.earthonline.app.data.local.dao.UserAchievementProgressDao
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
+import com.earthonline.app.data.local.entity.AchievementEvidence
+import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,66 +22,181 @@ data class UnlockedAchievementEvent(
 @Singleton
 class AchievementRepository @Inject constructor(
     private val definitionDao: AchievementDefinitionDao,
-    private val progressDao: UserAchievementProgressDao
+    private val progressDao: UserAchievementProgressDao,
+    private val checkInRecordDao: CheckInRecordDao,
+    private val evidenceDao: AchievementEvidenceDao
 ) {
     private val _unlockEvents = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
     val unlockEvents: SharedFlow<UnlockedAchievementEvent> = _unlockEvents
 
-    private val _totalPhotos = MutableSharedFlow<Long>(replay = 1)
-    val totalPhotos: SharedFlow<Long> = _totalPhotos
+    private val _totalCheckins = MutableSharedFlow<Long>(replay = 1)
+    val totalCheckins: SharedFlow<Long> = _totalCheckins
 
     suspend fun initializeAchievements() {
-            val definitions = listOf(
-                AchievementDefinitionEntity("photo_1", "初嚐記錄", "拍攝 1 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 1L, false, 10),
-                AchievementDefinitionEntity("photo_3", "三菜一湯", "拍攝 3 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 3L, false, 5),
-                AchievementDefinitionEntity("photo_5", "五感俱全", "拍攝 5 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 5L, false, 10),
-                AchievementDefinitionEntity("photo_7", "一週菜單", "拍攝 7 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 7L, false, 15),
-                AchievementDefinitionEntity("photo_10", "美食獵人", "拍攝 10 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 10L, false, 50),
-                AchievementDefinitionEntity("photo_25", "美食探險家", "拍攝 25 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 25L, false, 100),
-                AchievementDefinitionEntity("photo_50", "美食圖書館", "拍攝 50 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 50L, false, 200),
-                AchievementDefinitionEntity("photo_75", "舌尖上的旅途", "拍攝 75 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 75L, false, 300),
-                AchievementDefinitionEntity("photo_100", "百年食客", "拍攝 100 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 100L, false, 500),
-                AchievementDefinitionEntity("photo_150", "米其林之眼", "拍攝 150 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 150L, false, 750),
-                AchievementDefinitionEntity("photo_200", "美食評論家", "拍攝 200 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 200L, false, 1000),
-                AchievementDefinitionEntity("photo_250", "饕客名人堂", "拍攝 250 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 250L, false, 1200),
-                AchievementDefinitionEntity("photo_365", "全年無休", "拍攝 365 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 365L, false, 2000),
-                AchievementDefinitionEntity("photo_400", "食之史官", "拍攝 400 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 400L, false, 2500),
-                AchievementDefinitionEntity("photo_500", "人間食譜", "拍攝 500 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 500L, false, 5000),
-                AchievementDefinitionEntity("photo_666", "吃貨魔王", "拍攝 666 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 666L, false, 3333),
-                AchievementDefinitionEntity("photo_888", "食神發發發", "拍攝 888 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 888L, false, 5000),
-                AchievementDefinitionEntity("photo_999", "九九至尊食", "拍攝 999 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 999L, false, 6000),
-                AchievementDefinitionEntity("photo_1000", "食神降臨", "拍攝 1,000 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 1000L, false, 10000),
-                AchievementDefinitionEntity("photo_1500", "萬食之王", "拍攝 1,500 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 1500L, false, 8000),
-                AchievementDefinitionEntity("photo_2000", "美食之神", "拍攝 2,000 次餐點", "ic_achievement_photo_3", TriggerType.PHOTO_UPLOAD_COUNT.value, 2000L, false, 12000),
-                AchievementDefinitionEntity("photo_5000", "永恆食典", "拍攝 5,000 次餐點", "ic_achievement_photo_1", TriggerType.PHOTO_UPLOAD_COUNT.value, 5000L, false, 25000),
-                AchievementDefinitionEntity("photo_10000", "地球美食征服者", "拍攝 10,000 次餐點", "ic_achievement_photo_2", TriggerType.PHOTO_UPLOAD_COUNT.value, 10000L, false, 50000)
-            )
-            definitionDao.insertAll(definitions)
+        val definitions = listOf(
+            AchievementDefinitionEntity("checkin_1", "初次打卡", "在 1 個地點打卡", "ic_achievement_photo_1", TriggerType.LOCATION_CHECKIN_COUNT.value, 1L, false, 10),
+            AchievementDefinitionEntity("checkin_3", "三度探訪", "在 3 個不同地點打卡", "ic_achievement_photo_2", TriggerType.LOCATION_CHECKIN_COUNT.value, 3L, false, 15),
+            AchievementDefinitionEntity("checkin_5", "五方雲遊", "在 5 個不同地點打卡", "ic_achievement_photo_3", TriggerType.LOCATION_CHECKIN_COUNT.value, 5L, false, 25),
+            AchievementDefinitionEntity("checkin_10", "十全十美", "在 10 個不同地點打卡", "ic_achievement_photo_1", TriggerType.LOCATION_CHECKIN_COUNT.value, 10L, false, 50),
+            AchievementDefinitionEntity("checkin_25", "足跡遍布", "在 25 個不同地點打卡", "ic_achievement_photo_2", TriggerType.LOCATION_CHECKIN_COUNT.value, 25L, false, 100),
+            AchievementDefinitionEntity("checkin_50", "環球旅者", "在 50 個不同地點打卡", "ic_achievement_photo_3", TriggerType.LOCATION_CHECKIN_COUNT.value, 50L, false, 200),
 
-            val userId = "local_user"
-            val progressList = definitions.map { def ->
-                UserAchievementProgressEntity(
-                    userId = userId,
-                    achievementId = def.achievementId,
-                    currentProgress = 0L,
-                    isUnlocked = false,
-                    unlockedDate = null,
-                    triggerType = def.triggerType
-                )
-            }
-            progressDao.insertAll(progressList)
+            AchievementDefinitionEntity("explore_7continents", "征服七大洲", "踏上 7 大洲", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 7L, false, 1000),
+            AchievementDefinitionEntity("explore_50countries", "環遊世界", "造訪 50 個國家", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 50L, false, 2000),
+            AchievementDefinitionEntity("explore_10countries", "旅遊達人", "造訪 10 個國家", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 10L, false, 200),
+            AchievementDefinitionEntity("explore_5countries", "國際旅人", "造訪 5 個國家", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 5L, false, 100),
+            AchievementDefinitionEntity("explore_3continents", "跨洲冒險", "踏上 3 大洲", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 3L, false, 500),
+            AchievementDefinitionEntity("explore_dateline", "穿越換日線", "跨越國際換日線", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_missed_flight", "錯過班機", "錯過一次航班", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_island", "島嶼探險", "造訪一座島嶼", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_mountain", "登峰造極", "攀登一座高山", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 75),
+            AchievementDefinitionEntity("explore_solo", "獨自旅行", "完成一次獨自旅行", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_ocean", "橫渡大洋", "橫渡一片大洋", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 150),
+            AchievementDefinitionEntity("explore_first_abroad", "首度出國", "第一次出國旅行", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_japan", "日本漫遊", "造訪日本", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_europe", "歐洲巡禮", "造訪歐洲", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 75),
+            AchievementDefinitionEntity("explore_africa", "非洲探險", "造訪非洲", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_south_america", "南美之旅", "造訪南美洲", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_antarctica", "南極遠征", "造訪南極洲", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 500),
+            AchievementDefinitionEntity("explore_australia", "澳洲歷險", "造訪澳洲", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_capital", "首都巡禮", "造訪一個首都城市", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("explore_unesco", "世界遺產", "造訪一個 UNESCO 世界遺產", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_temple", "古剎參拜", "參訪一座寺廟", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 20),
+            AchievementDefinitionEntity("explore_night_market", "夜市饗宴", "逛一個夜市", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 20),
+            AchievementDefinitionEntity("explore_hot_spring", "溫泉之旅", "泡一次溫泉", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("explore_beach", "海灘時光", "享受一片海灘", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 20),
+            AchievementDefinitionEntity("explore_museum", "博物館日", "參觀一個博物館", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("explore_airport", "機場漫遊", "在機場待超過 3 小時", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("explore_cruise", "遊輪之旅", "搭乘一次遊輪", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 75),
+            AchievementDefinitionEntity("explore_border", "邊境穿梭", "跨越一次國境", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_canyon", "峽谷探險", "造訪一座峽谷", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_volcano", "火山探秘", "造訪一座火山", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_lake", "湖畔靜謐", "造訪一座湖泊", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+
+            AchievementDefinitionEntity("career_phd", "博士學位", "獲得博士學位", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+            AchievementDefinitionEntity("career_graduate", "學業有成", "大學畢業", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("career_house", "置產置業", "購買第一間房子", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 300),
+            AchievementDefinitionEntity("career_first_job", "踏入職場", "獲得第一份工作", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("career_365_ontime", "全勤達人", "連續一年準時上班", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 150),
+            AchievementDefinitionEntity("career_masters", "碩士學位", "獲得碩士學位", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("career_bachelor", "學士學位", "獲得學士學位", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("career_fired", "被開除了", "被公司解僱", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 75),
+            AchievementDefinitionEntity("career_promotion", "升職加薪", "獲得一次升職", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("career_startup", "創業先鋒", "創辦一家公司", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+
+            AchievementDefinitionEntity("daily_lottery", "發票中獎", "中一次發票", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("daily_social", "社交達人", "參加一場社交活動", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 20),
+            AchievementDefinitionEntity("daily_pets", "毛孩夥伴", "養 2 隻寵物", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 2L, false, 50),
+            AchievementDefinitionEntity("daily_earlybird", "早起的鳥兒", "清晨 5 點前起床", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("daily_cook", "自煮生活", "自己煮一餐", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 10),
+            AchievementDefinitionEntity("daily_binge", "追劇馬拉松", "一次看 10 集以上", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("daily_allnighter", "徹夜未眠", "通宵一次", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("daily_exercise_30", "運動習慣", "連續運動 30 分鐘", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            AchievementDefinitionEntity("daily_read_10", "閱讀時光", "讀完 10 本書", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 10L, false, 100),
+            AchievementDefinitionEntity("daily_no_phone", "數位排毒", "一整天不用手機", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("daily_stranger", "陌生善意", "幫助一位陌生人", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+
+            AchievementDefinitionEntity("epic_eclipse", "日月蝕", "親眼目睹日蝕或月蝕", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+            AchievementDefinitionEntity("epic_survive", "死裡逃生", "經歷一次生死關頭", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 500),
+            AchievementDefinitionEntity("epic_wedding", "步入禮堂", "舉辦一場婚禮", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 300),
+            AchievementDefinitionEntity("epic_newborn", "新生命", "迎接新生兒", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 500),
+            AchievementDefinitionEntity("epic_northernlights", "極光奇景", "親眼目睹極光", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 500),
+            AchievementDefinitionEntity("epic_milkyway", "銀河之旅", "親眼看見銀河", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 300),
+            AchievementDefinitionEntity("epic_earthquake", "地牛翻身", "經歷一次地震", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("epic_double_rainbow", "雙彩虹", "親眼目睹雙彩虹", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+            AchievementDefinitionEntity("epic_meteor", "流星雨", "親眼目睹流星雨", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+
+            AchievementDefinitionEntity("health_marathon", "馬拉松跑者", "完成一場馬拉松", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
+            AchievementDefinitionEntity("health_blood", "熱血助人", "捐血一次", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("health_10k", "十公里挑戰", "跑完 10 公里", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("health_no_sugar", "戒糖挑戰", "連續一週不吃糖", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 75),
+            AchievementDefinitionEntity("health_meditate", "靜心冥想", "連續 30 天冥想", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("health_gym", "健身新手", "開始去健身房", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+
+            AchievementDefinitionEntity("transport_license", "駕照到手", "考取駕照", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("transport_first_car", "第一台車", "購買第一輛車", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("transport_bike", "單車旅人", "騎單車通勤", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("transport_roadtrip", "公路旅行", "完成一次公路旅行", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("transport_no_accident", "安全駕駛", "一年無事故", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100)
+        )
+        definitionDao.insertAll(definitions)
+
+        val userId = "local_user"
+        val progressList = definitions.map { def ->
+            UserAchievementProgressEntity(
+                userId = userId,
+                achievementId = def.achievementId,
+                currentProgress = 0L,
+                isUnlocked = false,
+                unlockedDate = null,
+                triggerType = def.triggerType
+            )
+        }
+        progressDao.insertAll(progressList)
     }
 
-    suspend fun recordPhoto(): List<UnlockedAchievementEvent> {
+    suspend fun recordCheckin(latitude: Double, longitude: Double): List<UnlockedAchievementEvent> {
         val userId = "local_user"
-        val triggerType = TriggerType.PHOTO_UPLOAD_COUNT.value
+        val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
-        val photoCount = (progressDao.countByUserAndType(userId, triggerType) + 1).toLong()
-        progressDao.incrementProgress(userId, triggerType, 1)
+        checkInRecordDao.insert(
+            CheckInRecord(
+                userId = userId,
+                latitude = latitude,
+                longitude = longitude,
+                timestamp = System.currentTimeMillis()
+            )
+        )
 
-        _totalPhotos.emit(photoCount)
+        val uniqueCount = checkInRecordDao.countUniqueLocations(userId).toLong()
+        val totalCount = checkInRecordDao.countByUser(userId).toLong()
+        progressDao.setProgressByType(userId, triggerType, uniqueCount)
+
+        _totalCheckins.emit(totalCount)
 
         return checkAndUnlock(userId, triggerType)
+    }
+
+    suspend fun confirmManualAchievement(
+        achievementId: String,
+        photoPath: String? = null,
+        labels: List<String>? = null
+    ): UnlockedAchievementEvent? {
+        val userId = "local_user"
+
+        progressDao.incrementProgressById(userId, achievementId)
+
+        if (photoPath != null) {
+            evidenceDao.insert(
+                AchievementEvidence(
+                    achievementId = achievementId,
+                    userId = userId,
+                    photoPath = photoPath,
+                    detectedLabels = labels?.joinToString(", ") ?: "",
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+        }
+
+        val progress = progressDao.getByUserAndAchievement(userId, achievementId)
+        val definition = definitionDao.getById(achievementId)
+
+        if (progress != null && definition != null && progress.currentProgress >= definition.triggerGoal) {
+            val now = System.currentTimeMillis()
+            progressDao.unlockAchievement(userId, achievementId, now)
+            val event = UnlockedAchievementEvent(
+                achievement = definition,
+                unlockedDate = now
+            )
+            _unlockEvents.emit(event)
+            return event
+        }
+
+        return null
+    }
+
+    suspend fun getEvidence(achievementId: String): AchievementEvidence? {
+        return evidenceDao.getByAchievement(achievementId, "local_user")
     }
 
     suspend fun getAllAchievementProgress(): List<UserAchievementProgressEntity> {
@@ -86,6 +205,14 @@ class AchievementRepository @Inject constructor(
 
     suspend fun getAllDefinitions(): List<AchievementDefinitionEntity> {
         return definitionDao.getAll()
+    }
+
+    suspend fun getCheckinCount(): Int {
+        return checkInRecordDao.countByUser("local_user")
+    }
+
+    suspend fun getUniqueLocationCount(): Int {
+        return checkInRecordDao.countUniqueLocations("local_user")
     }
 
     private suspend fun checkAndUnlock(
@@ -113,9 +240,9 @@ class AchievementRepository @Inject constructor(
         return events
     }
 
-    suspend fun refreshTotalPhotos() {
+    suspend fun refreshTotalCheckins() {
         val userId = "local_user"
-        val total = progressDao.getTotalProgressByType(userId, TriggerType.PHOTO_UPLOAD_COUNT.value) ?: 0L
-        _totalPhotos.emit(total)
+        val total = checkInRecordDao.countByUser(userId).toLong()
+        _totalCheckins.emit(total)
     }
 }

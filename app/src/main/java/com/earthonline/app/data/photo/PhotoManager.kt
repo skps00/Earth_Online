@@ -1,6 +1,7 @@
 package com.earthonline.app.data.photo
 
 import android.content.Context
+import android.location.Geocoder
 import android.net.Uri
 import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,5 +40,18 @@ class PhotoManager @Inject constructor(
 
     fun getPhotoCount(): Int {
         return photoDir.listFiles()?.size ?: 0
+    }
+
+    fun reverseGeocode(latitude: Double, longitude: Double): String {
+        return try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            val addr = addresses?.firstOrNull() ?: return "%.5f, %.5f".format(latitude, longitude)
+            listOfNotNull(addr.adminArea, addr.locality, addr.subLocality, addr.thoroughfare)
+                .filter { it.isNotBlank() }.joinToString(", ")
+                .ifEmpty { "%.5f, %.5f".format(latitude, longitude) }
+        } catch (_: Exception) {
+            "%.5f, %.5f".format(latitude, longitude)
+        }
     }
 }

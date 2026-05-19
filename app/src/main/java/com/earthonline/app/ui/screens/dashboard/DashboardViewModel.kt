@@ -47,24 +47,105 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    fun setPendingLocation(latitude: Double, longitude: Double, address: String) {
+        _uiState.update {
+            it.copy(
+                showCheckinConfirmDialog = true,
+                pendingLocation = Pair(latitude, longitude),
+                pendingAddress = address
+            )
+        }
+    }
+
+    fun setAnalyzedLabels(labels: List<String>) {
+        _uiState.update { it.copy(analyzedLabels = labels) }
+    }
+
+    fun setEvidencePhotoPath(achievementId: String, path: String) {
+        _uiState.update {
+            it.copy(
+                pendingEvidenceAchievementId = achievementId,
+                pendingEvidencePhotoPath = path
+            )
+        }
+    }
+
     fun onEvent(event: DashboardEvent) {
         when (event) {
-            is DashboardEvent.PhotoTaken -> {
-                if (event.success) {
-                    _uiState.update { it.copy(showFoodConfirmDialog = true) }
+            DashboardEvent.CheckInConfirmed -> {
+                val location = _uiState.value.pendingLocation ?: return
+                _uiState.update {
+                    it.copy(
+                        showCheckinConfirmDialog = false,
+                        pendingLocation = null,
+                        pendingAddress = ""
+                    )
                 }
-            }
-            DashboardEvent.FoodConfirmed -> {
-                _uiState.update { it.copy(showFoodConfirmDialog = false) }
                 viewModelScope.launch {
-                    val events = achievementService.recordPhoto()
+                    val events = achievementService.recordCheckin(location.first, location.second)
                     handleUnlockEvents(events)
                     achievementService.refreshAll()
                     loadAchievementDisplay()
                 }
             }
-            DashboardEvent.FoodRejected -> {
-                _uiState.update { it.copy(showFoodConfirmDialog = false) }
+            DashboardEvent.CheckInRejected -> {
+                _uiState.update {
+                    it.copy(
+                        showCheckinConfirmDialog = false,
+                        pendingLocation = null,
+                        pendingAddress = ""
+                    )
+                }
+            }
+            is DashboardEvent.ManualConfirm -> {
+                viewModelScope.launch {
+                    val event = achievementService.confirmManualAchievement(
+                        achievementId = event.achievementId
+                    )
+                    if (event != null) {
+                        handleUnlockEvents(listOf(event))
+                    }
+                    achievementService.refreshAll()
+                    loadAchievementDisplay()
+                }
+            }
+            is DashboardEvent.EvidencePhotoTaken -> {
+                _uiState.update {
+                    it.copy(pendingEvidenceAchievementId = event.achievementId)
+                }
+            }
+            DashboardEvent.EvidenceConfirmed -> {
+                val achievementId = _uiState.value.pendingEvidenceAchievementId ?: return
+                val photoPath = _uiState.value.pendingEvidencePhotoPath ?: return
+                val labels = _uiState.value.analyzedLabels
+                _uiState.update {
+                    it.copy(
+                        pendingEvidenceAchievementId = null,
+                        pendingEvidencePhotoPath = null,
+                        analyzedLabels = emptyList()
+                    )
+                }
+                viewModelScope.launch {
+                    val unlockEvent = achievementService.confirmManualAchievement(
+                        achievementId = achievementId,
+                        photoPath = photoPath,
+                        labels = labels
+                    )
+                    if (unlockEvent != null) {
+                        handleUnlockEvents(listOf(unlockEvent))
+                    }
+                    achievementService.refreshAll()
+                    loadAchievementDisplay()
+                }
+            }
+            DashboardEvent.EvidenceRejected -> {
+                _uiState.update {
+                    it.copy(
+                        pendingEvidenceAchievementId = null,
+                        pendingEvidencePhotoPath = null,
+                        analyzedLabels = emptyList()
+                    )
+                }
             }
         }
     }
@@ -79,29 +160,35 @@ class DashboardViewModel @Inject constructor(
         val definitions = achievementService.getAllDefinitions()
         val allProgress = achievementService.getAllAchievementProgress()
 
-        val displayItems = definitions.map { def ->
-            val progress = allProgress.find { it.achievementId == def.achievementId }
-                ?: UserAchievementProgressEntity(
-                    userId = "local_user",
-                    achievementId = def.achievementId,
-                    currentProgress = 0L,
-                    isUnlocked = false,
-                    unlockedDate = null,
-                    triggerType = def.triggerType
-                )
-            AchievementDisplayItem(definition = def, progress = progress)
-        }.sortedWith(
-            compareByDescending<AchievementDisplayItem> { it.progress.isUnlocked }
-                .thenByDescending { it.progress.currentProgress }
+        val allowedTypes = setOf(
+            TriggerType.LOCATION_CHECKIN_COUNT.value,
+            TriggerType.MANUAL_CONFIRM.value
         )
 
-        val totalPhotos = allProgress
-            .filter { it.triggerType == TriggerType.PHOTO_UPLOAD_COUNT.value }
-            .maxOfOrNull { it.currentProgress } ?: 0L
+        val displayItems = definitions
+            .filter { it.triggerType in allowedTypes }
+            .map { def ->
+                val progress = allProgress.find { it.achievementId == def.achievementId }
+                    ?: UserAchievementProgressEntity(
+                        userId = "local_user",
+                        achievementId = def.achievementId,
+                        currentProgress = 0L,
+                        isUnlocked = false,
+                        unlockedDate = null,
+                        triggerType = def.triggerType
+                    )
+                AchievementDisplayItem(definition = def, progress = progress)
+            }
+            .sortedWith(
+                compareByDescending<AchievementDisplayItem> { it.progress.isUnlocked }
+                    .thenByDescending { it.progress.currentProgress }
+            )
+
+        val totalCheckins = achievementService.getCheckinCount().toLong()
 
         _uiState.update {
             it.copy(
-                totalPhotos = totalPhotos,
+                totalCheckins = totalCheckins,
                 achievements = displayItems
             )
         }

@@ -86,4 +86,10 @@ interface UserAchievementProgressDao {
 
     @Query("SELECT COUNT(*) FROM user_achievement_progress WHERE user_id = :userId AND trigger_type = :triggerType")
     suspend fun countByUserAndType(userId: String, triggerType: String): Int
+
+    @Query("UPDATE user_achievement_progress SET current_progress = :value WHERE user_id = :userId AND trigger_type = :triggerType AND is_unlocked = 0")
+    suspend fun setProgressByType(userId: String, triggerType: String, value: Long)
+
+    @Query("UPDATE user_achievement_progress SET current_progress = current_progress + 1 WHERE user_id = :userId AND achievement_id = :achievementId AND is_unlocked = 0")
+    suspend fun incrementProgressById(userId: String, achievementId: String)
 }
