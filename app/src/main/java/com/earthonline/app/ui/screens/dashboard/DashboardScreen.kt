@@ -1,8 +1,11 @@
 package com.earthonline.app.ui.screens.dashboard
 
+import android.graphics.BitmapFactory
+import android.content.Intent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -51,7 +55,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +69,7 @@ import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.components.AchievementUnlockDialog
+import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
 import com.earthonline.app.ui.theme.AccentOrange
@@ -108,6 +115,12 @@ fun DashboardScreen(
     }
 
     var selectedAchievement by remember { mutableStateOf<AchievementDisplayItem?>(null) }
+    var selectedEvidencePath by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(selectedAchievement) {
+        val id = selectedAchievement?.definition?.achievementId
+        selectedEvidencePath = if (id != null) viewModel.getEvidencePhoto(id) else null
+    }
 
     val tabTitles = listOf(
         "📍 打卡", "🗺️ 探索", "🎓 職涯", "🎭 日常", "🏆 史詩", "🩺 健康", "🚗 交通"
@@ -346,7 +359,8 @@ fun DashboardScreen(
         selectedAchievement?.let { item ->
             AchievementDetailDialog(
                 item = item,
-                onDismiss = { selectedAchievement = null },
+                evidencePhotoPath = selectedEvidencePath,
+                onDismiss = { selectedAchievement = null; selectedEvidencePath = null },
                 onTakeEvidencePhoto = {
                     selectedAchievement = null
                     onTakeEvidencePhoto(item.definition.achievementId)
@@ -548,6 +562,7 @@ private fun AchievementCard(
 @Composable
 private fun AchievementDetailDialog(
     item: AchievementDisplayItem,
+    evidencePhotoPath: String?,
     onDismiss: () -> Unit,
     onTakeEvidencePhoto: () -> Unit,
     onManualConfirm: () -> Unit
@@ -557,6 +572,7 @@ private fun AchievementDetailDialog(
     val goal = item.definition.triggerGoal
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
     val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value
+    val context = LocalContext.current
 
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
 
@@ -614,42 +630,82 @@ private fun AchievementDetailDialog(
                     color = Gold,
                     fontWeight = FontWeight.SemiBold
                 )
-            }
-        },
-        confirmButton = {
-            if (isManual && !isUnlocked) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
-                        onClick = onTakeEvidencePhoto,
-                        colors = ButtonDefaults.buttonColors(containerColor = Gold)
-                    ) {
-                        Text(stringResource(R.string.evidence_take_photo), color = Color(0xFF1A1A2E))
+
+                if (isUnlocked) {
+                    if (evidencePhotoPath != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val bitmap = remember(evidencePhotoPath) {
+                            try { BitmapFactory.decodeFile(evidencePhotoPath) } catch (_: Exception) { null }
+                        }
+                        if (bitmap != null) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    val shareText = "我在「地球 Online」解鎖了成就：${item.definition.title}！\n${item.definition.description}\n+${item.definition.rewardPoints} 點數"
                     Button(
-                        onClick = onManualConfirm,
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
+                        onClick = {
+                            val uri = ShareCardGenerator.generate(context, item.definition.title, item.definition.description, item.definition.rewardPoints)
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "image/png"
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                                if (uri != null) putExtra(Intent.EXTRA_STREAM, uri)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        },
+                        modifier = Modifier.fillMaxWidth().height(40.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
+                        shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text(stringResource(R.string.manual_confirm_btn), color = Color.White)
+                        Icon(Icons.Filled.Share, null, tint = Gold, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.share_achievement), color = Gold, fontSize = 13.sp)
                     }
-                }
-            } else {
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = CardDark)
-                ) {
-                    Text(
-                        if (isUnlocked) stringResource(R.string.unlocked_badge) else getString(R.string.loading),
-                        color = TextSecondaryDark
-                    )
                 }
             }
         },
         dismissButton = {
+            if (isManual && !isUnlocked) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = onTakeEvidencePhoto,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Gold),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(R.string.evidence_take_photo), color = Color(0xFF1A1A2E), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+                    Button(
+                        onClick = onManualConfirm,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(R.string.manual_confirm_btn), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
             Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
+                modifier = Modifier.fillMaxWidth().height(44.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
+                Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark, fontSize = 14.sp)
             }
         },
         containerColor = Color(0xFF1E1E3A),

@@ -22,7 +22,7 @@
     <string name="food_confirm_title">食物確認</string>
     <string name="food_confirm_message">這是食物嗎？\n\n請僅記錄餐點以解鎖成就</string>
     <string name="food_confirm_yes">是，這是食物</string>
-    <string name="food_confirm_no">不是</string>
+    <string name="food_confirm_no">關閉</string>
     <string name="take_photo">拍照記錄</string>
     <string name="evidence_take_photo">拍照存證</string>
     <string name="evidence_skip">略過</string>
@@ -30,4 +30,5 @@
     <string name="evidence_confirm_message">請確認照片內容是否正確</string>
     <string name="evidence_confirm_btn">確認</string>
     <string name="evidence_retry_btn">重拍</string>
+    <string name="share_achievement">分享成就</string>
 </resources>

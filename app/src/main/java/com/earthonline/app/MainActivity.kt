@@ -131,8 +131,8 @@ class MainActivity : ComponentActivity() {
                 try {
                     val location = locationManager.getLastKnownLocation(provider)
                     if (location != null) {
-                        val address = photoManager.reverseGeocode(location.latitude, location.longitude)
-                        viewModel.setPendingLocation(location.latitude, location.longitude, address)
+                        val (address, country, continent) = photoManager.reverseGeocode(location.latitude, location.longitude)
+                        viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
                         return
                     }
                 } catch (_: Exception) {

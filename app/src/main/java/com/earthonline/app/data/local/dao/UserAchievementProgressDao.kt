@@ -92,4 +92,15 @@ interface UserAchievementProgressDao {
 
     @Query("UPDATE user_achievement_progress SET current_progress = current_progress + 1 WHERE user_id = :userId AND achievement_id = :achievementId AND is_unlocked = 0")
     suspend fun incrementProgressById(userId: String, achievementId: String)
+
+    @Query(
+        """
+        UPDATE user_achievement_progress 
+        SET current_progress = :value 
+        WHERE user_id = :userId 
+        AND achievement_id = :achievementId 
+        AND is_unlocked = 0
+        """
+    )
+    suspend fun setProgressById(userId: String, achievementId: String, value: Long)
 }

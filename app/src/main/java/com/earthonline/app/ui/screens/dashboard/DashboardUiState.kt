@@ -15,6 +15,8 @@ data class DashboardUiState(
     val showCheckinConfirmDialog: Boolean = false,
     val pendingLocation: Pair<Double, Double>? = null,
     val pendingAddress: String = "",
+    val pendingCountry: String = "",
+    val pendingContinent: String = "",
     val pendingEvidenceAchievementId: String? = null,
     val pendingEvidencePhotoPath: String? = null,
     val analyzedLabels: List<String> = emptyList()

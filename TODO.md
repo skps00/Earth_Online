@@ -7,8 +7,12 @@
 - [x] ML Kit Image Labeling（裝置端照片分析證據）
 - [x] 7 頁籤成就牆（LazyRow + HorizontalPager）
 - [x] 成就解鎖動畫 + 音效
-- [x] Room DB v3（checkin_record、achievement_evidence 表）
+- [x] Room DB v4（checkin_record、achievement_evidence 表，含 country/continent 欄位）
 - [x] GitHub 版本控制
+- [x] 探索成就自動追蹤（國家數/大洲數由打卡數據自動更新）
+- [x] 成就分享功能（生成 1080x1080 分享卡 PNG + 文字）
+- [x] 國家→大洲對照表（Geocoder 反編碼後自動歸類大洲）
+- [x] 成就詳情對話框排版優化（關閉鈕置底、按鈕等寬）
 
 ---
 
@@ -26,9 +30,14 @@
 
 ## 🟡 中優先
 
-### 已解鎖成就顯示證據照片
-- [ ] 手動成就拍照存證後，詳情對話框顯示當時拍攝的照片
-- [ ] 從 `achievement_evidence` 表讀取 photoPath 並用 `Image` 顯示
+### 已解鎖成就顯示證據照片 ✅
+- [x] 手動成就拍照存證後，詳情對話框顯示當時拍攝的照片
+- [x] 從 `achievement_evidence` 表讀取 photoPath 並用 `BitmapFactory` 顯示
+
+### 七大洋成就
+- [ ] 新增探索成就：七大洋洋標（太平洋、大西洋、印度洋、南冰洋、北冰洋等）
+- [ ] 在打卡流程中透過 Geocoder 判斷是否靠近海洋/海岸線
+- [ ] 或設計為手動認領成就
 
 ### 打卡歷史地圖
 - [ ] 加入 Google Maps Compose 或 OSM 依賴
@@ -55,6 +64,13 @@
 - [ ] 空狀態提示（尚無打卡時顯示引導文字）
 - [ ] 載入骨架屏（Shimmer loading）
 - [ ] 下拉刷新打卡數據
+- [ ] 成就牆頁籤選中動畫（smooth indicator transition）
+- [ ] 打卡確認對話框顯示國家/大洲資訊
+- [ ] 分享卡片優化（加入打卡位置資訊、自訂背景圖）
+- [ ] Dark mode / Light mode 切換
+- [ ] 主畫面儀表板重新設計（打卡次數視覺化圖表）
+- [ ] 成就解鎖 Toast 替代（底部 snackbar 或橫幅）
+- [ ] 首次使用引導（Onboarding 頁面）
 
 ### 語言功能
 - [ ] 語言切換功能修復後加回

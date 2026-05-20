@@ -47,12 +47,14 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun setPendingLocation(latitude: Double, longitude: Double, address: String) {
+    fun setPendingLocation(latitude: Double, longitude: Double, address: String, country: String, continent: String) {
         _uiState.update {
             it.copy(
                 showCheckinConfirmDialog = true,
                 pendingLocation = Pair(latitude, longitude),
-                pendingAddress = address
+                pendingAddress = address,
+                pendingCountry = country,
+                pendingContinent = continent
             )
         }
     }
@@ -82,7 +84,7 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 viewModelScope.launch {
-                    val events = achievementService.recordCheckin(location.first, location.second)
+                    val events = achievementService.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent)
                     handleUnlockEvents(events)
                     achievementService.refreshAll()
                     loadAchievementDisplay()
@@ -151,9 +153,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private suspend fun handleUnlockEvents(events: List<UnlockedAchievementEvent>) {
-        for (event in events) {
-            _unlockEvent.emit(event)
-        }
+        for (e in events) _unlockEvent.emit(e)
     }
 
     private suspend fun loadAchievementDisplay() {
@@ -195,5 +195,9 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onUnlockEventHandled() {
+    }
+
+    suspend fun getEvidencePhoto(achievementId: String): String? {
+        return achievementService.getEvidence(achievementId)?.photoPath
     }
 }

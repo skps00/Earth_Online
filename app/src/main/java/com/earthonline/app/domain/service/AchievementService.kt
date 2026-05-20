@@ -20,8 +20,8 @@ class AchievementService @Inject constructor(
         repository.initializeAchievements()
     }
 
-    suspend fun recordCheckin(latitude: Double, longitude: Double): List<UnlockedAchievementEvent> {
-        return repository.recordCheckin(latitude, longitude)
+    suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String): List<UnlockedAchievementEvent> {
+        return repository.recordCheckin(latitude, longitude, country, continent)
     }
 
     suspend fun confirmManualAchievement(
