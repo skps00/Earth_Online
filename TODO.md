@@ -13,26 +13,29 @@
 - [x] 成就分享功能（生成 1080x1080 分享卡 PNG + 文字）
 - [x] 國家→大洲對照表（Geocoder 反編碼後自動歸類大洲）
 - [x] 成就詳情對話框排版優化（關閉鈕置底、按鈕等寬）
+- [x] 證據照片顯示（已解鎖成就詳情顯示拍照存證圖片）
 
 ---
 
 ## 🔴 高優先
 
 ### 實機完整測試
-- [ ] 打卡流程測試（權限請求 → GPS 取得 → 地址顯示 → 確認打卡 → 成就觸發）
-- [ ] ML Kit 照片分析測試（拍照存證 → AI 標籤顯示 → 確認解鎖）
-- [ ] 手動成就多步進度測試（多次認領 → 進度條更新 → 達到門檻解鎖）
-- [ ] 成就牆分頁測試（7 頁籤切換 → 滑動 → 點擊卡片）
-- [ ] 資料庫遷移測試（v1 → v3 fallbackToDestructiveMigration）
+- [x] 打卡流程測試（權限請求 → GPS 取得 → 地址顯示 → 確認打卡 → 成就觸發）
+- [x] 手動成就多步進度測試（多次認領 → 進度條更新 → 達到門檻解鎖）
+- [x] 成就牆分頁測試（7 頁籤切換 → 滑動 → 點擊卡片）
+- [ ] 多國家打卡測試（auto-track 5/10/50 國是否正確觸發）
+- [ ] 資料庫遷移測試（v1 → v4 fallbackToDestructiveMigration）
 - [ ] 不同 Android 版本相容性測試（SDK 26 ~ 34）
+- [ ] ML Kit 照片分析測試（暫移除，不穩定）
+
+### 程式碼品質修正
+- [ ] **TriggerType 矛盾修正**：`explore_5countries` 等用 `MANUAL_CONFIRM` 但實際上被 `autoTrackExploreCountry()` 自動更新 → 開新的 `AUTO_TRACK_EXPLORE` 或 `COUNTRY_COUNT` TriggerType
+- [ ] **DAO method rename**：`getUnlockedByUserAndType()` 名不符實（查的是 pending）→ 改為 `getPendingUnlockByUserAndType()`
+- [ ] **ViewModel error 靜默修正**：`initialize()` 的 `catch { }` 空塊 → 改為寫入 `DashboardUiState` error state
 
 ---
 
 ## 🟡 中優先
-
-### 已解鎖成就顯示證據照片 ✅
-- [x] 手動成就拍照存證後，詳情對話框顯示當時拍攝的照片
-- [x] 從 `achievement_evidence` 表讀取 photoPath 並用 `BitmapFactory` 顯示
 
 ### 七大洋成就
 - [ ] 新增探索成就：七大洋洋標（太平洋、大西洋、印度洋、南冰洋、北冰洋等）
@@ -40,7 +43,7 @@
 - [ ] 或設計為手動認領成就
 
 ### 打卡歷史地圖
-- [ ] 加入 Google Maps Compose 或 OSM 依賴
+- [ ] 加入 OSM 依賴（優先於 Google Maps，符合開源+隱私 ethos）
 - [ ] 讀取 `checkin_record` 表所有打卡位置
 - [ ] 在地圖上標記所有打卡點，點擊顯示地址和時間
 
@@ -48,6 +51,8 @@
 - [ ] 加入更多社群成就（r/outside 社群持續更新）
 - [ ] 隱藏成就（達成條件前不顯示標題和說明）
 - [ ] 成就稀有度分級（普通 / 稀有 / 史詩 / 傳說，不同顏色邊框）
+- [ ] 成就定義抽成 JSON 資源檔（`res/raw/achievements.json`，用 Moshi/Gson 解析）
+- [ ] JSON 備份匯出/匯入 — 使用者換機必備
 
 ---
 
@@ -57,7 +62,12 @@
 - [ ] 音效開關
 - [ ] 權限管理入口
 - [ ] 清除所有資料按鈕
-- [ ] 匯出/匯入成就進度（JSON 備份）
+- [ ] 匯出/匯入成就進度
+
+### 技術債清理
+- [ ] `userId = "local_user"` 抽成 `UserRepository` 或 `AppConfig`
+- [ ] Room `exportSchema = true` + `ksp { arg("room.schemaLocation", ...) }` 啟用 migration 驗證
+- [ ] Evidence 照片垃圾清理（取消確認時刪除暫存照，啟動時掃 orphan files）
 
 ### UI 打磨
 - [ ] 過場動畫（頁籤切換 Crossfade）
@@ -80,3 +90,13 @@
 - [ ] Lottie 粒子特效 JSON 動畫檔（螢火蟲光點）
 - [ ] 步數成就重新評估後重新實作
 - [ ] 方案 C：自訂 TensorFlow Lite 食物模型
+
+---
+
+## 📊 優先級路線圖（更新）
+
+1. **地圖標記**（OSM > Google Maps）— 符合開源+隱私 ethos
+2. **隱藏成就 + 稀有度分級** — 遊戲感大提升
+3. **JSON 備份匯出/匯入** — 認真用的使用者需要
+4. **音效開關 + 設定頁** — 使用者體驗細節
+5. **Lottie 粒子特效** — 螢火蟲光點，加分項
