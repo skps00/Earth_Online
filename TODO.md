@@ -30,8 +30,9 @@
 
 ### 程式碼品質修正
 - [ ] **TriggerType 矛盾修正**：`explore_5countries` 等用 `MANUAL_CONFIRM` 但實際上被 `autoTrackExploreCountry()` 自動更新 → 開新的 `AUTO_TRACK_EXPLORE` 或 `COUNTRY_COUNT` TriggerType
-- [ ] **DAO method rename**：`getUnlockedByUserAndType()` 名不符實（查的是 pending）→ 改為 `getPendingUnlockByUserAndType()`
+- [x] **DAO method rename**：`getUnlockedByUserAndType()` → `getPendingByUserAndType()`
 - [ ] **ViewModel error 靜默修正**：`initialize()` 的 `catch { }` 空塊 → 改為寫入 `DashboardUiState` error state
+- [ ] **MediaPlayer 多個同時播放**：`AchievementUnlockDialog` 內直接 create MediaPlayer，快速連續解鎖可能多個重疊 → 抽成 singleton 或用 ExoPlayer
 
 ---
 
@@ -87,9 +88,18 @@
 - [ ] 英文版字串資源（values-en）
 
 ### 其他
-- [ ] Lottie 粒子特效 JSON 動畫檔（螢火蟲光點）
-- [ ] 步數成就重新評估後重新實作
+- [ ] Lottie 粒子特效 JSON 動畫檔（螢火蟲光點，目前用 "★" + shimmer alpha 模擬）
+- [ ] 步數成就重新評估後重新實作（前期已有 `HealthConnectManager.kt`，非從零開發）
 - [ ] 方案 C：自訂 TensorFlow Lite 食物模型
+- [ ] ProGuard / R8 規則驗證（ML Kit、Geocoder 等第三方庫混淆後正常運作）
+- [ ] Android 13+ (SDK 33+) `POST_NOTIFICATIONS` 權限（若未來加入背景提醒）
+
+### Google Play 上架準備
+- [ ] 隱私權政策網址（即使資料全存本地，有相機/定位權限就必須提供）
+- [ ] App 圖示（目前為自訂向量圖，上架建議 1024x1024 PNG）
+- [ ] 商店文案（標題、短描述、長描述、螢幕截圖）
+- [ ] 內容分級問卷（Google Play Console 必填）
+- [ ] 測試用帳號（若有後端功能）
 
 ---
 
