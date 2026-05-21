@@ -57,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -303,11 +304,13 @@ fun DashboardScreen(
             }
 
             item {
+                val screenHeightDp = LocalConfiguration.current.screenHeightDp
+                val pagerHeight = (screenHeightDp - 320).coerceAtLeast(300)
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillParentMaxHeight(0.75f)
+                        .height(pagerHeight.dp)
                 ) { page ->
                     val pageItems = pagerItems[page]
                     if (pageItems.isEmpty()) {
