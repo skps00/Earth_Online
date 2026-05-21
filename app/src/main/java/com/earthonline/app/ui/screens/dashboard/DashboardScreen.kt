@@ -538,7 +538,7 @@ private fun AchievementCard(
             ) {
                 Text(
                     text = when { isUnlocked -> "★"; isHidden -> "🔒"; else -> "?" },
-                    color = when { isUnlocked -> Gold; isHidden -> RarityLegendary.copy(alpha = 0.5f); else -> TextSecondaryDark },
+                    color = when { isUnlocked -> Gold; isHidden -> Rarity.LEGENDARY.color.copy(alpha = 0.5f); else -> TextSecondaryDark },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -550,7 +550,7 @@ private fun AchievementCard(
                 Text(
                     text = if (isHidden) "???" else item.definition.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (isUnlocked) Gold else if (isHidden) RarityLegendary.copy(alpha = 0.6f) else TextPrimaryDark,
+                    color = if (isUnlocked) Gold else if (isHidden) Rarity.LEGENDARY.color.copy(alpha = 0.6f) else TextPrimaryDark,
                     fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -612,7 +612,7 @@ private fun AchievementDetailDialog(
             Text(
                 text = if (isHidden && !revealed) "???" else item.definition.title,
                 fontWeight = FontWeight.Bold,
-                color = if (isUnlocked) Gold else if (isHidden && !revealed) RarityLegendary.copy(alpha = 0.7f) else TextPrimaryDark
+                color = if (isUnlocked) Gold else if (isHidden && !revealed) Rarity.LEGENDARY.color.copy(alpha = 0.7f) else TextPrimaryDark
             )
         },
         text = {
@@ -628,17 +628,17 @@ private fun AchievementDetailDialog(
                         Text(
                             text = "💡 ${item.definition.hint}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = RarityRare
+                            color = Rarity.RARE.color
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { revealed = true },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = RarityLegendary.copy(alpha = 0.2f)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Rarity.LEGENDARY.color.copy(alpha = 0.2f)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("🔓 揭示成就內容", color = RarityLegendary, fontWeight = FontWeight.Bold)
+                        Text("🔓 揭示成就內容", color = Rarity.LEGENDARY.color, fontWeight = FontWeight.Bold)
                     }
                 }
             } else {
