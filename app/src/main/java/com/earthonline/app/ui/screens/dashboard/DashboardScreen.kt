@@ -47,6 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -94,9 +95,12 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
+    var unlockEventKey by remember { mutableStateOf(0L) }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
+            unlockEvent = null
+            unlockEventKey++
             unlockEvent = event
         }
     }
@@ -350,13 +354,15 @@ fun DashboardScreen(
         }
 
         unlockEvent?.let { event ->
-            AchievementUnlockDialog(
-                event = event,
-                onDismiss = {
-                    unlockEvent = null
-                    viewModel.onUnlockEventHandled()
-                }
-            )
+            key(unlockEventKey) {
+                AchievementUnlockDialog(
+                    event = event,
+                    onDismiss = {
+                        unlockEvent = null
+                        viewModel.onUnlockEventHandled()
+                    }
+                )
+            }
         }
 
         selectedAchievement?.let { item ->
