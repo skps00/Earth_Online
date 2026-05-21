@@ -51,6 +51,8 @@ import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.GoldDark
 import kotlinx.coroutines.delay
 
+private var sharedMediaPlayer: MediaPlayer? = null
+
 @Composable
 fun AchievementUnlockDialog(
     event: UnlockedAchievementEvent,
@@ -68,14 +70,23 @@ fun AchievementUnlockDialog(
     )
 
     LaunchedEffect(Unit) {
+        val currentPlayer = sharedMediaPlayer
+        currentPlayer?.stop()
+        currentPlayer?.release()
+        sharedMediaPlayer = null
+
         try {
             val resId = context.resources.getIdentifier(
                 "achievement_unlock", "raw", context.packageName
             )
             if (resId != 0) {
                 val mediaPlayer = MediaPlayer.create(context, resId)
+                sharedMediaPlayer = mediaPlayer
                 mediaPlayer?.start()
-                mediaPlayer?.setOnCompletionListener { it.release() }
+                mediaPlayer?.setOnCompletionListener {
+                    it.release()
+                    sharedMediaPlayer = null
+                }
             }
         } catch (_: Exception) {
         }

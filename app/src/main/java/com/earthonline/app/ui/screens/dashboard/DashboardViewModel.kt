@@ -40,7 +40,8 @@ class DashboardViewModel @Inject constructor(
                 achievementService.initialize()
                 achievementService.refreshAll()
                 loadAchievementDisplay()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = e.message ?: "初始化失敗") }
             }
 
             _uiState.update { it.copy(isLoading = false) }

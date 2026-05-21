@@ -19,7 +19,8 @@ data class DashboardUiState(
     val pendingContinent: String = "",
     val pendingEvidenceAchievementId: String? = null,
     val pendingEvidencePhotoPath: String? = null,
-    val analyzedLabels: List<String> = emptyList()
+    val analyzedLabels: List<String> = emptyList(),
+    val errorMessage: String? = null
 )
 
 sealed class DashboardEvent {
