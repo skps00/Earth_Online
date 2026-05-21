@@ -133,38 +133,9 @@ fun DashboardScreen(
         selectedEvidencePath = if (id != null) viewModel.getEvidencePhoto(id) else null
     }
 
-    val tabTitles = listOf(
-        "📍 打卡", "🗺️ 探索", "🎓 職涯", "🎭 日常", "🏆 史詩", "🩺 健康", "🚗 交通", "🌊 大海"
-    )
+    val sections = AchievementCategories.getAll(uiState.achievements)
 
-    val checkinItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.LOCATION_CHECKIN_COUNT.value
-    }
-    val exploreItems = uiState.achievements.filter {
-        (it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || it.definition.triggerType == TriggerType.AUTO_TRACK.value) && it.definition.achievementId.startsWith("explore_")
-    }
-    val careerItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("career_")
-    }
-    val dailyItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("daily_")
-    }
-    val epicItems = uiState.achievements.filter {
-        (it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || it.definition.triggerType == TriggerType.AUTO_TRACK.value) && it.definition.achievementId.startsWith("epic_")
-    }
-    val oceanItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("ocean_")
-    }
-    val healthItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("health_")
-    }
-    val transportItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("transport_")
-    }
-
-    val pagerItems = listOf(checkinItems, exploreItems, careerItems, dailyItems, epicItems, healthItems, transportItems, oceanItems)
-
-    val pagerState = rememberPagerState(pageCount = { pagerItems.size })
+    val pagerState = rememberPagerState(pageCount = { sections.size })
     val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
     val coroutineScope = rememberCoroutineScope()
 
@@ -277,9 +248,9 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(horizontal = 4.dp)
                 ) {
-                    items(tabTitles.size) { index ->
+                    items(sections.size) { index ->
                         val isSelected = selectedTabIndex == index
-                        val categoryItems = pagerItems[index]
+                        val categoryItems = sections[index].second
                         val unlockedCount = categoryItems.count { it.progress.isUnlocked }
                         val totalCount = categoryItems.size
 
@@ -290,7 +261,7 @@ fun DashboardScreen(
                             }
                         ) {
                             Text(
-                                text = tabTitles[index],
+                                text = sections[index].first,
                                 color = if (isSelected) Gold else Color.White.copy(alpha = 0.55f),
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                 fontSize = 14.sp
@@ -325,7 +296,7 @@ fun DashboardScreen(
                         .fillMaxWidth()
                         .height(pagerHeight.dp)
                 ) { page ->
-                    val pageItems = pagerItems[page]
+                    val pageItems = sections[page].second
                     if (pageItems.isEmpty()) {
                         Box(
                             modifier = Modifier
