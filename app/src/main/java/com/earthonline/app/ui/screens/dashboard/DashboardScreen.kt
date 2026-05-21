@@ -75,6 +75,8 @@ import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.components.AchievementCard
 import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
+import com.earthonline.app.ui.components.CheckInConfirmDialog
+import com.earthonline.app.ui.components.EvidenceConfirmDialog
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -389,95 +391,18 @@ fun DashboardScreen(
         }
 
         if (uiState.showCheckinConfirmDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.onEvent(DashboardEvent.CheckInRejected) },
-                title = {
-                    Text(
-                        stringResource(R.string.checkin_confirm_title),
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                },
-                text = {
-                    Column {
-                        Text(
-                            text = uiState.pendingAddress,
-                            color = TextSecondaryDark
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "${stringResource(R.string.checkin_action)}?",
-                            color = TextSecondaryDark
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.CheckInConfirmed) },
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
-                    ) {
-                        Text(stringResource(R.string.checkin_confirm_yes), color = Color.White)
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.CheckInRejected) },
-                        colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
-                    ) {
-                        Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
-                    }
-                },
-                containerColor = Color(0xFF1E1E3A),
-                shape = RoundedCornerShape(16.dp)
+            CheckInConfirmDialog(
+                address = uiState.pendingAddress,
+                onConfirm = { viewModel.onEvent(DashboardEvent.CheckInConfirmed) },
+                onDismiss = { viewModel.onEvent(DashboardEvent.CheckInRejected) }
             )
         }
 
         if (uiState.pendingEvidenceAchievementId != null && uiState.pendingEvidencePhotoPath != null) {
-            AlertDialog(
-                onDismissRequest = { viewModel.onEvent(DashboardEvent.EvidenceRejected) },
-                title = {
-                    Text(
-                        stringResource(R.string.evidence_confirm_title),
-                        fontWeight = FontWeight.Bold,
-                        color = Gold
-                    )
-                },
-                text = {
-                    Column {
-                        Text(
-                            stringResource(R.string.evidence_confirm_message),
-                            color = TextSecondaryDark
-                        )
-                        if (uiState.analyzedLabels.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            uiState.analyzedLabels.forEach { label ->
-                                Text(
-                                    text = "• $label",
-                                    color = TextSecondaryDark,
-                                    fontSize = 13.sp
-                                )
-                            }
-                        }
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.EvidenceConfirmed) },
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen)
-                    ) {
-                        Text(stringResource(R.string.evidence_confirm_btn), color = Color.White)
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = { viewModel.onEvent(DashboardEvent.EvidenceRejected) },
-                        colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)
-                    ) {
-                        Text(stringResource(R.string.evidence_retry_btn), color = TextSecondaryDark)
-                    }
-                },
-                containerColor = Color(0xFF1E1E3A),
-                shape = RoundedCornerShape(16.dp)
+            EvidenceConfirmDialog(
+                analyzedLabels = uiState.analyzedLabels,
+                onConfirm = { viewModel.onEvent(DashboardEvent.EvidenceConfirmed) },
+                onDismiss = { viewModel.onEvent(DashboardEvent.EvidenceRejected) }
             )
         }
     }
