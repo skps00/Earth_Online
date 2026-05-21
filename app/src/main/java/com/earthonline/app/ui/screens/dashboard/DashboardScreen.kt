@@ -624,15 +624,22 @@ private fun AchievementDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = item.definition.title,
+                text = if (isHidden) "???" else item.definition.title,
                 fontWeight = FontWeight.Bold,
-                color = if (isUnlocked) Gold else TextPrimaryDark
+                color = if (isUnlocked) Gold else if (isHidden) RarityLegendary.copy(alpha = 0.7f) else TextPrimaryDark
             )
         },
         text = {
+            if (isHidden) {
+                Text(
+                    text = "🔒 隱藏成就\n\n達成條件後揭曉",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondaryDark
+                )
+            } else {
             Column {
                 Text(
-                    text = if (isHidden) "???" else item.definition.description,
+                    text = item.definition.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondaryDark
                 )
@@ -718,7 +725,7 @@ private fun AchievementDetailDialog(
             }
         },
         dismissButton = {
-            if (isManual && !isUnlocked) {
+            if (isManual && !isUnlocked && !isHidden) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
