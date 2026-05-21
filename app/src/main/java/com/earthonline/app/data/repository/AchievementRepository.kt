@@ -59,6 +59,9 @@ class AchievementRepository @Inject constructor(
             AchievementDefinitionEntity("explore_south_america", "南美之旅", "造訪南美洲", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
             AchievementDefinitionEntity("explore_antarctica", "南極遠征", "造訪南極洲", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 500),
             AchievementDefinitionEntity("explore_australia", "澳洲歷險", "造訪澳洲", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_asia", "亞洲漫遊", "造訪亞洲", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
+            AchievementDefinitionEntity("explore_north_america", "北美探險", "造訪北美洲", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
+            AchievementDefinitionEntity("explore_oceania", "大洋洲之旅", "造訪大洋洲", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
             AchievementDefinitionEntity("explore_capital", "首都巡禮", "造訪一個首都城市", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
             AchievementDefinitionEntity("explore_unesco", "世界遺產", "造訪一個 UNESCO 世界遺產", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
             AchievementDefinitionEntity("explore_temple", "古剎參拜", "參訪一座寺廟", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 20),
@@ -72,6 +75,12 @@ class AchievementRepository @Inject constructor(
             AchievementDefinitionEntity("explore_canyon", "峽谷探險", "造訪一座峽谷", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
             AchievementDefinitionEntity("explore_volcano", "火山探秘", "造訪一座火山", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50),
             AchievementDefinitionEntity("explore_lake", "湖畔靜謐", "造訪一座湖泊", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 30),
+            // Seven oceans
+            AchievementDefinitionEntity("ocean_pacific", "太平洋", "造訪太平洋沿岸", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, true, 200),
+            AchievementDefinitionEntity("ocean_atlantic", "大西洋", "造訪大西洋沿岸", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, true, 200),
+            AchievementDefinitionEntity("ocean_indian", "印度洋", "造訪印度洋沿岸", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, true, 200),
+            AchievementDefinitionEntity("ocean_arctic", "北冰洋", "造訪北冰洋沿岸", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, true, 500),
+            AchievementDefinitionEntity("ocean_southern", "南冰洋", "造訪南冰洋沿岸", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, true, 500),
 
             AchievementDefinitionEntity("career_phd", "博士學位", "獲得博士學位", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200),
             AchievementDefinitionEntity("career_graduate", "學業有成", "大學畢業", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100),
@@ -222,10 +231,12 @@ class AchievementRepository @Inject constructor(
 
     private suspend fun autoTrackSpecificContinent(continent: String): List<UnlockedAchievementEvent> {
         val continentMap = mapOf(
-            "Asia" to "explore_japan",
+            "Asia" to "explore_asia",
             "Europe" to "explore_europe",
             "Africa" to "explore_africa",
+            "North America" to "explore_north_america",
             "South America" to "explore_south_america",
+            "Oceania" to "explore_oceania",
             "Antarctica" to "explore_antarctica"
         )
         val achievementId = continentMap[continent] ?: return emptyList()
