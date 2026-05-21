@@ -8,6 +8,7 @@ import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.AchievementEvidence
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
+import com.earthonline.app.domain.model.AchievementTriggers
 import com.earthonline.app.domain.model.TriggerType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -180,7 +181,7 @@ class AchievementRepository @Inject constructor(
     }
 
     private suspend fun autoTrackExploreCountry(countryCount: Long): List<UnlockedAchievementEvent> {
-        val exploreIds = listOf("explore_5countries", "explore_10countries", "explore_50countries")
+        val exploreIds = AchievementTriggers.countryCountAchievements
         val events = mutableListOf<UnlockedAchievementEvent>()
 
         for (id in exploreIds) {
@@ -196,7 +197,7 @@ class AchievementRepository @Inject constructor(
         }
 
         val continentCount = checkInRecordDao.countUniqueContinents("local_user")
-        val continentIds = listOf("explore_3continents", "explore_7continents")
+        val continentIds = AchievementTriggers.continentCountAchievements
         for (id in continentIds) {
             progressDao.setProgressById("local_user", id, continentCount.toLong())
             val updated = progressDao.getByUserAndAchievement("local_user", id) ?: continue
@@ -213,11 +214,7 @@ class AchievementRepository @Inject constructor(
     }
 
     private suspend fun autoTrackSpecificCountry(country: String): List<UnlockedAchievementEvent> {
-        val countryMap = mapOf(
-            "Japan" to "explore_japan",
-            "Australia" to "explore_australia"
-        )
-        val achievementId = countryMap[country] ?: return emptyList()
+        val achievementId = AchievementTriggers.countryTriggers[country] ?: return emptyList()
         val userId = "local_user"
         val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
         if (progress.isUnlocked) return emptyList()
@@ -230,16 +227,7 @@ class AchievementRepository @Inject constructor(
     }
 
     private suspend fun autoTrackSpecificContinent(continent: String): List<UnlockedAchievementEvent> {
-        val continentMap = mapOf(
-            "Asia" to "explore_asia",
-            "Europe" to "explore_europe",
-            "Africa" to "explore_africa",
-            "North America" to "explore_north_america",
-            "South America" to "explore_south_america",
-            "Oceania" to "explore_oceania",
-            "Antarctica" to "explore_antarctica"
-        )
-        val achievementId = continentMap[continent] ?: return emptyList()
+        val achievementId = AchievementTriggers.continentTriggers[continent] ?: return emptyList()
         val userId = "local_user"
         val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
         if (progress.isUnlocked) return emptyList()
@@ -346,7 +334,7 @@ class AchievementRepository @Inject constructor(
             val continentCount = checkInRecordDao.countUniqueContinents(userId).toLong()
 
             val countryIds = listOf("explore_5countries", "explore_10countries", "explore_50countries")
-            val continentIds = listOf("explore_3continents", "explore_7continents")
+            val continentIds = AchievementTriggers.continentCountAchievements
 
             for (id in countryIds) {
                 val def = definitionDao.getById(id) ?: continue
