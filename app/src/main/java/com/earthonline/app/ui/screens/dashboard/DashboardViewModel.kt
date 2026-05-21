@@ -40,6 +40,7 @@ class DashboardViewModel @Inject constructor(
             try {
                 achievementService.initialize()
                 delay(100)
+                achievementService.syncAutoTrackFromHistory()
                 achievementService.refreshAll()
                 loadAchievementDisplay()
             } catch (e: Exception) {

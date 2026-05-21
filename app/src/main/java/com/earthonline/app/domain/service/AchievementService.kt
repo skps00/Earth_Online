@@ -55,4 +55,8 @@ class AchievementService @Inject constructor(
     suspend fun refreshAll() {
         repository.refreshTotalCheckins()
     }
+
+    suspend fun syncAutoTrackFromHistory() {
+        repository.syncAutoTrackFromHistory()
+    }
 }
