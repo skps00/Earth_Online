@@ -40,7 +40,6 @@ class DashboardViewModel @Inject constructor(
             try {
                 achievementService.initialize()
                 delay(100)
-                achievementService.syncAutoTrackFromHistory()
                 achievementService.refreshAll()
                 loadAchievementDisplay()
             } catch (e: Exception) {
@@ -161,6 +160,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private suspend fun loadAchievementDisplay() {
+        achievementService.syncAutoTrackFromHistory()
         val definitions = achievementService.getAllDefinitions()
         val allProgress = achievementService.getAllAchievementProgress()
 
