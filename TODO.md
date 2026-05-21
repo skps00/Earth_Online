@@ -25,6 +25,7 @@
 - [x] 成就牆分頁測試（7 頁籤切換 → 滑動 → 點擊卡片）
 - [x] 多國家打卡測試（auto-track 5/10/50 國是否正確觸發）
 - [x] 資料庫遷移測試（v1 → v4 fallbackToDestructiveMigration）— 成功，但成就牆需打卡後才刷新
+- [ ] **已知 Bug：重開 App 後成就牆顯示未解鎖** — 已嘗試 IGNORE 策略 + syncAutoTrackFromHistory + collectAsStateWithLifecycle，仍待修復。打卡一次後恢復正常。
 - [x] 不同 Android 版本相容性測試（SDK 26 ~ 34）— 無其他裝置，跳過
 - [x] 音效測試 — 解鎖時正常播放
 - [ ] ML Kit 照片分析測試（暫移除，不穩定）
