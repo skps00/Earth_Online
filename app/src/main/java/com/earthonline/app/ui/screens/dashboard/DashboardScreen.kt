@@ -483,18 +483,37 @@ private fun AchievementCard(
     onClick: () -> Unit
 ) {
     val isUnlocked = item.progress.isUnlocked
+    val isHidden = item.definition.isHidden && !isUnlocked
     val progress = item.progress.currentProgress
     val goal = item.definition.triggerGoal
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
+    val points = item.definition.rewardPoints
+
+    val rarityColor = when {
+        points >= 1000 -> RarityLegendary
+        points >= 200 -> RarityEpic
+        points >= 50 -> RarityRare
+        else -> RarityCommon
+    }
+    val rarityLabel = when {
+        points >= 1000 -> "傳說"
+        points >= 200 -> "史詩"
+        points >= 50 -> "稀有"
+        else -> "普通"
+    }
 
     val cardColor by animateColorAsState(
-        targetValue = if (isUnlocked) AchievementUnlocked.copy(alpha = 0.15f) else AchievementLocked,
+        targetValue = when {
+            isUnlocked -> AchievementUnlocked.copy(alpha = 0.15f)
+            isHidden -> AchievementLocked.copy(alpha = 0.3f)
+            else -> AchievementLocked
+        },
         animationSpec = tween(600),
         label = "cardColor"
     )
 
     val borderColor by animateColorAsState(
-        targetValue = if (isUnlocked) AchievementUnlocked else Color.Transparent,
+        targetValue = if (isUnlocked) rarityColor else Color.Transparent,
         animationSpec = tween(600),
         label = "borderColor"
     )
@@ -526,8 +545,8 @@ private fun AchievementCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (isUnlocked) "★" else "?",
-                    color = if (isUnlocked) Gold else TextSecondaryDark,
+                    text = when { isUnlocked -> "★"; isHidden -> "🔒"; else -> "?" },
+                    color = when { isUnlocked -> Gold; isHidden -> RarityLegendary.copy(alpha = 0.5f); else -> TextSecondaryDark },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -537,14 +556,14 @@ private fun AchievementCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = item.definition.title,
+                    text = if (isHidden) "???" else item.definition.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (isUnlocked) Gold else TextPrimaryDark,
+                    color = if (isUnlocked) Gold else if (isHidden) RarityLegendary.copy(alpha = 0.6f) else TextPrimaryDark,
                     fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = item.definition.description,
+                    text = if (isHidden) "達成條件後揭曉" else item.definition.description,
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondaryDark
                 )
@@ -564,6 +583,13 @@ private fun AchievementCard(
                     style = MaterialTheme.typography.labelSmall,
                     color = if (isUnlocked) Gold else TextSecondaryDark
                 )
+                if (!isHidden || isUnlocked) {
+                    Text(
+                        text = rarityLabel,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = rarityColor.copy(alpha = 0.8f)
+                    )
+                }
             }
         }
     }
@@ -582,6 +608,7 @@ private fun AchievementDetailDialog(
     val goal = item.definition.triggerGoal
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
     val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || item.definition.triggerType == TriggerType.AUTO_TRACK.value
+    val isHidden = item.definition.isHidden && !isUnlocked
     val context = LocalContext.current
 
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
@@ -598,7 +625,7 @@ private fun AchievementDetailDialog(
         text = {
             Column {
                 Text(
-                    text = item.definition.description,
+                    text = if (isHidden) "???" else item.definition.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondaryDark
                 )
