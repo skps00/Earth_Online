@@ -1,6 +1,5 @@
 package com.earthonline.app.ui.components
 
-import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,7 @@ import com.earthonline.app.R
 import com.earthonline.app.domain.model.Rarity
 import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.screens.dashboard.AchievementDisplayItem
-import com.earthonline.app.ui.share.ShareCardGenerator
+import com.earthonline.app.ui.share.ShareHelper
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.CardDark
 import com.earthonline.app.ui.theme.EmeraldGreen
@@ -124,13 +123,8 @@ fun AchievementDetailDialog(
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        val shareText = "我在「地球 Online」解鎖了成就：${item.definition.title}！\n${item.definition.description}\n+${item.definition.rewardPoints} 點數"
                         Button(
-                            onClick = {
-                                val uri = ShareCardGenerator.generate(context, item.definition.title, item.definition.description, item.definition.rewardPoints)
-                                val intent = Intent(Intent.ACTION_SEND).apply { type = "image/png"; putExtra(Intent.EXTRA_TEXT, shareText); if (uri != null) putExtra(Intent.EXTRA_STREAM, uri); addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) }
-                                context.startActivity(Intent.createChooser(intent, null))
-                            },
+                            onClick = { ShareHelper.shareAchievement(context, item.definition.title, item.definition.description, item.definition.rewardPoints) },
                             modifier = Modifier.fillMaxWidth().height(40.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
                             shape = RoundedCornerShape(10.dp)
