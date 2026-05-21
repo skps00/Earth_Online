@@ -160,6 +160,11 @@ class AchievementRepository @Inject constructor(
         if (country.isNotBlank()) {
             val countryCount = checkInRecordDao.countUniqueCountries(userId).toLong()
             events.addAll(autoTrackExploreCountry(countryCount))
+            events.addAll(autoTrackSpecificCountry(country))
+        }
+
+        if (continent.isNotBlank()) {
+            autoTrackSpecificContinent(continent).let { events.addAll(it) }
         }
 
         return events
@@ -196,6 +201,43 @@ class AchievementRepository @Inject constructor(
         }
 
         return events
+    }
+
+    private suspend fun autoTrackSpecificCountry(country: String): List<UnlockedAchievementEvent> {
+        val countryMap = mapOf(
+            "Japan" to "explore_japan",
+            "Australia" to "explore_australia"
+        )
+        val achievementId = countryMap[country] ?: return emptyList()
+        val userId = "local_user"
+        val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
+        if (progress.isUnlocked) return emptyList()
+
+        progressDao.unlockAchievement(userId, achievementId, System.currentTimeMillis())
+        val def = definitionDao.getById(achievementId) ?: return emptyList()
+        val event = UnlockedAchievementEvent(def, System.currentTimeMillis())
+        _unlockEvents.emit(event)
+        return listOf(event)
+    }
+
+    private suspend fun autoTrackSpecificContinent(continent: String): List<UnlockedAchievementEvent> {
+        val continentMap = mapOf(
+            "Asia" to "explore_japan",
+            "Europe" to "explore_europe",
+            "Africa" to "explore_africa",
+            "South America" to "explore_south_america",
+            "Antarctica" to "explore_antarctica"
+        )
+        val achievementId = continentMap[continent] ?: return emptyList()
+        val userId = "local_user"
+        val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
+        if (progress.isUnlocked) return emptyList()
+
+        progressDao.unlockAchievement(userId, achievementId, System.currentTimeMillis())
+        val def = definitionDao.getById(achievementId) ?: return emptyList()
+        val event = UnlockedAchievementEvent(def, System.currentTimeMillis())
+        _unlockEvents.emit(event)
+        return listOf(event)
     }
 
     suspend fun confirmManualAchievement(
