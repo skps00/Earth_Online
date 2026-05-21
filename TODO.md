@@ -98,6 +98,7 @@
 - [ ] 方案 C：自訂 TensorFlow Lite 食物模型
 - [ ] ProGuard / R8 規則驗證（ML Kit、Geocoder 等第三方庫混淆後正常運作）
 - [ ] Android 13+ (SDK 33+) `POST_NOTIFICATIONS` 權限（若未來加入背景提醒）
+- [ ] **Google Timeline 自動打卡**：整合 Google Sign-In + Maps Platform API，讀取位置歷史來自動解鎖國家/大洲成就，取代手動打卡（需 OAuth 審核，開發量大）
 
 ### Google Play 上架準備
 - [ ] 隱私權政策網址（即使資料全存本地，有相機/定位權限就必須提供）
