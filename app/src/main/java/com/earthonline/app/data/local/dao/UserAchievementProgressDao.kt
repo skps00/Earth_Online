@@ -11,7 +11,7 @@ import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 @Dao
 interface UserAchievementProgressDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(progressList: List<UserAchievementProgressEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

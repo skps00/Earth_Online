@@ -7,7 +7,6 @@ import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.domain.service.AchievementService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -39,7 +38,6 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 achievementService.initialize()
-                delay(100)
                 achievementService.refreshAll()
                 loadAchievementDisplay()
             } catch (e: Exception) {

@@ -97,12 +97,6 @@ fun DashboardScreen(
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
 
-    LaunchedEffect(uiState.isLoading) {
-        if (!uiState.isLoading && uiState.achievements.isEmpty()) {
-            viewModel.retryLoad()
-        }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
             unlockEvent = null
