@@ -103,37 +103,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            handleCheckIn()
-        } else {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    @SuppressLint("MissingPermission")
     private fun handleCheckIn() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            Toast.makeText(this, getString(R.string.location_needed), Toast.LENGTH_SHORT).show()
+        if (!hasLocationPermission) {
+            requestLocationPermission()
             return
         }
-
         val location = locationHelper.getLastLocation()
         if (location != null) {
             val (address, country, continent) = locationHelper.reverseGeocode(location.latitude, location.longitude)
             viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
-            return
+        } else {
+            Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
         }
+    }
 
-        Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
+    private fun requestLocationPermission() {
+        locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private fun handleEvidencePhoto(achievementId: String) {
