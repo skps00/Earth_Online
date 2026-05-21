@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import com.earthonline.app.data.location.LocationHelper
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.ui.screens.dashboard.DashboardEvent
@@ -34,6 +34,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var imageAnalyzer: ImageAnalyzer
+
+    @Inject
+    lateinit var locationHelper: LocationHelper
 
     private lateinit var viewModel: DashboardViewModel
 
@@ -123,21 +126,11 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        val providers = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
-        for (provider in providers) {
-            if (locationManager.isProviderEnabled(provider)) {
-                try {
-                    val location = locationManager.getLastKnownLocation(provider)
-                    if (location != null) {
-                        val (address, country, continent) = photoManager.reverseGeocode(location.latitude, location.longitude)
-                        viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
-                        return
-                    }
-                } catch (_: Exception) {
-                }
-            }
+        val location = locationHelper.getLastLocation()
+        if (location != null) {
+            val (address, country, continent) = locationHelper.reverseGeocode(location.latitude, location.longitude)
+            viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
+            return
         }
 
         Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
