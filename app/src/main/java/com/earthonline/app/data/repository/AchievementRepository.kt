@@ -288,31 +288,33 @@ class AchievementRepository @Inject constructor(
     }
 
     suspend fun syncAutoTrackFromHistory() {
-        val userId = "local_user"
-        val countryCount = checkInRecordDao.countUniqueCountries(userId).toLong()
-        val continentCount = checkInRecordDao.countUniqueContinents(userId).toLong()
+        try {
+            val userId = "local_user"
+            val countryCount = checkInRecordDao.countUniqueCountries(userId).toLong()
+            val continentCount = checkInRecordDao.countUniqueContinents(userId).toLong()
 
-        val countryIds = listOf("explore_5countries", "explore_10countries", "explore_50countries")
-        val continentIds = listOf("explore_3continents", "explore_7continents")
+            val countryIds = listOf("explore_5countries", "explore_10countries", "explore_50countries")
+            val continentIds = listOf("explore_3continents", "explore_7continents")
 
-        for (id in countryIds) {
-            progressDao.setProgressById(userId, id, countryCount)
-            val updated = progressDao.getByUserAndAchievement(userId, id) ?: continue
-            val def = definitionDao.getById(id) ?: continue
-            if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
-                progressDao.unlockAchievement(userId, id, System.currentTimeMillis())
-                _unlockEvents.emit(UnlockedAchievementEvent(def, System.currentTimeMillis()))
+            for (id in countryIds) {
+                val def = definitionDao.getById(id) ?: continue
+                progressDao.setProgressById(userId, id, countryCount)
+                val updated = progressDao.getByUserAndAchievement(userId, id) ?: continue
+                if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
+                    progressDao.unlockAchievement(userId, id, System.currentTimeMillis())
+                    _unlockEvents.emit(UnlockedAchievementEvent(def, System.currentTimeMillis()))
+                }
             }
-        }
 
-        for (id in continentIds) {
-            progressDao.setProgressById(userId, id, continentCount)
-            val updated = progressDao.getByUserAndAchievement(userId, id) ?: continue
-            val def = definitionDao.getById(id) ?: continue
-            if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
-                progressDao.unlockAchievement(userId, id, System.currentTimeMillis())
-                _unlockEvents.emit(UnlockedAchievementEvent(def, System.currentTimeMillis()))
+            for (id in continentIds) {
+                val def = definitionDao.getById(id) ?: continue
+                progressDao.setProgressById(userId, id, continentCount)
+                val updated = progressDao.getByUserAndAchievement(userId, id) ?: continue
+                if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
+                    progressDao.unlockAchievement(userId, id, System.currentTimeMillis())
+                    _unlockEvents.emit(UnlockedAchievementEvent(def, System.currentTimeMillis()))
+                }
             }
-        }
+        } catch (_: Exception) { }
     }
 }
