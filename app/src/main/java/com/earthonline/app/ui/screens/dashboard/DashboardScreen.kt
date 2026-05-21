@@ -130,7 +130,7 @@ fun DashboardScreen(
         it.definition.triggerType == TriggerType.LOCATION_CHECKIN_COUNT.value
     }
     val exploreItems = uiState.achievements.filter {
-        it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("explore_")
+        (it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || it.definition.triggerType == TriggerType.AUTO_TRACK.value) && it.definition.achievementId.startsWith("explore_")
     }
     val careerItems = uiState.achievements.filter {
         it.definition.triggerType == TriggerType.MANUAL_CONFIRM.value && it.definition.achievementId.startsWith("career_")
@@ -307,7 +307,7 @@ fun DashboardScreen(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(600.dp)
+                        .fillParentMaxHeight(0.75f)
                 ) { page ->
                     val pageItems = pagerItems[page]
                     if (pageItems.isEmpty()) {
@@ -342,7 +342,7 @@ fun DashboardScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 

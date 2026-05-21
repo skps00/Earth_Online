@@ -162,7 +162,8 @@ class DashboardViewModel @Inject constructor(
 
         val allowedTypes = setOf(
             TriggerType.LOCATION_CHECKIN_COUNT.value,
-            TriggerType.MANUAL_CONFIRM.value
+            TriggerType.MANUAL_CONFIRM.value,
+            TriggerType.AUTO_TRACK.value
         )
 
         val displayItems = definitions
