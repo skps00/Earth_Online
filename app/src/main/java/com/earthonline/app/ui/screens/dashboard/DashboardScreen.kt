@@ -616,6 +616,7 @@ private fun AchievementDetailDialog(
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
     val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || item.definition.triggerType == TriggerType.AUTO_TRACK.value
     val isHidden = item.definition.isHidden && !isUnlocked
+    var revealed by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
@@ -624,18 +625,29 @@ private fun AchievementDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isHidden) "???" else item.definition.title,
+                text = if (isHidden && !revealed) "???" else item.definition.title,
                 fontWeight = FontWeight.Bold,
-                color = if (isUnlocked) Gold else if (isHidden) RarityLegendary.copy(alpha = 0.7f) else TextPrimaryDark
+                color = if (isUnlocked) Gold else if (isHidden && !revealed) RarityLegendary.copy(alpha = 0.7f) else TextPrimaryDark
             )
         },
         text = {
-            if (isHidden) {
-                Text(
-                    text = "🔒 隱藏成就\n\n達成條件後揭曉",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondaryDark
-                )
+            if (isHidden && !revealed) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "🔒 隱藏成就\n\n點擊下方按鈕揭示內容",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextSecondaryDark
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { revealed = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = RarityLegendary.copy(alpha = 0.2f)),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("🔓 揭示成就內容", color = RarityLegendary, fontWeight = FontWeight.Bold)
+                    }
+                }
             } else {
             Column {
                 Text(
@@ -725,7 +737,7 @@ private fun AchievementDetailDialog(
             }
         },
         dismissButton = {
-            if (isManual && !isUnlocked && !isHidden) {
+            if (isManual && !isUnlocked && (!isHidden || revealed)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
