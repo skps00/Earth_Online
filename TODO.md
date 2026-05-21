@@ -69,6 +69,9 @@
 - [ ] `userId = "local_user"` 抽成 `UserRepository` 或 `AppConfig`
 - [ ] Room `exportSchema = true` + `ksp { arg("room.schemaLocation", ...) }` 啟用 migration 驗證
 - [ ] Evidence 照片垃圾清理（取消確認時刪除暫存照，啟動時掃 orphan files）
+- [ ] **照片壓縮機制**：儲存前等比例縮放至 1080p + JPEG/WebP 壓縮（單張控制在 200KB 內）
+- [ ] **快取清理/封存**：允許使用者解鎖成就後，選擇「只保留記錄，刪除老照片」
+- [ ] **Version Catalogs**：`build.gradle.kts` 硬編碼改為 `libs.versions.toml`
 
 ### UI 打磨
 - [ ] 過場動畫（頁籤切換 Crossfade）
