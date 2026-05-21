@@ -743,7 +743,7 @@ private fun AchievementDetailDialog(
                     }
                 }
             }
-        },
+        } },
         dismissButton = {
             if (isManual && !isUnlocked && (!isHidden || revealed)) {
                 Row(
