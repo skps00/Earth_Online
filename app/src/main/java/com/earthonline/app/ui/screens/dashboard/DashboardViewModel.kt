@@ -162,32 +162,7 @@ class DashboardViewModel @Inject constructor(
         achievementService.refreshAll()
         val definitions = achievementService.getAllDefinitions()
         val allProgress = achievementService.getAllAchievementProgress()
-
-        val allowedTypes = setOf(
-            TriggerType.LOCATION_CHECKIN_COUNT.value,
-            TriggerType.MANUAL_CONFIRM.value,
-            TriggerType.AUTO_TRACK.value
-        )
-
-        val displayItems = definitions
-            .filter { it.triggerType in allowedTypes }
-            .map { def ->
-                val progress = allProgress.find { it.achievementId == def.achievementId }
-                    ?: UserAchievementProgressEntity(
-                        userId = "local_user",
-                        achievementId = def.achievementId,
-                        currentProgress = 0L,
-                        isUnlocked = false,
-                        unlockedDate = null,
-                        triggerType = def.triggerType
-                    )
-                AchievementDisplayItem(definition = def, progress = progress)
-            }
-            .sortedWith(
-                compareByDescending<AchievementDisplayItem> { it.progress.isUnlocked }
-                    .thenByDescending { it.progress.currentProgress }
-            )
-
+        val displayItems = AchievementDisplayMapper.map(definitions, allProgress)
         val totalCheckins = achievementService.getCheckinCount().toLong()
 
         _uiState.update {
