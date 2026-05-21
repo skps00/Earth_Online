@@ -81,6 +81,10 @@ import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextPrimaryDark
 import com.earthonline.app.ui.theme.TextSecondaryDark
+import com.earthonline.app.ui.theme.RarityCommon
+import com.earthonline.app.ui.theme.RarityEpic
+import com.earthonline.app.ui.theme.RarityLegendary
+import com.earthonline.app.ui.theme.RarityRare
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
