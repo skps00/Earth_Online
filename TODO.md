@@ -117,3 +117,30 @@
 3. **JSON 備份匯出/匯入** — 認真用的使用者需要
 4. **音效開關 + 設定頁** — 使用者體驗細節
 5. **Lottie 粒子特效** — 螢火蟲光點，加分項
+
+---
+
+## 🔧 重構計劃
+
+### 🔴 Critical
+- [ ] **#1 成就定義 JSON 化**：`AchievementRepository.initializeAchievements()` 90+ 項硬編碼 → `res/raw/achievements.json`
+- [ ] **#2 DashboardScreen 拆分**：391 行單石函數 → `DashboardHeader()`, `CheckinCounterCard()`, `AchievementTabs()` 等子組件
+- [ ] **#3 AchievementCard 抽離**：116 行 → `ui/components/AchievementCard.kt`
+- [ ] **#4 AchievementDetailDialog 抽離**：180 行 → `ui/components/AchievementDetailDialog.kt`
+
+### 🟡 High
+- [ ] **#5 MediaPlayer 抽離**：`AchievementUnlockDialog` 中的音效邏輯 → `AchievementSoundPlayer` 類別
+- [ ] **#6 國家→大洲對照表 JSON 化**：`LocationHelper.countryToContinent()` → JSON
+- [ ] **#7 成就觸發對照表 JSON 化**：`autoTrackSpecificCountry/Continent()` 的 hardcode map → JSON
+
+### 🟢 Medium/Low
+- [ ] **#8 權限檢查去重**：`MainActivity` 中重複的 location/camera 權限檢查
+- [ ] **#9 打卡流程抽離**：`handleCheckIn()` → `CheckInCoordinator`
+- [ ] **#10 recordCheckin() 拆分**：一個方法做太多事
+- [ ] **#11 Tab 分類結構化**：硬編碼的 `tabTitles` + filter predicates
+- [ ] **#12 Dialog 組件抽離**：`CheckInConfirmDialog`, `EvidenceConfirmDialog`
+- [ ] **#13 Rarity 枚舉化**：魔法數字 50/200/1000 → enum
+- [ ] **#14 ShareHelper 抽離**：分享 intent 創建 → `ShareHelper`
+- [ ] **#15 移除 getString() wrapper**：無意義的包裝函數
+- [ ] **#16 AchievementService 精簡**：純轉發無加值，考慮移除
+- [ ] **#17 成就顯示映射抽離**：`loadAchievementDisplay` 中的 filter/sort/map → `AchievementDisplayMapper`

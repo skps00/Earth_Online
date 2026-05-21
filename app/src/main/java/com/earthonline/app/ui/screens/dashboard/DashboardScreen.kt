@@ -407,7 +407,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "${getString(R.string.checkin_action)}?",
+                            text = "${stringResource(R.string.checkin_action)}?",
                             color = TextSecondaryDark
                         )
                     }
@@ -784,7 +784,3 @@ private fun AchievementDetailDialog(
     )
 }
 
-@Composable
-private fun getString(resId: Int): String {
-    return stringResource(resId)
-}
