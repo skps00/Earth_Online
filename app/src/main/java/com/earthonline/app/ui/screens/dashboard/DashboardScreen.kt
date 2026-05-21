@@ -70,6 +70,7 @@ import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
+import com.earthonline.app.domain.model.Rarity
 import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.share.ShareCardGenerator
@@ -81,10 +82,6 @@ import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextPrimaryDark
 import com.earthonline.app.ui.theme.TextSecondaryDark
-import com.earthonline.app.ui.theme.RarityCommon
-import com.earthonline.app.ui.theme.RarityEpic
-import com.earthonline.app.ui.theme.RarityLegendary
-import com.earthonline.app.ui.theme.RarityRare
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -494,20 +491,8 @@ private fun AchievementCard(
     val progress = item.progress.currentProgress
     val goal = item.definition.triggerGoal
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
-    val points = item.definition.rewardPoints
 
-    val rarityColor = when {
-        points >= 1000 -> RarityLegendary
-        points >= 200 -> RarityEpic
-        points >= 50 -> RarityRare
-        else -> RarityCommon
-    }
-    val rarityLabel = when {
-        points >= 1000 -> "傳說"
-        points >= 200 -> "史詩"
-        points >= 50 -> "稀有"
-        else -> "普通"
-    }
+    val rarity = Rarity.fromPoints(item.definition.rewardPoints)
 
     val cardColor by animateColorAsState(
         targetValue = when {
@@ -520,7 +505,7 @@ private fun AchievementCard(
     )
 
     val borderColor by animateColorAsState(
-        targetValue = if (isUnlocked) rarityColor else Color.Transparent,
+        targetValue = if (isUnlocked) rarity.color else Color.Transparent,
         animationSpec = tween(600),
         label = "borderColor"
     )
@@ -592,9 +577,9 @@ private fun AchievementCard(
                 )
                 if (!isHidden || isUnlocked) {
                     Text(
-                        text = rarityLabel,
+                        text = rarity.label,
                         style = MaterialTheme.typography.labelSmall,
-                        color = rarityColor.copy(alpha = 0.8f)
+                        color = rarity.color.copy(alpha = 0.8f)
                     )
                 }
             }
