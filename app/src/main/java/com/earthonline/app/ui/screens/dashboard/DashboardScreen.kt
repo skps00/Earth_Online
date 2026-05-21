@@ -72,6 +72,7 @@ import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.domain.model.Rarity
 import com.earthonline.app.domain.model.TriggerType
+import com.earthonline.app.ui.components.AchievementCard
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
@@ -477,112 +478,6 @@ fun DashboardScreen(
                 containerColor = Color(0xFF1E1E3A),
                 shape = RoundedCornerShape(16.dp)
             )
-        }
-    }
-}
-
-@Composable
-private fun AchievementCard(
-    item: AchievementDisplayItem,
-    onClick: () -> Unit
-) {
-    val isUnlocked = item.progress.isUnlocked
-    val isHidden = item.definition.isHidden && !isUnlocked
-    val progress = item.progress.currentProgress
-    val goal = item.definition.triggerGoal
-    val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
-
-    val rarity = Rarity.fromPoints(item.definition.rewardPoints)
-
-    val cardColor by animateColorAsState(
-        targetValue = when {
-            isUnlocked -> AchievementUnlocked.copy(alpha = 0.15f)
-            isHidden -> AchievementLocked.copy(alpha = 0.3f)
-            else -> AchievementLocked
-        },
-        animationSpec = tween(600),
-        label = "cardColor"
-    )
-
-    val borderColor by animateColorAsState(
-        targetValue = if (isUnlocked) rarity.color else Color.Transparent,
-        animationSpec = tween(600),
-        label = "borderColor"
-    )
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(
-                if (isUnlocked) Modifier.border(1.dp, borderColor, RoundedCornerShape(12.dp))
-                else Modifier
-            )
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isUnlocked) Gold.copy(alpha = 0.3f) else AchievementLocked.copy(alpha = 0.5f)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = when { isUnlocked -> "★"; isHidden -> "🔒"; else -> "?" },
-                    color = when { isUnlocked -> Gold; isHidden -> Rarity.LEGENDARY.color.copy(alpha = 0.5f); else -> TextSecondaryDark },
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = if (isHidden) "???" else item.definition.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (isUnlocked) Gold else if (isHidden) Rarity.LEGENDARY.color.copy(alpha = 0.6f) else TextPrimaryDark,
-                    fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = if (isHidden) "達成條件後揭曉" else item.definition.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondaryDark
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                LinearProgressIndicator(
-                    progress = progressFraction,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = if (isUnlocked) Gold else EmeraldGreen,
-                    trackColor = AchievementLocked.copy(alpha = 0.3f)
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = if (isUnlocked) stringResource(R.string.unlocked_badge) else "$progress / $goal",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isUnlocked) Gold else TextSecondaryDark
-                )
-                if (!isHidden || isUnlocked) {
-                    Text(
-                        text = rarity.label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = rarity.color.copy(alpha = 0.8f)
-                    )
-                }
-            }
         }
     }
 }

@@ -1,0 +1,147 @@
+package com.earthonline.app.ui.components
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.earthonline.app.R
+import com.earthonline.app.domain.model.Rarity
+import com.earthonline.app.ui.screens.dashboard.AchievementDisplayItem
+import com.earthonline.app.ui.theme.AchievementLocked
+import com.earthonline.app.ui.theme.AchievementUnlocked
+import com.earthonline.app.ui.theme.EmeraldGreen
+import com.earthonline.app.ui.theme.Gold
+import com.earthonline.app.ui.theme.TextPrimaryDark
+import com.earthonline.app.ui.theme.TextSecondaryDark
+
+@Composable
+fun AchievementCard(
+    item: AchievementDisplayItem,
+    onClick: () -> Unit
+) {
+    val isUnlocked = item.progress.isUnlocked
+    val isHidden = item.definition.isHidden && !isUnlocked
+    val progress = item.progress.currentProgress
+    val goal = item.definition.triggerGoal
+    val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
+
+    val rarity = Rarity.fromPoints(item.definition.rewardPoints)
+
+    val cardColor by animateColorAsState(
+        targetValue = when {
+            isUnlocked -> AchievementUnlocked.copy(alpha = 0.15f)
+            isHidden -> AchievementLocked.copy(alpha = 0.3f)
+            else -> AchievementLocked
+        },
+        animationSpec = tween(600),
+        label = "cardColor"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = if (isUnlocked) rarity.color else Color.Transparent,
+        animationSpec = tween(600),
+        label = "borderColor"
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (isUnlocked) Modifier.border(1.dp, borderColor, RoundedCornerShape(12.dp))
+                else Modifier
+            )
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isUnlocked) Gold.copy(alpha = 0.3f) else AchievementLocked.copy(alpha = 0.5f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = when { isUnlocked -> "★"; isHidden -> "🔒"; else -> "?" },
+                    color = when { isUnlocked -> Gold; isHidden -> Rarity.LEGENDARY.color.copy(alpha = 0.5f); else -> TextSecondaryDark },
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = if (isHidden) "???" else item.definition.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isUnlocked) Gold else if (isHidden) Rarity.LEGENDARY.color.copy(alpha = 0.6f) else TextPrimaryDark,
+                    fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = if (isHidden) "達成條件後揭曉" else item.definition.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondaryDark
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                LinearProgressIndicator(
+                    progress = progressFraction,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp)),
+                    color = if (isUnlocked) Gold else EmeraldGreen,
+                    trackColor = AchievementLocked.copy(alpha = 0.3f)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = if (isUnlocked) stringResource(R.string.unlocked_badge) else "$progress / $goal",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isUnlocked) Gold else TextSecondaryDark
+                )
+                if (!isHidden || isUnlocked) {
+                    Text(
+                        text = rarity.label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = rarity.color.copy(alpha = 0.8f)
+                    )
+                }
+            }
+        }
+    }
+}
