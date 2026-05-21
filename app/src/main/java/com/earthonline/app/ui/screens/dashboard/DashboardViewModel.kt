@@ -38,8 +38,6 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 achievementService.initialize()
-                achievementService.syncAutoTrackFromHistory()
-                achievementService.refreshAll()
                 loadAchievementDisplay()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "初始化失敗") }
@@ -160,6 +158,8 @@ class DashboardViewModel @Inject constructor(
     }
 
     private suspend fun loadAchievementDisplay() {
+        achievementService.syncAutoTrackFromHistory()
+        achievementService.refreshAll()
         val definitions = achievementService.getAllDefinitions()
         val allProgress = achievementService.getAllAchievementProgress()
 
