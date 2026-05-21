@@ -571,7 +571,7 @@ private fun AchievementDetailDialog(
     val progress = item.progress.currentProgress
     val goal = item.definition.triggerGoal
     val progressFraction = if (goal > 0) (progress.toFloat() / goal).coerceIn(0f, 1f) else 0f
-    val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value
+    val isManual = item.definition.triggerType == TriggerType.MANUAL_CONFIRM.value || item.definition.triggerType == TriggerType.AUTO_TRACK.value
     val context = LocalContext.current
 
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }

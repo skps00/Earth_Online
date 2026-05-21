@@ -29,7 +29,7 @@
 - [ ] ML Kit 照片分析測試（暫移除，不穩定）
 
 ### 程式碼品質修正
-- [ ] **TriggerType 矛盾修正**：`explore_5countries` 等用 `MANUAL_CONFIRM` 但實際上被 `autoTrackExploreCountry()` 自動更新 → 開新的 `AUTO_TRACK_EXPLORE` 或 `COUNTRY_COUNT` TriggerType
+- [x] **TriggerType 矛盾修正**：`explore_5countries` 等用 `MANUAL_CONFIRM` 但實際上被 `autoTrackExploreCountry()` 自動更新 → 開新的 `AUTO_TRACK` TriggerType
 - [x] **DAO method rename**：`getUnlockedByUserAndType()` → `getPendingByUserAndType()`
 - [ ] **ViewModel error 靜默修正**：`initialize()` 的 `catch { }` 空塊 → 改為寫入 `DashboardUiState` error state
 - [ ] **MediaPlayer 多個同時播放**：`AchievementUnlockDialog` 內直接 create MediaPlayer，快速連續解鎖可能多個重疊 → 抽成 singleton 或用 ExoPlayer
