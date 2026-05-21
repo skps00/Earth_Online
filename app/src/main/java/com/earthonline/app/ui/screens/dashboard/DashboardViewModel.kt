@@ -198,7 +198,10 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun onUnlockEventHandled() {
+    fun retryLoad() {
+        viewModelScope.launch {
+            loadAchievementDisplay()
+        }
     }
 
     suspend fun getEvidencePhoto(achievementId: String): String? {
