@@ -96,4 +96,4 @@ app/src/main/java/com/earthonline/app/
 
 ## License
 
-MIT
+Proprietary — All rights reserved.
