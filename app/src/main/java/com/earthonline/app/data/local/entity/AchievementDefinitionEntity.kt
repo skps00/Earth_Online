@@ -29,5 +29,8 @@ data class AchievementDefinitionEntity(
     val isHidden: Boolean = false,
 
     @ColumnInfo(name = "reward_points")
-    val rewardPoints: Int = 0
+    val rewardPoints: Int = 0,
+
+    @ColumnInfo(name = "hint")
+    val hint: String = ""
 )

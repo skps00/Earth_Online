@@ -634,10 +634,18 @@ private fun AchievementDetailDialog(
             if (isHidden && !revealed) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "🔒 隱藏成就\n\n點擊下方按鈕揭示內容",
+                        text = "🔒 隱藏成就",
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextSecondaryDark
                     )
+                    if (item.definition.hint.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "💡 ${item.definition.hint}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = RarityRare
+                        )
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { revealed = true },
