@@ -40,12 +40,12 @@ class AchievementRepository @Inject constructor(
         progressDao.insertAll(AchievementSeedData.createProgress(definitions, "local_user"))
     }
 
-    suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = ""): List<UnlockedAchievementEvent> {
+    suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = "", address: String = ""): List<UnlockedAchievementEvent> {
         val userId = "local_user"
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
         checkInRecordDao.insert(
-            CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, timestamp = System.currentTimeMillis())
+            CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, address = address, timestamp = System.currentTimeMillis())
         )
 
         val uniqueCount = checkInRecordDao.countUniqueLocations(userId).toLong()

@@ -12,5 +12,6 @@ data class CheckInRecord(
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "country") val country: String,
     @ColumnInfo(name = "continent") val continent: String,
+    @ColumnInfo(name = "address") val address: String,
     @ColumnInfo(name = "timestamp") val timestamp: Long
 )

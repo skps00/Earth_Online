@@ -87,7 +87,7 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 viewModelScope.launch {
-                    val events = repository.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent)
+                    val events = repository.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent, _uiState.value.pendingAddress)
                     handleUnlockEvents(events)
                     repository.refreshAll()
                     loadAchievementDisplay()
