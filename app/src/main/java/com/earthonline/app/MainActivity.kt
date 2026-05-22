@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.earthonline.app.data.location.LocationHelper
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
+import com.earthonline.app.domain.service.CheckInCoordinator
 import com.earthonline.app.ui.screens.dashboard.DashboardEvent
 import com.earthonline.app.ui.screens.dashboard.DashboardScreen
 import com.earthonline.app.ui.screens.dashboard.DashboardViewModel
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
     lateinit var imageAnalyzer: ImageAnalyzer
 
     @Inject
-    lateinit var locationHelper: LocationHelper
+    lateinit var checkInCoordinator: CheckInCoordinator
 
     private lateinit var viewModel: DashboardViewModel
 
@@ -107,15 +108,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleCheckIn() {
-        if (!hasLocationPermission) {
-            requestLocationPermission()
-            return
-        }
-        val location = locationHelper.getLastLocation()
-        if (location != null) {
-            val (address, country, continent) = locationHelper.reverseGeocode(location.latitude, location.longitude)
-            viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
-        } else {
+        if (!hasLocationPermission) { requestLocationPermission(); return }
+        if (!checkInCoordinator.performCheckIn(viewModel)) {
             Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
         }
     }

@@ -2,10 +2,8 @@ package com.earthonline.app.ui.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
-import com.earthonline.app.domain.model.TriggerType
-import com.earthonline.app.domain.service.AchievementService
+import com.earthonline.app.data.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val achievementService: AchievementService
+    private val repository: AchievementRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -37,7 +35,7 @@ class DashboardViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
 
             try {
-                achievementService.initialize()
+                repository.initialize()
                 loadAchievementDisplay()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "初始化失敗") }
@@ -85,9 +83,9 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 viewModelScope.launch {
-                    val events = achievementService.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent)
+                    val events = repository.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent)
                     handleUnlockEvents(events)
-                    achievementService.refreshAll()
+                    repository.refreshAll()
                     loadAchievementDisplay()
                 }
             }
@@ -102,13 +100,13 @@ class DashboardViewModel @Inject constructor(
             }
             is DashboardEvent.ManualConfirm -> {
                 viewModelScope.launch {
-                    val event = achievementService.confirmManualAchievement(
+                    val event = repository.confirmManualAchievement(
                         achievementId = event.achievementId
                     )
                     if (event != null) {
                         handleUnlockEvents(listOf(event))
                     }
-                    achievementService.refreshAll()
+                    repository.refreshAll()
                     loadAchievementDisplay()
                 }
             }
@@ -129,7 +127,7 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 viewModelScope.launch {
-                    val unlockEvent = achievementService.confirmManualAchievement(
+                    val unlockEvent = repository.confirmManualAchievement(
                         achievementId = achievementId,
                         photoPath = photoPath,
                         labels = labels
@@ -137,7 +135,7 @@ class DashboardViewModel @Inject constructor(
                     if (unlockEvent != null) {
                         handleUnlockEvents(listOf(unlockEvent))
                     }
-                    achievementService.refreshAll()
+                    repository.refreshAll()
                     loadAchievementDisplay()
                 }
             }
@@ -158,12 +156,12 @@ class DashboardViewModel @Inject constructor(
     }
 
     private suspend fun loadAchievementDisplay() {
-        achievementService.syncAutoTrackFromHistory()
-        achievementService.refreshAll()
-        val definitions = achievementService.getAllDefinitions()
-        val allProgress = achievementService.getAllAchievementProgress()
+        repository.syncAutoTrackFromHistory()
+        repository.refreshAll()
+        val definitions = repository.getAllDefinitions()
+        val allProgress = repository.getAllAchievementProgress()
         val displayItems = AchievementDisplayMapper.map(definitions, allProgress)
-        val totalCheckins = achievementService.getCheckinCount().toLong()
+        val totalCheckins = repository.getCheckinCount().toLong()
 
         _uiState.update {
             it.copy(
@@ -183,6 +181,6 @@ class DashboardViewModel @Inject constructor(
     }
 
     suspend fun getEvidencePhoto(achievementId: String): String? {
-        return achievementService.getEvidence(achievementId)?.photoPath
+        return repository.getEvidence(achievementId)?.photoPath
     }
 }
