@@ -70,35 +70,6 @@ fun CheckInMapScreen(
     }
 }
 
-        """
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-        <style>
-          body { margin:0; padding:0; background:#1A1A2E; }
-          #map { width:100vw; height:100vh; }
-          .leaflet-container { background:#1A1A2E; }
-        </style>
-        </head>
-        <body>
-        <div id="map"></div>
-        <script>
-          var map = L.map('map', { zoomControl: false, attributionControl: false })
-            .setView([25, 0], 2);
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 8,
-            minZoom: 2
-          }).addTo(map);
-          $markers
-        </script>
-        </body>
-        </html>
-        """.trimIndent()
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
