@@ -76,6 +76,7 @@ import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
+import com.earthonline.app.ui.screens.history.CheckInHistoryScreen
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -103,6 +104,14 @@ fun DashboardScreen(
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
+    var showHistory by remember { mutableStateOf(false) }
+    var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
+
+    if (showHistory) {
+        LaunchedEffect(Unit) { historyRecords = viewModel.getAllCheckinRecords() }
+        CheckInHistoryScreen(records = historyRecords, onBack = { showHistory = false })
+        return
+    }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
@@ -161,22 +170,28 @@ fun DashboardScreen(
             item { CheckinCounterCard(uiState.totalCheckins) }
 
             item {
-                Button(
-                    onClick = onCheckIn,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
-                    shape = RoundedCornerShape(14.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(Icons.Filled.LocationOn, null, tint = Color.White, modifier = Modifier.size(22.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        stringResource(R.string.checkin_label),
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Button(
+                        onClick = onCheckIn,
+                        modifier = Modifier.weight(1f).height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Icon(Icons.Filled.LocationOn, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.checkin_label), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Button(
+                        onClick = { showHistory = true },
+                        modifier = Modifier.weight(0.4f).height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text("記錄", color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
