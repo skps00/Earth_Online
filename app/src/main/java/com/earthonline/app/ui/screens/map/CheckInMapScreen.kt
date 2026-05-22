@@ -21,7 +21,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.ui.theme.Gold
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -64,7 +63,6 @@ fun CheckInMapScreen(
                         maxZoomLevel = 8.0
                         controller.setZoom(3.0)
                         controller.setCenter(GeoPoint(25.0, 121.0))
-                        scrollableAreaLimitLatLng = BoundingBox(85.0, 180.0, -85.0, -180.0)
                     }
                 },
                 update = { mapView ->
