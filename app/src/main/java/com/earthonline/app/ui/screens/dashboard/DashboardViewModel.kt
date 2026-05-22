@@ -1,7 +1,9 @@
 package com.earthonline.app.ui.screens.dashboard
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.earthonline.app.data.backup.BackupManager
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.repository.AchievementRepository
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val repository: AchievementRepository
+    private val repository: AchievementRepository,
+    private val backupManager: BackupManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -187,5 +190,16 @@ class DashboardViewModel @Inject constructor(
 
     suspend fun getAllCheckinRecords(): List<CheckInRecord> {
         return repository.getAllCheckinRecords()
+    }
+
+    suspend fun exportBackup(uri: Uri) {
+        backupManager.exportToUri(uri)
+    }
+
+    suspend fun importBackup(uri: Uri) {
+        backupManager.importFromUri(uri)
+        repository.syncAutoTrackFromHistory()
+        repository.refreshAll()
+        loadAchievementDisplay()
     }
 }

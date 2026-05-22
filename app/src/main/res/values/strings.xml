@@ -31,4 +31,8 @@
     <string name="evidence_confirm_btn">確認</string>
     <string name="evidence_retry_btn">重拍</string>
     <string name="share_achievement">分享成就</string>
+    <string name="backup_export">匯出</string>
+    <string name="backup_import">匯入</string>
+    <string name="backup_exported">備份已匯出</string>
+    <string name="backup_imported">備份已匯入</string>
 </resources>

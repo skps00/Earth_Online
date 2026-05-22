@@ -90,7 +90,9 @@ import java.util.Locale
 fun DashboardScreen(
     viewModel: DashboardViewModel,
     onCheckIn: () -> Unit,
-    onTakeEvidencePhoto: (String) -> Unit
+    onTakeEvidencePhoto: (String) -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -265,6 +267,30 @@ fun DashboardScreen(
                             }
                             Spacer(modifier = Modifier.height(12.dp))
                         }
+                    }
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = onExportBackup,
+                        modifier = Modifier.weight(1f).height(38.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen.copy(alpha = 0.15f)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(stringResource(R.string.backup_export), color = EmeraldGreen, fontSize = 12.sp)
+                    }
+                    Button(
+                        onClick = onImportBackup,
+                        modifier = Modifier.weight(1f).height(38.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange.copy(alpha = 0.15f)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(stringResource(R.string.backup_import), color = AccentOrange, fontSize = 12.sp)
                     }
                 }
             }

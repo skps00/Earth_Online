@@ -87,6 +87,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val exportLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri != null) {
+            lifecycleScope.launch {
+                viewModel.exportBackup(uri)
+                Toast.makeText(this@MainActivity, getString(R.string.backup_exported), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val importLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            lifecycleScope.launch {
+                viewModel.importBackup(uri)
+                Toast.makeText(this@MainActivity, getString(R.string.backup_imported), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkLocationPermission()
@@ -100,7 +122,9 @@ class MainActivity : ComponentActivity() {
                     DashboardScreen(
                         viewModel = vm,
                         onCheckIn = { requestLocationPermission() },
-                        onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) }
+                        onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
+                        onExportBackup = { exportLauncher.launch("earth_online_backup.json") },
+                        onImportBackup = { importLauncher.launch(arrayOf("application/json")) }
                     )
                 }
             }
