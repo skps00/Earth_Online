@@ -149,23 +149,22 @@ class AchievementRepository @Inject constructor(
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
         checkInRecordDao.insert(
-            CheckInRecord(
-                userId = userId,
-                latitude = latitude,
-                longitude = longitude,
-                country = country,
-                continent = continent,
-                timestamp = System.currentTimeMillis()
-            )
+            CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, timestamp = System.currentTimeMillis())
         )
 
         val uniqueCount = checkInRecordDao.countUniqueLocations(userId).toLong()
         progressDao.setProgressByType(userId, triggerType, uniqueCount)
-
         _totalCheckins.emit(uniqueCount)
 
         val events = mutableListOf<UnlockedAchievementEvent>()
         events.addAll(checkAndUnlock(userId, triggerType))
+        events.addAll(evaluateAutoTrackAchievements(country, continent))
+        return events
+    }
+
+    private suspend fun evaluateAutoTrackAchievements(country: String, continent: String): List<UnlockedAchievementEvent> {
+        val userId = "local_user"
+        val events = mutableListOf<UnlockedAchievementEvent>()
 
         if (country.isNotBlank()) {
             val countryCount = checkInRecordDao.countUniqueCountries(userId).toLong()
