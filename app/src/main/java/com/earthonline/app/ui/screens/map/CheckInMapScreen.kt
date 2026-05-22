@@ -70,34 +70,3 @@ fun CheckInMapScreen(
     }
 }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("打卡地圖", color = Gold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "返回", tint = Gold)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A1A2E))
-            )
-        }
-    ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    WebView(ctx).apply {
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
-                        settings.loadWithOverviewMode = true
-                        settings.useWideViewPort = true
-                        settings.allowFileAccess = true
-                        webViewClient = WebViewClient()
-                        loadDataWithBaseURL("https://unpkg.com/", html, "text/html", "UTF-8", null)
-                    }
-                }
-            )
-        }
-    }
-}
