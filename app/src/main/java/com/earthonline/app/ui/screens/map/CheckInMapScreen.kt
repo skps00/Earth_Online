@@ -78,8 +78,12 @@ fun CheckInMapScreen(
                 factory = { ctx ->
                     WebView(ctx).apply {
                         settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.loadWithOverviewMode = true
+                        settings.useWideViewPort = true
+                        settings.allowFileAccess = true
                         webViewClient = WebViewClient()
-                        loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+                        loadData(html, "text/html; charset=UTF-8", null)
                     }
                 }
             )
