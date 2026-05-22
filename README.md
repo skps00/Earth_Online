@@ -6,30 +6,38 @@
 
 「地球 Online」是一款 Android 原生應用程式，核心概念源自網路社群中「地球是一款 MMORPG」的梗。透過打卡記錄現實地點，自動給予如同遊戲成就系統的回饋與鼓勵。
 
-## 當前版本 (v1.3.0)
+## 當前版本 (v1.4.0)
 
 ### 打卡系統
 - GPS 定位 + Geocoder 反編碼（經緯度 → 地址 + 國家 + 大洲）
 - 打卡確認對話框顯示可讀地址
 - 打卡紀錄儲存於本機 Room 資料庫
 
-### 78 個成就（8 大分類）
+### 86 個成就（9 大分類）
 | 分類 | 數量 | 觸發方式 |
 |---|---|---|
 | 📍 打卡 | 6 | 自動（不重複地點數） |
-| 🗺️ 探索 | 31 | AUTO_TRACK（國家/大洲自動）+ MANUAL_CONFIRM |
+| 🗺️ 探索 | 31 | AUTO_TRACK + MANUAL_CONFIRM |
 | 🎓 職涯 | 10 | MANUAL_CONFIRM |
 | 🎭 日常 | 11 | MANUAL_CONFIRM |
 | 🏆 史詩 | 9 | MANUAL_CONFIRM |
 | 🩺 健康 | 6 | MANUAL_CONFIRM |
 | 🚗 交通 | 5 | MANUAL_CONFIRM |
+| 🌊 大海 | 5 | MANUAL_CONFIRM（隱藏） |
+| 📸 拍照證據 | — | 手動成就可拍照存證 |
 
 ### 成就系統
-- 多步進度（世界奇觀需手動認領 7 次）
+- 多步進度（世界奇觀需手動認領 7 次、環球旅人需 50 次）
 - 探索成就自動追蹤（打卡後自動計算不重複國家/大洲數）
+- 國家/大洲特定成就自動解鎖（在日本打卡 → 自動解鎖「日本漫遊」）
+- 隱藏成就 + 稀有度分級（普通/稀有/史詩/傳說，不同顏色邊框）
 - Minecraft 風格解鎖彈窗動畫（滑入 + 彈跳 + 縮放，3.5 秒自動淡出）
 - 解鎖音效
-- 7 頁籤成就牆（LazyRow + HorizontalPager）
+- 9 頁籤成就牆（LazyRow + HorizontalPager，顯示解鎖數/總數）
+
+### 備份系統
+- JSON 匯出/匯入（成就進度 + 打卡記錄 + 證據路徑）
+- Android SAF 檔案選擇器
 
 ### 拍照證據
 - 手動成就可拍照存證
@@ -47,7 +55,7 @@
 | 語言 | Kotlin |
 | UI | Jetpack Compose (Material 3) |
 | 架構 | MVVM (ViewModel + StateFlow) |
-| 資料庫 | Room (v4, 4 tables) |
+| 資料庫 | Room (v6, 4 tables) |
 | DI | Hilt |
 | 相機 | CameraX |
 | 定位 | Android LocationManager + Geocoder |
