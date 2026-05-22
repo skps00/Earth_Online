@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
     private var pendingEvidenceUri: android.net.Uri? = null
     private var pendingEvidenceAchievementId: String? = null
+    private var hasLocationPermission = false
 
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
+            hasLocationPermission = true
             handleCheckIn()
         }
     }
@@ -86,6 +88,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkLocationPermission()
 
         setContent {
             EarthOnlineTheme {
@@ -137,5 +140,10 @@ class MainActivity : ComponentActivity() {
         pendingEvidenceUri = uri
         pendingEvidenceAchievementId = achievementId
         evidenceCaptureLauncher.launch(uri)
+    }
+
+    private fun checkLocationPermission() {
+        hasLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 }
