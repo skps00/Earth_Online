@@ -226,6 +226,10 @@ class AchievementRepository @Inject constructor(
         _totalCheckins.emit(count)
     }
 
+    suspend fun refreshAll() {
+        refreshTotalCheckins()
+    }
+
     suspend fun syncAutoTrackFromHistory() {
         try {
             val userId = "local_user"

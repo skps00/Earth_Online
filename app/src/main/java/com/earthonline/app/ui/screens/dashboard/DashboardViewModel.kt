@@ -35,7 +35,7 @@ class DashboardViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
 
             try {
-                repository.initialize()
+                repository.initializeAchievements()
                 loadAchievementDisplay()
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "初始化失敗") }
