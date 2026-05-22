@@ -1,7 +1,5 @@
 package com.earthonline.app.ui.screens.map
 
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -17,9 +15,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.viewinterop.AndroidView
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.ui.theme.Gold
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,10 +35,12 @@ fun CheckInMapScreen(
     records: List<CheckInRecord>,
     onBack: () -> Unit
 ) {
-    val markerScript = remember(records) {
-        records.joinToString("\n") { record ->
-            "addMarker(${record.latitude}, ${record.longitude}, '${record.country.ifBlank { "打卡點" }}');"
-        }
+    val markers = remember(records) {
+        records.map { it to LatLng(it.latitude, it.longitude) }
+    }
+
+    val cameraState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(25.0, 5.0), 2f)
     }
 
     Scaffold(
@@ -47,26 +57,24 @@ fun CheckInMapScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            AndroidView(
+            GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    WebView(ctx).apply {
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
-                        settings.loadWithOverviewMode = true
-                        settings.useWideViewPort = true
-                        webViewClient = object : WebViewClient() {
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                if (view != null && markerScript.isNotBlank()) {
-                                    view.evaluateJavascript(markerScript, null)
-                                }
-                            }
-                        }
-                        loadUrl("file:///android_asset/map.html")
-                    }
+                cameraPositionState = cameraState,
+                uiSettings = MapUiSettings(zoomControlsEnabled = false),
+                properties = MapProperties(
+                    minZoomPreference = 2f,
+                    maxZoomPreference = 8f
+                )
+            ) {
+                markers.forEach { (record, latLng) ->
+                    Marker(
+                        state = MarkerState(position = latLng),
+                        title = record.country.ifBlank { "打卡點" },
+                        snippet = record.country,
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                    )
                 }
-            )
+            }
         }
     }
 }
-
