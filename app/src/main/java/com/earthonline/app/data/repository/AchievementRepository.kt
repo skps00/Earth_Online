@@ -1,5 +1,8 @@
 package com.earthonline.app.data.repository
 
+import android.content.Context
+import com.earthonline.app.data.local.AchievementJsonLoader
+import com.earthonline.app.data.local.AchievementSeedData
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
@@ -12,6 +15,7 @@ import com.earthonline.app.domain.model.AchievementTriggers
 import com.earthonline.app.domain.model.TriggerType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +26,7 @@ data class UnlockedAchievementEvent(
 
 @Singleton
 class AchievementRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val definitionDao: AchievementDefinitionDao,
     private val progressDao: UserAchievementProgressDao,
     private val checkInRecordDao: CheckInRecordDao,
@@ -34,7 +39,7 @@ class AchievementRepository @Inject constructor(
     val totalCheckins: SharedFlow<Long> = _totalCheckins
 
     suspend fun initializeAchievements() {
-        val definitions = AchievementSeedData.create()
+        val definitions = AchievementJsonLoader.load(context)
         definitionDao.insertAll(definitions)
         progressDao.insertAll(AchievementSeedData.createProgress(definitions, "local_user"))
     }
