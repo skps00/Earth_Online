@@ -62,6 +62,8 @@
 - [ ] 內容分級問卷
 
 ### 未來功能
+- [ ] **足跡地圖**：react-leaflet 暗色地圖 + 霓虹光點標記每個打卡地點
+- [ ] **排行榜**：成就數/國家數雙維度排名（需後端支援）
 - [ ] 打卡歷史地圖（暫緩 — osmdroid/Leaflet/GMaps 皆未成功）
 - [ ] Google Timeline 自動打卡
 - [ ] Google Drive AppData 雲端儲存
