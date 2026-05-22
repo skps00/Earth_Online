@@ -59,7 +59,7 @@ fun CheckInMapScreen(
                     MapView(ctx).apply {
                         setTileSource(TileSourceFactory.MAPNIK)
                         setMultiTouchControls(true)
-                        minZoomLevel = 2.0
+                        minZoomLevel = 3.0
                         maxZoomLevel = 8.0
                         controller.setZoom(3.0)
                         controller.setCenter(GeoPoint(25.0, 121.0))
