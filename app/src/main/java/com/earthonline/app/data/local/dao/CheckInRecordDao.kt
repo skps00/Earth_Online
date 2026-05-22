@@ -21,4 +21,7 @@ interface CheckInRecordDao {
 
     @Query("SELECT COUNT(DISTINCT continent) FROM checkin_record WHERE user_id = :userId AND continent != ''")
     suspend fun countUniqueContinents(userId: String): Int
+
+    @Query("SELECT * FROM checkin_record WHERE user_id = :userId ORDER BY timestamp DESC")
+    suspend fun getAllByUser(userId: String): List<CheckInRecord>
 }

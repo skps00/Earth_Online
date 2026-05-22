@@ -30,6 +30,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.LocationOn
@@ -69,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
+import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.domain.model.Rarity
 import com.earthonline.app.domain.model.TriggerType
@@ -77,6 +79,7 @@ import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
+import com.earthonline.app.ui.screens.map.CheckInMapScreen
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -102,6 +105,8 @@ fun DashboardScreen(
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
+    var showMap by remember { mutableStateOf(false) }
+    var mapRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
@@ -109,6 +114,17 @@ fun DashboardScreen(
             unlockEventKey++
             unlockEvent = event
         }
+    }
+
+    if (showMap) {
+        LaunchedEffect(Unit) {
+            mapRecords = viewModel.getAllCheckinRecords()
+        }
+        CheckInMapScreen(
+            records = mapRecords,
+            onBack = { showMap = false }
+        )
+        return
     }
 
     if (uiState.isLoading) {
@@ -155,7 +171,17 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { DashboardHeader() }
+            item {
+                Box {
+                    DashboardHeader()
+                    IconButton(
+                        onClick = { showMap = true },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 48.dp, end = 12.dp)
+                    ) {
+                        Icon(Icons.Filled.Map, "地圖", tint = Gold.copy(alpha = 0.6f), modifier = Modifier.size(28.dp))
+                    }
+                }
+            }
 
             item { CheckinCounterCard(uiState.totalCheckins) }
 

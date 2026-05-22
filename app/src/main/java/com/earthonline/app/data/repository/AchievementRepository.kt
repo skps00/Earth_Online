@@ -188,6 +188,10 @@ class AchievementRepository @Inject constructor(
         return checkInRecordDao.countByUser("local_user")
     }
 
+    suspend fun getAllCheckinRecords(): List<CheckInRecord> {
+        return checkInRecordDao.getAllByUser("local_user")
+    }
+
     suspend fun getUniqueLocationCount(): Int {
         return checkInRecordDao.countUniqueLocations("local_user")
     }

@@ -2,6 +2,7 @@ package com.earthonline.app.ui.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -182,5 +183,9 @@ class DashboardViewModel @Inject constructor(
 
     suspend fun getEvidencePhoto(achievementId: String): String? {
         return repository.getEvidence(achievementId)?.photoPath
+    }
+
+    suspend fun getAllCheckinRecords(): List<CheckInRecord> {
+        return repository.getAllCheckinRecords()
     }
 }
