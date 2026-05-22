@@ -91,14 +91,14 @@ class BackupManager @Inject constructor(
                 unlockedDate = obj.optString("unlockedDate").toLongOrNull(),
                 triggerType = obj.getString("triggerType")
             )
-            progressDao.insert(progress)
+            progressDao.insertReplace(progress)
         }
 
         val checkinArray = json.optJSONArray("checkinRecords")
         if (checkinArray != null) {
             for (i in 0 until checkinArray.length()) {
                 val obj = checkinArray.getJSONObject(i)
-                checkInRecordDao.insert(CheckInRecord(
+                checkInRecordDao.insertReplace(CheckInRecord(
                     userId = userId,
                     latitude = obj.getDouble("latitude"),
                     longitude = obj.getDouble("longitude"),

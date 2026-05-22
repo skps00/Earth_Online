@@ -2,13 +2,18 @@ package com.earthonline.app.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.earthonline.app.data.local.entity.CheckInRecord
 
 @Dao
 interface CheckInRecordDao {
+
     @Insert
     suspend fun insert(record: CheckInRecord)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReplace(record: CheckInRecord)
 
     @Query("SELECT COUNT(*) FROM checkin_record WHERE user_id = :userId")
     suspend fun countByUser(userId: String): Int

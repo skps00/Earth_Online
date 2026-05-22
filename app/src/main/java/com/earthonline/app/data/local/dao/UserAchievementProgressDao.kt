@@ -17,6 +17,9 @@ interface UserAchievementProgressDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(progress: UserAchievementProgressEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReplace(progress: UserAchievementProgressEntity)
+
     @Update
     suspend fun update(progress: UserAchievementProgressEntity)
 
