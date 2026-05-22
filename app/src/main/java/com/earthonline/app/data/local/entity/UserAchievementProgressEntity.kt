@@ -12,8 +12,7 @@ import androidx.room.Index
         ForeignKey(
             entity = AchievementDefinitionEntity::class,
             parentColumns = ["achievement_id"],
-            childColumns = ["achievement_id"],
-            onDelete = ForeignKey.CASCADE
+            childColumns = ["achievement_id"]
         )
     ],
     indices = [

@@ -18,7 +18,7 @@ import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
         CheckInRecord::class,
         AchievementEvidence::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
