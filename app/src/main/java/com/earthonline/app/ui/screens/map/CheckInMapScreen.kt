@@ -39,8 +39,9 @@ fun CheckInMapScreen(
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-          body { margin:0; padding:0; }
+          body { margin:0; padding:0; background:#1A1A2E; }
           #map { width:100vw; height:100vh; }
+          .leaflet-container { background:#1A1A2E; }
         </style>
         </head>
         <body>
@@ -83,7 +84,7 @@ fun CheckInMapScreen(
                         settings.useWideViewPort = true
                         settings.allowFileAccess = true
                         webViewClient = WebViewClient()
-                        loadData(html, "text/html; charset=UTF-8", null)
+                        loadDataWithBaseURL("https://unpkg.com/", html, "text/html", "UTF-8", null)
                     }
                 }
             )
