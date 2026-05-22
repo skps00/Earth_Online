@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.earthonline.app.data.location.LocationHelper
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
