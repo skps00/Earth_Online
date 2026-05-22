@@ -51,6 +51,7 @@ class BackupManager @Inject constructor(
                     put("longitude", c.longitude)
                     put("country", c.country)
                     put("continent", c.continent)
+                    put("address", c.address)
                     put("timestamp", c.timestamp)
                 })
             }
@@ -104,6 +105,7 @@ class BackupManager @Inject constructor(
                     longitude = obj.getDouble("longitude"),
                     country = obj.optString("country", ""),
                     continent = obj.optString("continent", ""),
+                    address = obj.optString("address", ""),
                     timestamp = obj.getLong("timestamp")
                 ))
             }
