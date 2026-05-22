@@ -64,10 +64,7 @@ fun CheckInMapScreen(
                         maxZoomLevel = 8.0
                         controller.setZoom(3.0)
                         controller.setCenter(GeoPoint(25.0, 121.0))
-                        setScrollableAreaLimitLatLng(
-                            BoundingBox(85.0, 180.0, -85.0, -180.0),
-                            0, 0
-                        )
+                        scrollableAreaLimitLatLng = BoundingBox(85.0, 180.0, -85.0, -180.0)
                     }
                 },
                 update = { mapView ->
