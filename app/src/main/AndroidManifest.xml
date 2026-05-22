@@ -25,7 +25,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EarthOnlineApp">
+        android:theme="@style/Theme.EarthOnlineApp"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
