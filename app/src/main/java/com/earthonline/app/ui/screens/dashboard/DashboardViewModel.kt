@@ -100,11 +100,11 @@ class DashboardViewModel @Inject constructor(
             }
             is DashboardEvent.ManualConfirm -> {
                 viewModelScope.launch {
-                    val event = repository.confirmManualAchievement(
+                    val result = repository.confirmManualAchievement(
                         achievementId = event.achievementId
                     )
-                    if (event != null) {
-                        handleUnlockEvents(listOf(event))
+                    if (result != null) {
+                        handleUnlockEvents(listOf(result))
                     }
                     repository.refreshAll()
                     loadAchievementDisplay()
