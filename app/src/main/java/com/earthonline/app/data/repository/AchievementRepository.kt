@@ -43,8 +43,6 @@ class AchievementRepository @Inject constructor(
         definitionDao.insertAll(definitions)
         progressDao.insertAll(AchievementSeedData.createProgress(definitions, "local_user"))
     }
-        progressDao.insertAll(progressList)
-    }
 
     suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = ""): List<UnlockedAchievementEvent> {
         val userId = "local_user"
