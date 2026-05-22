@@ -107,18 +107,13 @@ fun DashboardScreen(
     var showHistory by remember { mutableStateOf(false) }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
-    if (showHistory) {
-        LaunchedEffect(Unit) { historyRecords = viewModel.getAllCheckinRecords() }
-        CheckInHistoryScreen(records = historyRecords, onBack = { showHistory = false })
-        return
+    LaunchedEffect(showHistory) {
+        if (showHistory) historyRecords = viewModel.getAllCheckinRecords()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.unlockEvent.collect { event ->
-            unlockEvent = null
-            unlockEventKey++
-            unlockEvent = event
-        }
+    if (showHistory) {
+        CheckInHistoryScreen(records = historyRecords, onBack = { showHistory = false })
+        return
     }
 
     if (uiState.isLoading) {
@@ -185,7 +180,7 @@ fun DashboardScreen(
                         Text(stringResource(R.string.checkin_label), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                     Button(
-                        onClick = { showHistory = true },
+                        onClick = { unlockEvent = null; showHistory = true },
                         modifier = Modifier.weight(0.4f).height(56.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CardDark),
                         shape = RoundedCornerShape(14.dp)
