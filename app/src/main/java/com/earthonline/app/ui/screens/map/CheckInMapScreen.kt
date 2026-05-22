@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.ui.theme.Gold
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -57,10 +57,10 @@ fun CheckInMapScreen(
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
-                    val cartoDbSource = object : OnlineTileSourceBase(
+                    val cartoDbSource = XYTileSource(
                         "CartoDB", 0, 19, 256, ".png",
                         arrayOf("https://basemaps.cartocdn.com/light_all/")
-                    ) {}
+                    )
                     MapView(ctx).apply {
                         setTileSource(cartoDbSource)
                         setMultiTouchControls(true)
