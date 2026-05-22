@@ -2,12 +2,12 @@
 
 ## V3 已完成 ✅
 - [x] 打卡系統（GPS + Geocoder 反編碼 + 打卡確認對話框）
-- [x] 78 個成就（6 打卡 + 31 探索 + 10 職涯 + 11 日常 + 9 史詩 + 6 健康 + 5 交通）
+- [x] 86 個成就（6 打卡 + 31 探索 + 10 職涯 + 11 日常 + 9 史詩 + 6 健康 + 5 交通 + 5 大洋 + 3 大洲）
 - [x] 手動成就多步進度（世界奇觀 7 次、環球旅人 50 次等）
 - [x] ML Kit Image Labeling（裝置端照片分析證據）
 - [x] 7 頁籤成就牆（LazyRow + HorizontalPager）
 - [x] 成就解鎖動畫 + 音效
-- [x] Room DB v4（checkin_record、achievement_evidence 表，含 country/continent 欄位）
+- [x] Room DB v6（4 表，移除 FK CASCADE）
 - [x] GitHub 版本控制
 - [x] 探索成就自動追蹤（國家數/大洲數由打卡數據自動更新）
 - [x] 成就分享功能（生成 1080x1080 分享卡 PNG + 文字）
@@ -41,9 +41,8 @@
 ## 🟡 中優先
 
 ### 七大洋成就
-- [ ] 新增探索成就：七大洋洋標（太平洋、大西洋、印度洋、南冰洋、北冰洋等）
-- [ ] 在打卡流程中透過 Geocoder 判斷是否靠近海洋/海岸線
-- [ ] 或設計為手動認領成就
+- [x] 新增探索成就：太平洋、大西洋、印度洋、北冰洋、南冰洋（隱藏成就）
+- [x] 設計為手動認領成就（附提示）
 
 ### 打卡歷史地圖
 - [ ] 加入 OSM 依賴（優先於 Google Maps，符合開源+隱私 ethos）
@@ -114,7 +113,7 @@
 ## 📊 優先級路線圖（更新）
 
 1. **地圖標記**（OSM > Google Maps）— 符合開源+隱私 ethos
-2. **隱藏成就 + 稀有度分級** — 遊戲感大提升
+2. **隱藏成就 + 稀有度分級** ✅
 3. **JSON 備份匯出/匯入** — 認真用的使用者需要
 4. **音效開關 + 設定頁** — 使用者體驗細節
 5. **Lottie 粒子特效** — 螢火蟲光點，加分項
@@ -129,15 +128,3 @@ SoundPlayer、ContinentMapper、AchievementTriggers、Rarity、AchievementSeedDa
 AchievementCategories、AchievementDisplayMapper、CheckInCoordinator、ShareHelper
 
 ---
-
-## 🔧 重構計劃
-
-### 🔴 Critical
-- [ ] **#1 成就定義 JSON 化**：`AchievementRepository.initializeAchievements()` 90+ 項硬編碼 → `res/raw/achievements.json`
-- [ ] **#2 DashboardScreen 拆分**：391 行單石函數 → `DashboardHeader()`, `CheckinCounterCard()`, `AchievementTabs()` 等子組件
-- [x] **#3 AchievementCard 抽離**：116 行 → `ui/components/AchievementCard.kt`
-- [x] **#4 AchievementDetailDialog 抽離**：180 行 → `ui/components/AchievementDetailDialog.kt`
-- [x] **#13 Rarity 枚舉化**：魔法數字 50/200/1000 → Rarity enum
-- [x] **#15 移除 getString() wrapper**：無意義的包裝函數
-- [ ] **#16 AchievementService 精簡**：純轉發無加值，考慮移除
-- [ ] **#17 成就顯示映射抽離**：`loadAchievementDisplay` 中的 filter/sort/map → `AchievementDisplayMapper`
