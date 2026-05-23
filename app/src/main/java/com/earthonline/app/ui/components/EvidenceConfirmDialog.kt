@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AchievementLocked
+import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
