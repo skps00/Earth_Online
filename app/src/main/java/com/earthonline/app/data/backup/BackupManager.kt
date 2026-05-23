@@ -2,6 +2,7 @@ package com.earthonline.app.data.backup
 
 import android.content.Context
 import android.net.Uri
+import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
@@ -23,7 +24,7 @@ class BackupManager @Inject constructor(
     private val evidenceDao: AchievementEvidenceDao,
     private val definitionDao: AchievementDefinitionDao
 ) {
-    private val userId = "local_user"
+    private val userId = AppConstants.LOCAL_USER_ID
 
     suspend fun exportToUri(uri: Uri) {
         val json = JSONObject().apply {

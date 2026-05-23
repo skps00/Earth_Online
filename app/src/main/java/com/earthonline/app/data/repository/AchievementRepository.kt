@@ -1,5 +1,6 @@
 package com.earthonline.app.data.repository
 
+import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.AchievementSeedData
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
@@ -37,11 +38,11 @@ class AchievementRepository @Inject constructor(
     suspend fun initializeAchievements() {
         val definitions = AchievementSeedData.create()
         definitionDao.insertAll(definitions)
-        progressDao.insertAll(AchievementSeedData.createProgress(definitions, "local_user"))
+        progressDao.insertAll(AchievementSeedData.createProgress(definitions, AppConstants.LOCAL_USER_ID))
     }
 
     suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = "", address: String = ""): List<UnlockedAchievementEvent> {
-        val userId = "local_user"
+        val userId = AppConstants.LOCAL_USER_ID
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
         checkInRecordDao.insert(
@@ -59,7 +60,7 @@ class AchievementRepository @Inject constructor(
     }
 
     private suspend fun evaluateAutoTrackAchievements(country: String, continent: String): List<UnlockedAchievementEvent> {
-        val userId = "local_user"
+        val userId = AppConstants.LOCAL_USER_ID
         val events = mutableListOf<UnlockedAchievementEvent>()
 
         if (country.isNotBlank()) {
@@ -80,25 +81,25 @@ class AchievementRepository @Inject constructor(
         val events = mutableListOf<UnlockedAchievementEvent>()
 
         for (id in exploreIds) {
-            progressDao.setProgressById("local_user", id, countryCount)
-            val updated = progressDao.getByUserAndAchievement("local_user", id) ?: continue
+            progressDao.setProgressById(AppConstants.LOCAL_USER_ID, id, countryCount)
+            val updated = progressDao.getByUserAndAchievement(AppConstants.LOCAL_USER_ID, id) ?: continue
             val def = definitionDao.getById(id) ?: continue
             if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
-                progressDao.unlockAchievement("local_user", id, System.currentTimeMillis())
+                progressDao.unlockAchievement(AppConstants.LOCAL_USER_ID, id, System.currentTimeMillis())
                 val event = UnlockedAchievementEvent(def, System.currentTimeMillis())
                 _unlockEvents.emit(event)
                 events.add(event)
             }
         }
 
-        val continentCount = checkInRecordDao.countUniqueContinents("local_user")
+        val continentCount = checkInRecordDao.countUniqueContinents(AppConstants.LOCAL_USER_ID)
         val continentIds = AchievementTriggers.continentCountAchievements
         for (id in continentIds) {
-            progressDao.setProgressById("local_user", id, continentCount.toLong())
-            val updated = progressDao.getByUserAndAchievement("local_user", id) ?: continue
+            progressDao.setProgressById(AppConstants.LOCAL_USER_ID, id, continentCount.toLong())
+            val updated = progressDao.getByUserAndAchievement(AppConstants.LOCAL_USER_ID, id) ?: continue
             val def = definitionDao.getById(id) ?: continue
             if (!updated.isUnlocked && updated.currentProgress >= def.triggerGoal) {
-                progressDao.unlockAchievement("local_user", id, System.currentTimeMillis())
+                progressDao.unlockAchievement(AppConstants.LOCAL_USER_ID, id, System.currentTimeMillis())
                 val event = UnlockedAchievementEvent(def, System.currentTimeMillis())
                 _unlockEvents.emit(event)
                 events.add(event)
@@ -110,7 +111,7 @@ class AchievementRepository @Inject constructor(
 
     private suspend fun autoTrackSpecificCountry(country: String): List<UnlockedAchievementEvent> {
         val achievementId = AchievementTriggers.countryTriggers[country] ?: return emptyList()
-        val userId = "local_user"
+        val userId = AppConstants.LOCAL_USER_ID
         val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
         if (progress.isUnlocked) return emptyList()
 
@@ -123,7 +124,7 @@ class AchievementRepository @Inject constructor(
 
     private suspend fun autoTrackSpecificContinent(continent: String): List<UnlockedAchievementEvent> {
         val achievementId = AchievementTriggers.continentTriggers[continent] ?: return emptyList()
-        val userId = "local_user"
+        val userId = AppConstants.LOCAL_USER_ID
         val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return emptyList()
         if (progress.isUnlocked) return emptyList()
 
@@ -139,7 +140,7 @@ class AchievementRepository @Inject constructor(
         photoPath: String? = null,
         labels: List<String>? = null
     ): UnlockedAchievementEvent? {
-        val userId = "local_user"
+        val userId = AppConstants.LOCAL_USER_ID
 
         progressDao.incrementProgressById(userId, achievementId)
 
@@ -173,11 +174,11 @@ class AchievementRepository @Inject constructor(
     }
 
     suspend fun getEvidence(achievementId: String): AchievementEvidence? {
-        return evidenceDao.getByAchievement(achievementId, "local_user")
+        return evidenceDao.getByAchievement(achievementId, AppConstants.LOCAL_USER_ID)
     }
 
     suspend fun getAllAchievementProgress(): List<UserAchievementProgressEntity> {
-        return progressDao.getAllByUser("local_user")
+        return progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
     }
 
     suspend fun getAllDefinitions(): List<AchievementDefinitionEntity> {
@@ -185,26 +186,26 @@ class AchievementRepository @Inject constructor(
     }
 
     suspend fun getTotalPoints(): Long {
-        val allProgress = progressDao.getAllByUser("local_user")
+        val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
         return allProgress.filter { it.isUnlocked }.sumOf { progress ->
             definitionDao.getById(progress.achievementId)?.rewardPoints?.toLong() ?: 0L
         }
     }
 
     suspend fun getUnlockedCount(): Int {
-        return progressDao.getAllByUser("local_user").count { it.isUnlocked }
+        return progressDao.getAllByUser(AppConstants.LOCAL_USER_ID).count { it.isUnlocked }
     }
 
     suspend fun getCheckinCount(): Int {
-        return checkInRecordDao.countByUser("local_user")
+        return checkInRecordDao.countByUser(AppConstants.LOCAL_USER_ID)
     }
 
     suspend fun getAllCheckinRecords(): List<CheckInRecord> {
-        return checkInRecordDao.getAllByUser("local_user")
+        return checkInRecordDao.getAllByUser(AppConstants.LOCAL_USER_ID)
     }
 
     suspend fun getUniqueLocationCount(): Int {
-        return checkInRecordDao.countUniqueLocations("local_user")
+        return checkInRecordDao.countUniqueLocations(AppConstants.LOCAL_USER_ID)
     }
 
     private suspend fun checkAndUnlock(
@@ -233,7 +234,7 @@ class AchievementRepository @Inject constructor(
     }
 
     suspend fun refreshTotalCheckins() {
-        val count = checkInRecordDao.countUniqueLocations("local_user").toLong()
+        val count = checkInRecordDao.countUniqueLocations(AppConstants.LOCAL_USER_ID).toLong()
         _totalCheckins.emit(count)
     }
 
@@ -263,7 +264,7 @@ class AchievementRepository @Inject constructor(
 
     suspend fun syncAutoTrackFromHistory() {
         try {
-            val userId = "local_user"
+            val userId = AppConstants.LOCAL_USER_ID
             val countryCount = checkInRecordDao.countUniqueCountries(userId).toLong()
             val continentCount = checkInRecordDao.countUniqueContinents(userId).toLong()
 

@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.screens.dashboard
 
+import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
@@ -21,7 +22,7 @@ object AchievementDisplayMapper {
             .map { def ->
                 val progress = allProgress.find { it.achievementId == def.achievementId }
                     ?: UserAchievementProgressEntity(
-                        userId = "local_user",
+                        userId = AppConstants.LOCAL_USER_ID,
                         achievementId = def.achievementId,
                         currentProgress = 0L,
                         isUnlocked = false,
