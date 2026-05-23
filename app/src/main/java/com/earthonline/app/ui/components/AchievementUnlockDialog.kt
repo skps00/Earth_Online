@@ -1,6 +1,5 @@
 package com.earthonline.app.ui.components
 
-import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -69,9 +68,13 @@ fun AchievementUnlockDialog(
 
     LaunchedEffect(Unit) {
         try {
-            val mp = MediaPlayer.create(context, com.earthonline.app.R.raw.achievement_unlock)
-            mp?.start()
-            mp?.setOnCompletionListener { it.release() }
+            val sp = android.media.SoundPool.Builder()
+                .setMaxStreams(1)
+                .build()
+            val soundId = sp.load(context, com.earthonline.app.R.raw.achievement_unlock, 1)
+            sp.setOnLoadCompleteListener { _, _, status ->
+                if (status == 0) sp.play(soundId, 1f, 1f, 1, 0, 1f)
+            }
         } catch (_: Exception) { }
         visible = true
         delay(3500)
