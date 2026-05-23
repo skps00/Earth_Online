@@ -101,7 +101,7 @@ fun CheckInHistoryScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = record.address.ifBlank { "${record.latitude}, ${record.longitude}" },
+                                text = record.address.ifBlank { record.country.ifBlank { "${record.latitude}, ${record.longitude}" } },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondaryDark
                             )

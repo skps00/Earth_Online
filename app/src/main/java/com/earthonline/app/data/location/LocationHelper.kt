@@ -34,12 +34,12 @@ class LocationHelper @Inject constructor(
             val addr = addresses?.firstOrNull()
             val display = listOfNotNull(addr?.adminArea, addr?.locality, addr?.subLocality, addr?.thoroughfare)
                 .filter { it.isNotBlank() }.joinToString(", ")
-                .ifEmpty { "%.5f, %.5f".format(latitude, longitude) }
+                .ifEmpty { "" }
             val country = addr?.countryName ?: ""
             val continent = ContinentMapper.continentOf(country)
             Triple(display, country, continent)
         } catch (_: Exception) {
-            Triple("%.5f, %.5f".format(latitude, longitude), "", "")
+            Triple("", "", "")
         }
     }
 }
