@@ -55,6 +55,11 @@ import com.earthonline.app.ui.theme.GoldDark
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
+private const val DIALOG_DISPLAY_MS = 3500L
+private const val DIALOG_FADE_MS = 500L
+private const val DIALOG_WIDTH_FRACTION = 0.92f
+private const val DISMISS_DRAG_THRESHOLD_DP = 60f
+
 @Composable
 fun AchievementUnlockDialog(
     event: UnlockedAchievementEvent,
@@ -68,9 +73,9 @@ fun AchievementUnlockDialog(
     LaunchedEffect(Unit) {
         SoundPlayer.play(context, "achievement_unlock")
         visible = true
-        delay(3500)
+        delay(DIALOG_DISPLAY_MS)
         visible = false
-        delay(500)
+        delay(DIALOG_FADE_MS)
         onDismiss()
     }
 
@@ -85,13 +90,13 @@ fun AchievementUnlockDialog(
         ) {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(0.92f)
+                    .fillMaxWidth(DIALOG_WIDTH_FRACTION)
                     .padding(top = 40.dp)
                     .offset { IntOffset(0, dragOffset.roundToInt()) }
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragEnd = {
-                                if (dragOffset < -with(density) { 60.dp.toPx() }) {
+                                if (dragOffset < -with(density) { DISMISS_DRAG_THRESHOLD_DP.dp.toPx() }) {
                                     visible = false
                                     onDismiss()
                                 }

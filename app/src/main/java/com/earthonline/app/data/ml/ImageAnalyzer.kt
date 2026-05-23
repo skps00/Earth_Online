@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class ImageAnalyzer @Inject constructor(@ApplicationContext private val context: Context) {
     private val labeler = ImageLabeling.getClient(
         ImageLabelerOptions.Builder()
-            .setConfidenceThreshold(0.6f)
+            .setConfidenceThreshold(ML_CONFIDENCE)
             .build()
     )
 
@@ -24,9 +24,12 @@ class ImageAnalyzer @Inject constructor(@ApplicationContext private val context:
         try {
             val image = InputImage.fromFilePath(context, uri)
             val labels = Tasks.await(labeler.process(image))
-            labels.take(5).map { "${it.text} (${(it.confidence * 100).toInt()}%)" }
+            labels.take(ML_MAX_LABELS).map { "${it.text} (${(it.confidence * 100).toInt()}%)" }
         } catch (_: Exception) {
             emptyList()
         }
     }
 }
+
+private const val ML_CONFIDENCE = 0.6f
+private const val ML_MAX_LABELS = 5

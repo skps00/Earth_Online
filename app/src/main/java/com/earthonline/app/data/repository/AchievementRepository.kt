@@ -242,20 +242,22 @@ class AchievementRepository @Inject constructor(
         refreshTotalCheckins()
     }
 
+    private val LEVEL_SCALE = 100.0
+
     fun computePlayerLevel(totalPoints: Long): Int {
-        return (kotlin.math.sqrt(totalPoints.toDouble() / 100.0) + 1).toInt()
+        return (kotlin.math.sqrt(totalPoints.toDouble() / LEVEL_SCALE) + 1).toInt()
     }
 
     fun computeXpToNext(totalPoints: Long): Long {
         val currentLevel = computePlayerLevel(totalPoints)
-        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * 100
+        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * LEVEL_SCALE.toLong()
         return (nextLevelXp - totalPoints).coerceAtLeast(0)
     }
 
     fun computeLevelProgress(totalPoints: Long): Float {
         val currentLevel = computePlayerLevel(totalPoints)
-        val currentLevelXp = ((currentLevel - 1).toLong() * (currentLevel - 1).toLong()) * 100
-        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * 100
+        val currentLevelXp = ((currentLevel - 1).toLong() * (currentLevel - 1).toLong()) * LEVEL_SCALE.toLong()
+        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * LEVEL_SCALE.toLong()
         val totalNeeded = nextLevelXp - currentLevelXp
         if (totalNeeded <= 0) return 1f
         val earned = totalPoints - currentLevelXp
