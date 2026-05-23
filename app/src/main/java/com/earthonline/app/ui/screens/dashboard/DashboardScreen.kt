@@ -112,6 +112,14 @@ fun DashboardScreen(
     var showSettings by remember { mutableStateOf(false) }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
+    LaunchedEffect(Unit) {
+        viewModel.unlockEvent.collect { event ->
+            unlockEvent = null
+            unlockEventKey++
+            unlockEvent = event
+        }
+    }
+
     if (showSettings) {
         SettingsScreen(settingsManager = settingsManager, onBack = { showSettings = false })
         return
