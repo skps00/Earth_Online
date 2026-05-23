@@ -12,7 +12,7 @@ data class DashboardUiState(
     val totalCheckins: Long = 0L,
     val totalPoints: Long = 0L,
     val unlockedCount: Int = 0,
-    val totalAchievements: Int = 86,
+    val totalAchievements: Int = 129,
     val playerLevel: Int = 1,
     val levelProgress: Float = 0f,
     val xpToNext: Long = 100L,
