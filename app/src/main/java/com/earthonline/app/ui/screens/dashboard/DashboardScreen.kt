@@ -253,7 +253,7 @@ fun DashboardScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = CardDark),
                         shape = RoundedCornerShape(14.dp)
                     ) {
-                        Text("閮?", color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text("記錄", color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
