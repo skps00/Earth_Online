@@ -42,6 +42,7 @@ import com.earthonline.app.ui.screens.dashboard.AchievementDisplayItem
 import com.earthonline.app.ui.share.ShareHelper
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.CardDark
+import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextPrimaryDark
