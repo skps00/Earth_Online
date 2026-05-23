@@ -144,19 +144,6 @@ fun AchievementUnlockDialog(
                         )
                     }
 
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(event.achievement.title, style = MaterialTheme.typography.titleLarge, color = Gold, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                        Text(event.achievement.description, style = MaterialTheme.typography.bodySmall, color = Color(0xFFB0B0B0), textAlign = TextAlign.Center)
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(stringResource(R.string.reward_points_format, event.achievement.rewardPoints), style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.SemiBold)
-
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Box(
-                            modifier = Modifier.width(40.dp).height(4.dp)
-                                .background(Gold.copy(alpha = 0.4f), RoundedCornerShape(2.dp))
-                        )
-                    }
                 }
             }
         }
