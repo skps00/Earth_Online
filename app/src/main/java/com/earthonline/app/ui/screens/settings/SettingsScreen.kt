@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -81,7 +81,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(R.string.settings_title), color = Gold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
@@ -105,7 +105,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        if (soundOn) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+                        if (soundOn) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
                         null,
                         tint = if (soundOn) EmeraldGreen else TextSecondaryDark
                     )
