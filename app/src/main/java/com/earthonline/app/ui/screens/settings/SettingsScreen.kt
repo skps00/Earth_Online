@@ -54,7 +54,9 @@ import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
-import com.earthonline.app.ui.theme.EmeraldGreen
+import com.earthonline.app.ui.theme.DeepBlue
+import com.earthonline.app.ui.theme.DestructiveRed
+import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
