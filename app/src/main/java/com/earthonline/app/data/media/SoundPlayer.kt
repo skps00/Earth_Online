@@ -7,9 +7,6 @@ object SoundPlayer {
     private var currentPlayer: MediaPlayer? = null
 
     fun play(context: Context, resourceName: String) {
-        val muted = context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
-            .getBoolean("sound_muted", false)
-        if (muted) return
         stop()
         try {
             val resId = context.resources.getIdentifier(resourceName, "raw", context.packageName)
