@@ -3,6 +3,7 @@ package com.earthonline.app.ui.screens.settings
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,6 +62,8 @@ fun SettingsScreen(
     val context = LocalContext.current
     var soundOn by remember { mutableStateOf(settingsManager.soundEnabled) }
     var showClearDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = true) { onBack() }
 
     Scaffold(
         topBar = {

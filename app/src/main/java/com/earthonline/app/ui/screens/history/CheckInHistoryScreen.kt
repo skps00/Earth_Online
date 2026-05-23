@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.screens.history
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -53,6 +54,8 @@ fun CheckInHistoryScreen(
             .toList()
             .sortedByDescending { (_, list) -> list.maxOf { it.timestamp } }
     }
+
+    BackHandler { onBack() }
 
     Scaffold(
         topBar = {
