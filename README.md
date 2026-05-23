@@ -55,7 +55,7 @@
 | 語言 | Kotlin |
 | UI | Jetpack Compose (Material 3) |
 | 架構 | MVVM (ViewModel + StateFlow) |
-| 資料庫 | Room (v6, 4 tables) |
+| 資料庫 | Room (v7, 4 tables) |
 | DI | Hilt |
 | 相機 | CameraX |
 | 定位 | Android LocationManager + Geocoder |
