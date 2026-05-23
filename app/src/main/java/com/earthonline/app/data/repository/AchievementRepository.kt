@@ -184,11 +184,16 @@ class AchievementRepository @Inject constructor(
         return definitionDao.getAll()
     }
 
-    suspend fun getCheckinCount(): Int {
-        return checkInRecordDao.countByUser("local_user")
+    suspend fun getTotalPoints(): Long {
+        val allProgress = progressDao.getAllByUser("local_user")
+        return allProgress.filter { it.isUnlocked }.sumOf { progress ->
+            definitionDao.getById(progress.achievementId)?.rewardPoints?.toLong() ?: 0L
+        }
     }
 
-    suspend fun getAllCheckinRecords(): List<CheckInRecord> {
+    suspend fun getUnlockedCount(): Int {
+        return progressDao.getAllByUser("local_user").count { it.isUnlocked }
+    }(): List<CheckInRecord> {
         return checkInRecordDao.getAllByUser("local_user")
     }
 
@@ -228,6 +233,24 @@ class AchievementRepository @Inject constructor(
 
     suspend fun refreshAll() {
         refreshTotalCheckins()
+    }
+
+    fun computePlayerLevel(totalPoints: Long): Int {
+        return (kotlin.math.sqrt(totalPoints.toDouble() / 100.0) + 1).toInt()
+    }
+
+    fun computeXpToNext(totalPoints: Long): Long {
+        val currentLevel = computePlayerLevel(totalPoints)
+        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong() - 1) * 100
+        return (nextLevelXp - totalPoints).coerceAtLeast(0)
+    }
+
+    fun computeLevelProgress(totalPoints: Long): Float {
+        val xpNeeded = computeXpToNext(totalPoints)
+        val currentLevel = computePlayerLevel(totalPoints)
+        val totalNeeded = ((currentLevel + 1).toLong() * (currentLevel + 1).toLong() - currentLevel.toLong() * currentLevel.toLong()) * 100
+        if (totalNeeded <= 0) return 1f
+        return 1f - (xpNeeded.toFloat() / totalNeeded.toFloat())
     }
 
     suspend fun syncAutoTrackFromHistory() {

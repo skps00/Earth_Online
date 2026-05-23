@@ -10,7 +10,12 @@ data class AchievementDisplayItem(
 
 data class DashboardUiState(
     val totalCheckins: Long = 0L,
-    val achievements: List<AchievementDisplayItem> = emptyList(),
+    val totalPoints: Long = 0L,
+    val unlockedCount: Int = 0,
+    val totalAchievements: Int = 86,
+    val playerLevel: Int = 1,
+    val levelProgress: Float = 0f,
+    val xpToNext: Long = 100L,
     val isLoading: Boolean = true,
     val showCheckinConfirmDialog: Boolean = false,
     val pendingLocation: Pair<Double, Double>? = null,

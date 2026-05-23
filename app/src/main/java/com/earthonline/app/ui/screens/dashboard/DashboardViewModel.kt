@@ -166,10 +166,20 @@ class DashboardViewModel @Inject constructor(
         val allProgress = repository.getAllAchievementProgress()
         val displayItems = AchievementDisplayMapper.map(definitions, allProgress)
         val totalCheckins = repository.getCheckinCount().toLong()
+        val totalPoints = repository.getTotalPoints()
+        val unlockedCount = repository.getUnlockedCount()
+        val level = repository.computePlayerLevel(totalPoints)
+        val progress = repository.computeLevelProgress(totalPoints)
+        val xpNext = repository.computeXpToNext(totalPoints)
 
         _uiState.update {
             it.copy(
                 totalCheckins = totalCheckins,
+                totalPoints = totalPoints,
+                unlockedCount = unlockedCount,
+                playerLevel = level,
+                levelProgress = progress,
+                xpToNext = xpNext,
                 achievements = displayItems
             )
         }
