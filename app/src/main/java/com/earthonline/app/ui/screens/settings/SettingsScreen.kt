@@ -186,6 +186,6 @@ fun SettingsScreen(
             },
             containerColor = DialogDark,
             shape = RoundedCornerShape(16.dp)
-        )
+        )`
     }
 }

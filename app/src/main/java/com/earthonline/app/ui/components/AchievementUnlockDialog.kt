@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -127,13 +128,41 @@ fun AchievementUnlockDialog(
                         Text(stringResource(R.string.achievement_unlocked), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        // Achievement icon
+                        // Achievement icon with firefly particles
+                        val fireflyAlpha by animateFloatAsState(if (visible) 1f else 0f, tween(600), label = "ff")
+                        val starScale by animateFloatAsState(
+                            if (visible) 1f else 0.3f,
+                            spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                            label = "star"
+                        )
                         Box(
-                            modifier = Modifier.size(40.dp).clip(CircleShape)
-                                .background(Brush.radialGradient(listOf(Gold, GoldDark, GoldDark.copy(alpha = 0.3f)))),
+                            modifier = Modifier.size(80.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("★", fontSize = 22.sp, color = DeepBlue)
+                            // Firefly particles
+                            Canvas(modifier = Modifier.fillMaxSize()) {
+                                val fireflies = listOf(
+                                    0.0 to -28.0, 20.0 to -18.0, 28.0 to 4.0, 18.0 to 22.0,
+                                    -5.0 to 28.0, -22.0 to 18.0, -28.0 to -6.0, -18.0 to -20.0
+                                )
+                                fireflies.forEachIndexed { i, (x, y) ->
+                                    val angle = (System.currentTimeMillis() / 800.0 + i * 45.0) % 360.0
+                                    val rad = Math.toRadians(angle)
+                                    val orbit = 28f
+                                    val cx = (x + kotlin.math.cos(rad).toFloat() * 6f + center.x)
+                                    val cy = (y + kotlin.math.sin(rad).toFloat() * 6f + center.y)
+                                    val alpha = ((kotlin.math.sin(angle * 3) + 1) / 2).toFloat() * fireflyAlpha
+                                    drawCircle(Gold, 2.5f, androidx.compose.ui.geometry.Offset(cx, cy), alpha = alpha.coerceIn(0.1f, 0.9f))
+                                }
+                            }
+                            // Star
+                            Box(
+                                modifier = Modifier.size(45.dp).clip(CircleShape)
+                                    .background(Brush.radialGradient(listOf(Gold, GoldDark, GoldDark.copy(alpha = 0.3f)))),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("★", fontSize = 24.sp, color = DeepBlue)
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
