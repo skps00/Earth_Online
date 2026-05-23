@@ -6,12 +6,14 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -48,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.theme.AchievementLocked
+import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
+import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
@@ -57,7 +61,9 @@ import com.earthonline.app.ui.theme.TextSecondaryDark
 @Composable
 fun SettingsScreen(
     settingsManager: SettingsManager,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit
 ) {
     val context = LocalContext.current
     var soundOn by remember { mutableStateOf(settingsManager.soundEnabled) }
@@ -125,6 +131,21 @@ fun SettingsScreen(
                     Icon(Icons.Filled.Settings, null, tint = TextSecondaryDark)
                     Text("應用程式權限", color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                 }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = onExportBackup, modifier = Modifier.weight(1f).height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen.copy(alpha = 0.15f)),
+                    shape = RoundedCornerShape(8.dp)
+                ) { Text("匯出備份", color = EmeraldGreen, fontSize = 13.sp) }
+                Button(
+                    onClick = onImportBackup, modifier = Modifier.weight(1f).height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentOrange.copy(alpha = 0.15f)),
+                    shape = RoundedCornerShape(8.dp)
+                ) { Text("匯入備份", color = AccentOrange, fontSize = 13.sp) }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

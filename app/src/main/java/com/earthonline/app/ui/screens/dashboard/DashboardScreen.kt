@@ -125,7 +125,10 @@ fun DashboardScreen(
     }
 
     if (showSettings) {
-        SettingsScreen(settingsManager = settingsManager, onBack = { showSettings = false })
+        SettingsScreen(
+            settingsManager = settingsManager, onBack = { showSettings = false },
+            onExportBackup = onExportBackup, onImportBackup = onImportBackup
+        )
         return
     }
 
@@ -354,30 +357,6 @@ fun DashboardScreen(
                             }
                             Spacer(modifier = Modifier.height(12.dp))
                         }
-                    }
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = onExportBackup,
-                        modifier = Modifier.weight(1f).height(38.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen.copy(alpha = 0.15f)),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(stringResource(R.string.backup_export), color = EmeraldGreen, fontSize = 12.sp)
-                    }
-                    Button(
-                        onClick = onImportBackup,
-                        modifier = Modifier.weight(1f).height(38.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange.copy(alpha = 0.15f)),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(stringResource(R.string.backup_import), color = AccentOrange, fontSize = 12.sp)
                     }
                 }
             }
