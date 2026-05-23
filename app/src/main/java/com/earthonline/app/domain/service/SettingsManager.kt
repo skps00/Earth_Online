@@ -1,6 +1,7 @@
 package com.earthonline.app.domain.service
 
 import android.content.Context
+import com.earthonline.app.AppConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,7 +10,7 @@ import javax.inject.Singleton
 class SettingsManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val prefs = context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
 
     var soundEnabled: Boolean
         get() = !prefs.getBoolean("sound_muted", false)
@@ -17,6 +18,6 @@ class SettingsManager @Inject constructor(
 
     fun clearAllData() {
         prefs.edit().clear().apply()
-        context.deleteDatabase("earth_online.db")
+        context.deleteDatabase(AppConstants.DATABASE_NAME)
     }
 }

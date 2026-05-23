@@ -1,5 +1,6 @@
 package com.earthonline.app.data.media
 
+import com.earthonline.app.AppConstants
 import android.content.Context
 import android.media.MediaPlayer
 
@@ -7,7 +8,7 @@ object SoundPlayer {
     private var currentPlayer: MediaPlayer? = null
 
     fun play(context: Context, resourceName: String) {
-        val muted = context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
+        val muted = context            .getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean("sound_muted", false)
         if (muted) return
         stop()
