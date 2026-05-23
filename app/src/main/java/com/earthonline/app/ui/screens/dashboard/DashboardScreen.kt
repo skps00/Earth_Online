@@ -30,6 +30,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -77,6 +78,8 @@ import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
 import com.earthonline.app.ui.screens.history.CheckInHistoryScreen
+import com.earthonline.app.ui.screens.settings.SettingsScreen
+import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -95,6 +98,7 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
+    settingsManager: SettingsManager,
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
     onExportBackup: () -> Unit,
@@ -105,18 +109,12 @@ fun DashboardScreen(
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
     var showHistory by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        viewModel.unlockEvent.collect { event ->
-            unlockEvent = null
-            unlockEventKey++
-            unlockEvent = event
-        }
-    }
-
-    LaunchedEffect(showHistory) {
-        if (showHistory) historyRecords = viewModel.getAllCheckinRecords()
+    if (showSettings) {
+        SettingsScreen(settingsManager = settingsManager, onBack = { showSettings = false })
+        return
     }
 
     if (showHistory) {
@@ -168,7 +166,20 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { DashboardHeader() }
+            item {
+                Box {
+                    DashboardHeader()
+                    Button(
+                        onClick = { showSettings = true },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 48.dp, end = 12.dp).size(36.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.1f)),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(4.dp)
+                    ) {
+                        Icon(Icons.Filled.Settings, "設定", tint = Gold.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                    }
+                }
+            }
 
             item { CheckinCounterCard(uiState.totalCheckins) }
 

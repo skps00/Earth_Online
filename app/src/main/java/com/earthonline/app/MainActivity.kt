@@ -18,6 +18,7 @@ import com.earthonline.app.data.location.LocationHelper
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.domain.service.CheckInCoordinator
+import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.screens.dashboard.DashboardEvent
 import com.earthonline.app.ui.screens.dashboard.DashboardScreen
 import com.earthonline.app.ui.screens.dashboard.DashboardViewModel
@@ -39,6 +40,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var checkInCoordinator: CheckInCoordinator
+
+    @Inject
+    lateinit var settingsManager: SettingsManager
 
     private lateinit var viewModel: DashboardViewModel
 
@@ -122,6 +126,7 @@ class MainActivity : ComponentActivity() {
 
                     DashboardScreen(
                         viewModel = vm,
+                        settingsManager = settingsManager,
                         onCheckIn = { requestLocationPermission() },
                         onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
                         onExportBackup = { exportLauncher.launch("earth_online_backup.json") },
