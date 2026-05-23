@@ -49,8 +49,9 @@ fun CheckInHistoryScreen(
     onBack: () -> Unit
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
+    val unknownLabel = stringResource(R.string.unknown_location)
     val grouped = remember(records) {
-        records.groupBy { it.country.ifBlank { stringResource(R.string.unknown_location) } }
+        records.groupBy { it.country.ifBlank { unknownLabel } }
             .toList()
             .sortedByDescending { (_, list) -> list.maxOf { it.timestamp } }
     }
