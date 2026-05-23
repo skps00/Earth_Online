@@ -176,7 +176,7 @@ fun SettingsScreen(
                     onClick = {
                         settingsManager.clearAllData()
                         showClearDialog = false
-                        Toast.makeText(context, stringResource(R.string.data_cleared_toast), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.data_cleared_toast), Toast.LENGTH_LONG).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = DestructiveRed)
                 ) { Text(stringResource(R.string.confirm_clear_label), color = Color.White) }
