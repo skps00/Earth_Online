@@ -2,7 +2,6 @@ package com.earthonline.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -36,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -117,20 +115,34 @@ fun AchievementUnlockDialog(
                         )
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(20.dp),
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("成就解鎖！", color = Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Text("成就解鎖！", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                        Spacer(modifier = Modifier.height(6.dp))
 
+                        // Achievement icon
                         Box(
-                            modifier = Modifier.size(52.dp).clip(CircleShape)
+                            modifier = Modifier.size(40.dp).clip(CircleShape)
                                 .background(Brush.radialGradient(listOf(Gold, GoldDark, GoldDark.copy(alpha = 0.3f)))),
                             contentAlignment = Alignment.Center
                         ) {
-                            val shimmer by animateFloatAsState(if (visible) 1f else 0f, tween(800), label = "shimmer")
-                            Text("★", fontSize = 28.sp, color = Color(0xFF1A1A2E), modifier = Modifier.alpha(shimmer))
+                            Text("★", fontSize = 22.sp, color = Color(0xFF1A1A2E))
                         }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(event.achievement.title, style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Text(event.achievement.description, style = MaterialTheme.typography.bodySmall, color = Color(0xFFB0B0B0), textAlign = TextAlign.Center)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(stringResource(R.string.reward_points_format, event.achievement.rewardPoints), fontSize = 16.sp, color = Gold, fontWeight = FontWeight.SemiBold)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier.width(32.dp).height(3.dp)
+                                .background(Gold.copy(alpha = 0.4f), RoundedCornerShape(2.dp))
+                        )
+                    }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
