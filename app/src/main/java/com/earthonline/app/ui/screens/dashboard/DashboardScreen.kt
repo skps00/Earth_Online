@@ -107,6 +107,14 @@ fun DashboardScreen(
     var showHistory by remember { mutableStateOf(false) }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
+    LaunchedEffect(Unit) {
+        viewModel.unlockEvent.collect { event ->
+            unlockEvent = null
+            unlockEventKey++
+            unlockEvent = event
+        }
+    }
+
     LaunchedEffect(showHistory) {
         if (showHistory) historyRecords = viewModel.getAllCheckinRecords()
     }
