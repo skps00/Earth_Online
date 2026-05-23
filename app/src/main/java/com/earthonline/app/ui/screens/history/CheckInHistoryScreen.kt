@@ -36,6 +36,7 @@ import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
+import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
 import java.text.SimpleDateFormat
