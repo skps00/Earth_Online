@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class CheckInCoordinator @Inject constructor(
     private val locationHelper: LocationHelper
 ) {
-    suspend fun performCheckIn(viewModel: DashboardViewModel): Boolean {
+    fun performCheckIn(viewModel: DashboardViewModel): Boolean {
         val location = locationHelper.getLastLocation() ?: return false
         val (address, country, continent) = locationHelper.reverseGeocode(location.latitude, location.longitude)
         viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)

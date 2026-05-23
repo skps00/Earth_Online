@@ -139,10 +139,8 @@ class MainActivity : ComponentActivity() {
 
     private fun handleCheckIn() {
         if (!hasLocationPermission) { requestLocationPermission(); return }
-        lifecycleScope.launch {
-            if (!checkInCoordinator.performCheckIn(viewModel)) {
-                Toast.makeText(this@MainActivity, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
-            }
+        if (!checkInCoordinator.performCheckIn(viewModel)) {
+            Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
         }
     }
 
