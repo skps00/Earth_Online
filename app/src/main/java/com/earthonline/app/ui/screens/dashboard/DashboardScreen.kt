@@ -192,7 +192,7 @@ fun DashboardScreen(
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(4.dp)
                     ) {
-                        Icon(Icons.Filled.Settings, "閮剖?", tint = Gold.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                        Icon(Icons.Filled.Settings, "設定", tint = Gold.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
                     }
                 }
             }
@@ -237,6 +237,18 @@ fun DashboardScreen(
                             }
                         }
                     }
+                }
+            }
+
+            if (uiState.totalCheckins == 0L) {
+                item {
+                    Text(
+                        stringResource(R.string.empty_checkin_hint),
+                        color = TextSecondaryDark,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
 
