@@ -16,6 +16,7 @@ data class DashboardUiState(
     val playerLevel: Int = 1,
     val levelProgress: Float = 0f,
     val xpToNext: Long = 100L,
+    val achievements: List<AchievementDisplayItem> = emptyList(),
     val isLoading: Boolean = true,
     val showCheckinConfirmDialog: Boolean = false,
     val pendingLocation: Pair<Double, Double>? = null,
