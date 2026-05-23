@@ -120,6 +120,10 @@ fun DashboardScreen(
         }
     }
 
+    LaunchedEffect(showHistory) {
+        if (showHistory) historyRecords = viewModel.getAllCheckinRecords()
+    }
+
     if (showSettings) {
         SettingsScreen(settingsManager = settingsManager, onBack = { showSettings = false })
         return
