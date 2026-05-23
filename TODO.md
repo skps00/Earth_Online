@@ -20,7 +20,7 @@
 ## 🔴 高優先
 
 ### Bug
-- [x] 重開 App 成就牆短暫空白（需打卡一次才刷新）— 已修復
+- [ ] 打卡歷史記錄僅顯示國家，無法顯示街道地址 — 已試 Android Geocoder / Nominatim / getAddressLine(0)，仍僅解析到國家級別，待修
 
 ---
 
