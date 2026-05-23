@@ -80,14 +80,14 @@ fun SettingsScreen(
                         Icon(Icons.Filled.ArrowBack, "返回", tint = Gold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A1A2E))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF1A1A2E))
+                .background(DeepBlue)
                 .padding(padding)
                 .padding(16.dp)
         ) {
@@ -156,8 +156,8 @@ fun SettingsScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Icon(Icons.Filled.Delete, null, tint = Color(0xFFFF4444))
-                Text("清除所有資料", color = Color(0xFFFF4444), fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
+                Icon(Icons.Filled.Delete, null, tint = DestructiveRed)
+                Text("清除所有資料", color = DestructiveRed, fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
             }
         }
     }
@@ -174,13 +174,13 @@ fun SettingsScreen(
                         showClearDialog = false
                         Toast.makeText(context, "資料已清除，請重啟 App", Toast.LENGTH_LONG).show()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF4444))
+                    colors = ButtonDefaults.buttonColors(containerColor = DestructiveRed)
                 ) { Text("確認清除", color = Color.White) }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) { Text("取消", color = TextSecondaryDark) }
             },
-            containerColor = Color(0xFF1E1E3A),
+            containerColor = DialogDark,
             shape = RoundedCornerShape(16.dp)
         )
     }

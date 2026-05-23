@@ -102,7 +102,7 @@ fun AchievementUnlockDialog(
                             dragOffset = (dragOffset + dragAmount).coerceAtMost(0f)
                         }
                     },
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A2E)),
+                colors = CardDefaults.cardColors(containerColor = DeepBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
                 Box(
@@ -110,7 +110,7 @@ fun AchievementUnlockDialog(
                         .fillMaxWidth()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(GoldDark.copy(alpha = 0.3f), Color(0xFF1A1A2E))
+                                colors = listOf(GoldDark.copy(alpha = 0.3f), DeepBlue)
                             )
                         )
                 ) {
@@ -127,7 +127,7 @@ fun AchievementUnlockDialog(
                                 .background(Brush.radialGradient(listOf(Gold, GoldDark, GoldDark.copy(alpha = 0.3f)))),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("★", fontSize = 22.sp, color = Color(0xFF1A1A2E))
+                            Text("★", fontSize = 22.sp, color = DeepBlue)
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))

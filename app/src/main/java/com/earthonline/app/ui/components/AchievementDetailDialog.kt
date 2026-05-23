@@ -140,7 +140,7 @@ fun AchievementDetailDialog(
         dismissButton = {
             if (isManual && !isUnlocked && (!isHidden || revealed)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = onTakeEvidencePhoto, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = Gold), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.evidence_take_photo), color = Color(0xFF1A1A2E), fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+                    Button(onClick = onTakeEvidencePhoto, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = Gold), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.evidence_take_photo), color = DeepBlue, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
                     Button(onClick = onManualConfirm, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.manual_confirm_btn), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
                 }
             }
@@ -148,7 +148,7 @@ fun AchievementDetailDialog(
         confirmButton = {
             Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth().height(44.dp), colors = ButtonDefaults.buttonColors(containerColor = CardDark), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark, fontSize = 14.sp) }
         },
-        containerColor = Color(0xFF1E1E3A),
+        containerColor = DialogDark,
         shape = RoundedCornerShape(16.dp)
     )
 }

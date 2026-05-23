@@ -172,7 +172,7 @@ fun DashboardScreen(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF1A1A2E),
+                            DeepBlue,
                             Color(0xFF16213E),
                             Color(0xFF0F3460)
                         )

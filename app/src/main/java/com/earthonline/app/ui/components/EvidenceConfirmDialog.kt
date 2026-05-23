@@ -51,7 +51,7 @@ fun EvidenceConfirmDialog(
                 Text(stringResource(R.string.evidence_retry_btn), color = TextSecondaryDark)
             }
         },
-        containerColor = Color(0xFF1E1E3A),
+        containerColor = DialogDark,
         shape = RoundedCornerShape(16.dp)
     )
 }

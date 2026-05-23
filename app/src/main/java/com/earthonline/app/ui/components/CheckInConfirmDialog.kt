@@ -46,7 +46,7 @@ fun CheckInConfirmDialog(
                 Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
             }
         },
-        containerColor = Color(0xFF1E1E3A),
+        containerColor = DialogDark,
         shape = RoundedCornerShape(16.dp)
     )
 }

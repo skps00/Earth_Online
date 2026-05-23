@@ -66,14 +66,14 @@ fun CheckInHistoryScreen(
                         Icon(Icons.Filled.ArrowBack, "返回", tint = Gold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A1A2E))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
             )
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF1A1A2E))
+                .background(DeepBlue)
                 .padding(padding),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
         ) {
