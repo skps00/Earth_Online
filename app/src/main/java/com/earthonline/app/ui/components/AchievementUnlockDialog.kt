@@ -131,11 +131,6 @@ fun AchievementUnlockDialog(
 
                         // Achievement icon with firefly particles
                         val fireflyAlpha by animateFloatAsState(if (visible) 1f else 0f, tween(600), label = "ff")
-                        val starScale by animateFloatAsState(
-                            if (visible) 1f else 0.3f,
-                            spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "star"
-                        )
                         Box(
                             modifier = Modifier.size(80.dp),
                             contentAlignment = Alignment.Center
@@ -149,7 +144,6 @@ fun AchievementUnlockDialog(
                                 fireflies.forEachIndexed { i, (x, y) ->
                                     val angle = (System.currentTimeMillis() / 800.0 + i * 45.0) % 360.0
                                     val rad = Math.toRadians(angle)
-                                    val orbit = 28f
                                     val cx = (x + kotlin.math.cos(rad).toFloat() * 6f + center.x)
                                     val cy = (y + kotlin.math.sin(rad).toFloat() * 6f + center.y)
                                     val alpha = ((kotlin.math.sin(angle * 3).toFloat() + 1f) / 2f) * fireflyAlpha
