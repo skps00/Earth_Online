@@ -54,6 +54,14 @@
 - [ ] Evidence 照片清理（取消時刪除暫存照）
 - [ ] Room exportSchema + Version Catalogs
 - [ ] ProGuard / R8 規則驗證
+- [ ] **消除硬編碼**：
+  - [ ] `"local_user"` 重複 24 次 → 抽出 `AppConstants.LOCAL_USER_ID`
+  - [ ] 35+ 個中文字串 → 放入 `strings.xml`（設定頁、歷史頁、等級面板）
+  - [ ] `Color(0xFF1A1A2E)` 重複 11 次 → 改用既有 `DeepBlue`
+  - [ ] `Color(0xFF1E1E3A)` 重複 4 次 → 新增 `DialogDark`
+  - [ ] `"earth_online.db"` / `"earth_online_settings"` 重複 → 常數化
+  - [ ] `SimpleDateFormat("yyyy/MM/dd HH:mm")` 重複 → 共用工具
+  - [ ] 魔法數字（3500ms、0.92f、60.dp 等）→ 具名常數
 
 ### Google Play 上架準備
 - [ ] 隱私權政策網址
