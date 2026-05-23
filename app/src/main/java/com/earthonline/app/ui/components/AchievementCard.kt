@@ -108,7 +108,7 @@ fun AchievementCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (isHidden) stringResource(R.string.hidden_placeholder) else item.definition.title,
+                    text = if (isHidden) "???" else item.definition.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isUnlocked) Gold else if (isHidden) Rarity.LEGENDARY.color.copy(alpha = 0.6f) else TextPrimaryDark,
                     fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal

@@ -60,7 +60,6 @@
     <string name="category_health">🩺 健康</string>
     <string name="category_transport">🚗 交通</string>
     <string name="category_ocean">🌊 大海</string>
-    <string name="hidden_placeholder">???</string>
     <string name="hidden_unlock_hint">達成條件後揭曉</string>
     <string name="hidden_achievement_label">🔒 隱藏成就</string>
     <string name="reveal_achievement_btn">🔓 揭示成就內容</string>

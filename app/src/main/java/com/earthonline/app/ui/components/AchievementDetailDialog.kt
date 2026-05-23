@@ -74,7 +74,7 @@ fun AchievementDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isHidden && !revealed) stringResource(R.string.hidden_placeholder) else item.definition.title,
+                text = if (isHidden && !revealed) "???" else item.definition.title,
                 fontWeight = FontWeight.Bold,
                 color = if (isUnlocked) Gold else if (isHidden && !revealed) Rarity.LEGENDARY.color.copy(alpha = 0.7f) else TextPrimaryDark
             )
