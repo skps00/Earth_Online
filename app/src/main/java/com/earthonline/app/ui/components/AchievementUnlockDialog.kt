@@ -78,22 +78,22 @@ fun AchievementUnlockDialog(
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
+        contentAlignment = Alignment.TopCenter
     ) {
         AnimatedVisibility(
             visible = visible,
-            enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(500)) + fadeIn(tween(400)),
-            exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400)) + fadeOut(tween(300))
+            enter = slideInVertically(initialOffsetY = { -it }, animationSpec = tween(500)) + fadeIn(tween(400)),
+            exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(400)) + fadeOut(tween(300))
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.92f)
-                    .padding(bottom = 24.dp)
+                    .padding(top = 40.dp)
                     .offset { IntOffset(0, dragOffset.roundToInt()) }
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragEnd = {
-                                if (dragOffset > with(density) { 80.dp.toPx() }) {
+                                if (dragOffset < -with(density) { 60.dp.toPx() }) {
                                     visible = false
                                     onDismiss()
                                 }
@@ -101,7 +101,7 @@ fun AchievementUnlockDialog(
                             },
                             onDragCancel = { dragOffset = 0f }
                         ) { _, dragAmount ->
-                            dragOffset = (dragOffset + dragAmount).coerceAtLeast(0f)
+                            dragOffset = (dragOffset + dragAmount).coerceAtMost(0f)
                         }
                     },
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A2E)),
@@ -120,15 +120,6 @@ fun AchievementUnlockDialog(
                         modifier = Modifier.fillMaxWidth().padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Drag handle
-                        Box(
-                            modifier = Modifier
-                                .width(40.dp)
-                                .height(4.dp)
-                                .background(Gold.copy(alpha = 0.4f), RoundedCornerShape(2.dp))
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
                         Text("成就解鎖！", color = Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -147,6 +138,12 @@ fun AchievementUnlockDialog(
                         Text(event.achievement.description, style = MaterialTheme.typography.bodySmall, color = Color(0xFFB0B0B0), textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(stringResource(R.string.reward_points_format, event.achievement.rewardPoints), style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.SemiBold)
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier.width(40.dp).height(4.dp)
+                                .background(Gold.copy(alpha = 0.4f), RoundedCornerShape(2.dp))
+                        )
                     }
                 }
             }
