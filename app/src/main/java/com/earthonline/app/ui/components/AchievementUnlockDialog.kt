@@ -143,8 +143,8 @@ fun AchievementUnlockDialog(
                             // Firefly particles
                             Canvas(modifier = Modifier.fillMaxSize()) {
                                 val fireflies = listOf(
-                                    0.0 to -28.0, 20.0 to -18.0, 28.0 to 4.0, 18.0 to 22.0,
-                                    -5.0 to 28.0, -22.0 to 18.0, -28.0 to -6.0, -18.0 to -20.0
+                                    0f to -28f, 20f to -18f, 28f to 4f, 18f to 22f,
+                                    -5f to 28f, -22f to 18f, -28f to -6f, -18f to -20f
                                 )
                                 fireflies.forEachIndexed { i, (x, y) ->
                                     val angle = (System.currentTimeMillis() / 800.0 + i * 45.0) % 360.0
@@ -152,7 +152,7 @@ fun AchievementUnlockDialog(
                                     val orbit = 28f
                                     val cx = (x + kotlin.math.cos(rad).toFloat() * 6f + center.x)
                                     val cy = (y + kotlin.math.sin(rad).toFloat() * 6f + center.y)
-                                    val alpha = ((kotlin.math.sin(angle * 3) + 1) / 2).toFloat() * fireflyAlpha
+                                    val alpha = ((kotlin.math.sin(angle * 3).toFloat() + 1f) / 2f) * fireflyAlpha
                                     drawCircle(Gold, 2.5f, androidx.compose.ui.geometry.Offset(cx, cy), alpha = alpha.coerceIn(0.1f, 0.9f))
                                 }
                             }
