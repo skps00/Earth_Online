@@ -222,17 +222,17 @@ fun DashboardScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("🏆", fontSize = 18.sp)
                                 Text("${uiState.totalPoints}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("總點數", color = TextSecondaryDark, fontSize = 10.sp)
+                                Text(stringResource(R.string.total_points_label), color = TextSecondaryDark, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("✅", fontSize = 18.sp)
                                 Text("${uiState.unlockedCount}/${uiState.totalAchievements}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("成就", color = TextSecondaryDark, fontSize = 10.sp)
+                                Text(stringResource(R.string.achievements_label), color = TextSecondaryDark, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("📍", fontSize = 18.sp)
                                 Text("${uiState.totalCheckins}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("打卡", color = TextSecondaryDark, fontSize = 10.sp)
+                                Text(stringResource(R.string.checkin_short_label), color = TextSecondaryDark, fontSize = 10.sp)
                             }
                         }
                     }
@@ -260,7 +260,7 @@ fun DashboardScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = CardDark),
                         shape = RoundedCornerShape(14.dp)
                     ) {
-                        Text("記錄", color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.history_label), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }

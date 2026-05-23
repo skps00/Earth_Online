@@ -74,7 +74,7 @@ fun AchievementDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isHidden && !revealed) "???" else item.definition.title,
+                text = if (isHidden && !revealed) stringResource(R.string.hidden_placeholder) else item.definition.title,
                 fontWeight = FontWeight.Bold,
                 color = if (isUnlocked) Gold else if (isHidden && !revealed) Rarity.LEGENDARY.color.copy(alpha = 0.7f) else TextPrimaryDark
             )
@@ -82,7 +82,7 @@ fun AchievementDetailDialog(
         text = {
             if (isHidden && !revealed) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text("🔒 隱藏成就", style = MaterialTheme.typography.bodyMedium, color = TextSecondaryDark)
+                    Text(stringResource(R.string.hidden_achievement_label), style = MaterialTheme.typography.bodyMedium, color = TextSecondaryDark)
                     if (item.definition.hint.isNotBlank()) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("💡 ${item.definition.hint}", style = MaterialTheme.typography.bodySmall, color = Rarity.RARE.color)
@@ -94,7 +94,7 @@ fun AchievementDetailDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Rarity.LEGENDARY.color.copy(alpha = 0.2f)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("🔓 揭示成就內容", color = Rarity.LEGENDARY.color, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.reveal_achievement_btn), color = Rarity.LEGENDARY.color, fontWeight = FontWeight.Bold)
                     }
                 }
             } else {

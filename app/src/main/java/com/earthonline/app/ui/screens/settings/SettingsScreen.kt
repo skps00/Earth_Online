@@ -45,9 +45,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.earthonline.app.R
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AccentOrange
@@ -74,10 +76,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("設定", color = Gold) },
+                title = { Text(stringResource(R.string.settings_title), color = Gold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "返回", tint = Gold)
+                        Icon(Icons.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
@@ -105,7 +107,7 @@ fun SettingsScreen(
                         null,
                         tint = if (soundOn) EmeraldGreen else TextSecondaryDark
                     )
-                    Text("音效", color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Text(stringResource(R.string.sound_label), color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                     Switch(
                         checked = soundOn,
                         onCheckedChange = {
@@ -129,7 +131,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Filled.Settings, null, tint = TextSecondaryDark)
-                    Text("應用程式權限", color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Text(stringResource(R.string.app_permissions_label), color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                 }
             }
 
@@ -140,12 +142,12 @@ fun SettingsScreen(
                     onClick = onExportBackup, modifier = Modifier.weight(1f).height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen.copy(alpha = 0.15f)),
                     shape = RoundedCornerShape(8.dp)
-                ) { Text("匯出備份", color = EmeraldGreen, fontSize = 13.sp) }
+                ) { Text(stringResource(R.string.export_backup_label), color = EmeraldGreen, fontSize = 13.sp) }
                 Button(
                     onClick = onImportBackup, modifier = Modifier.weight(1f).height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = AccentOrange.copy(alpha = 0.15f)),
                     shape = RoundedCornerShape(8.dp)
-                ) { Text("匯入備份", color = AccentOrange, fontSize = 13.sp) }
+                ) { Text(stringResource(R.string.import_backup_label), color = AccentOrange, fontSize = 13.sp) }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -157,7 +159,7 @@ fun SettingsScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(Icons.Filled.Delete, null, tint = DestructiveRed)
-                Text("清除所有資料", color = DestructiveRed, fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
+                Text(stringResource(R.string.clear_all_data_label), color = DestructiveRed, fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
             }
         }
     }
@@ -165,20 +167,20 @@ fun SettingsScreen(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("確認清除", fontWeight = FontWeight.Bold, color = Gold) },
-            text = { Text("這將刪除所有打卡記錄和成就進度，無法復原。", color = TextSecondaryDark) },
+            title = { Text(stringResource(R.string.confirm_clear_label), fontWeight = FontWeight.Bold, color = Gold) },
+            text = { Text(stringResource(R.string.clear_data_warning), color = TextSecondaryDark) },
             confirmButton = {
                 Button(
                     onClick = {
                         settingsManager.clearAllData()
                         showClearDialog = false
-                        Toast.makeText(context, "資料已清除，請重啟 App", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, stringResource(R.string.data_cleared_toast), Toast.LENGTH_LONG).show()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = DestructiveRed)
-                ) { Text("確認清除", color = Color.White) }
+                ) { Text(stringResource(R.string.confirm_clear_label), color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) { Text("取消", color = TextSecondaryDark) }
+                TextButton(onClick = { showClearDialog = false }) { Text(stringResource(R.string.cancel_label), color = TextSecondaryDark) }
             },
             containerColor = DialogDark,
             shape = RoundedCornerShape(16.dp)

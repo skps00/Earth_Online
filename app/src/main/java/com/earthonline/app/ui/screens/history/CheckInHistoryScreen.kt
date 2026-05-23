@@ -50,7 +50,7 @@ fun CheckInHistoryScreen(
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
     val grouped = remember(records) {
-        records.groupBy { it.country.ifBlank { "未知" } }
+        records.groupBy { it.country.ifBlank { stringResource(R.string.unknown_location) } }
             .toList()
             .sortedByDescending { (_, list) -> list.maxOf { it.timestamp } }
     }
@@ -60,10 +60,10 @@ fun CheckInHistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("打卡記錄", color = Gold) },
+                title = { Text(stringResource(R.string.checkin_history_title), color = Gold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "返回", tint = Gold)
+                        Icon(Icons.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)

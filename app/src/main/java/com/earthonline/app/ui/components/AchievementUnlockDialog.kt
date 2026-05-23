@@ -118,7 +118,7 @@ fun AchievementUnlockDialog(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("成就解鎖！", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                        Text(stringResource(R.string.achievement_unlocked), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                         Spacer(modifier = Modifier.height(6.dp))
 
                         // Achievement icon

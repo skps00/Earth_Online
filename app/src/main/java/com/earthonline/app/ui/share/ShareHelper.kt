@@ -3,6 +3,7 @@ package com.earthonline.app.ui.share
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.earthonline.app.R
 
 object ShareHelper {
     fun shareAchievement(
@@ -12,7 +13,7 @@ object ShareHelper {
         points: Int
     ) {
         val uri = ShareCardGenerator.generate(context, title, description, points)
-        val shareText = "我在「地球 Online」解鎖了成就：$title！\n$description\n+$points 點數"
+        val shareText = context.getString(R.string.share_achievement_template, title, description, points)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
             putExtra(Intent.EXTRA_TEXT, shareText)

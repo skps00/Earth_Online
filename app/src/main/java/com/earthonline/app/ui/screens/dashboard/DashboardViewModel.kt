@@ -1,13 +1,16 @@
 package com.earthonline.app.ui.screens.dashboard
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.earthonline.app.R
 import com.earthonline.app.data.backup.BackupManager
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -21,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val repository: AchievementRepository,
-    private val backupManager: BackupManager
+    private val backupManager: BackupManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -42,7 +46,7 @@ class DashboardViewModel @Inject constructor(
                 repository.initializeAchievements()
                 loadAchievementDisplay()
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "初始化失敗") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: context.getString(R.string.init_failed)) }
                 return@launch
             }
 
