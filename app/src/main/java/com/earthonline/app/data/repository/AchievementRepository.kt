@@ -247,16 +247,18 @@ class AchievementRepository @Inject constructor(
 
     fun computeXpToNext(totalPoints: Long): Long {
         val currentLevel = computePlayerLevel(totalPoints)
-        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong() - 1) * 100
+        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * 100
         return (nextLevelXp - totalPoints).coerceAtLeast(0)
     }
 
     fun computeLevelProgress(totalPoints: Long): Float {
-        val xpNeeded = computeXpToNext(totalPoints)
         val currentLevel = computePlayerLevel(totalPoints)
-        val totalNeeded = ((currentLevel + 1).toLong() * (currentLevel + 1).toLong() - currentLevel.toLong() * currentLevel.toLong()) * 100
+        val currentLevelXp = ((currentLevel - 1).toLong() * (currentLevel - 1).toLong()) * 100
+        val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * 100
+        val totalNeeded = nextLevelXp - currentLevelXp
         if (totalNeeded <= 0) return 1f
-        return 1f - (xpNeeded.toFloat() / totalNeeded.toFloat())
+        val earned = totalPoints - currentLevelXp
+        return (earned.toFloat() / totalNeeded.toFloat()).coerceIn(0f, 1f)
     }
 
     suspend fun syncAutoTrackFromHistory() {
