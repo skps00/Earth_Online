@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.AppDatabase
-import com.earthonline.app.AppConstants
+import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
 import com.earthonline.app.data.local.dao.UserAchievementProgressDao
