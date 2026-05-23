@@ -193,7 +193,13 @@ class AchievementRepository @Inject constructor(
 
     suspend fun getUnlockedCount(): Int {
         return progressDao.getAllByUser("local_user").count { it.isUnlocked }
-    }(): List<CheckInRecord> {
+    }
+
+    suspend fun getCheckinCount(): Int {
+        return checkInRecordDao.countByUser("local_user")
+    }
+
+    suspend fun getAllCheckinRecords(): List<CheckInRecord> {
         return checkInRecordDao.getAllByUser("local_user")
     }
 
