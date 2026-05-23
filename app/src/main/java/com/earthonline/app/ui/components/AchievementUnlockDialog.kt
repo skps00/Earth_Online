@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.media.SoundPlayer
+import com.earthonline.app.R
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.GoldDark
 import kotlinx.coroutines.delay
