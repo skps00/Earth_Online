@@ -78,6 +78,7 @@ import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
 import com.earthonline.app.ui.screens.history.CheckInHistoryScreen
+import com.earthonline.app.ui.screens.onboarding.OnboardingScreen
 import com.earthonline.app.ui.screens.settings.SettingsScreen
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.share.ShareCardGenerator
@@ -106,12 +107,27 @@ fun DashboardScreen(
     onImportBackup: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
     var showHistory by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
+    var showOnboarding by remember {
+        val shown = context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
+            .getBoolean("onboarding_shown", false)
+        mutableStateOf(!shown)
+    }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
+
+    if (showOnboarding) {
+        OnboardingScreen(onDone = {
+            context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
+                .edit().putBoolean("onboarding_shown", true).apply()
+            showOnboarding = false
+        })
+        return
+    }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
