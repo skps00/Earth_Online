@@ -1,7 +1,6 @@
 package com.earthonline.app.ui.components
 
 import android.media.MediaPlayer
-import com.earthonline.app.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -70,7 +69,7 @@ fun AchievementUnlockDialog(
 
     LaunchedEffect(Unit) {
         try {
-            val mp = MediaPlayer.create(context, R.raw.achievement_unlock)
+            val mp = MediaPlayer.create(context, com.earthonline.app.R.raw.achievement_unlock)
             mp?.start()
             mp?.setOnCompletionListener { it.release() }
         } catch (_: Exception) { }
