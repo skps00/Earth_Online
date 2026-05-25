@@ -32,5 +32,20 @@ data class AchievementDefinitionEntity(
     val rewardPoints: Int = 0,
 
     @ColumnInfo(name = "hint")
-    val hint: String = ""
+    val hint: String = "",
+
+    @ColumnInfo(name = "strength_weight")
+    val strengthWeight: Float = 0f,
+
+    @ColumnInfo(name = "agility_weight")
+    val agilityWeight: Float = 0f,
+
+    @ColumnInfo(name = "intelligence_weight")
+    val intelligenceWeight: Float = 0f,
+
+    @ColumnInfo(name = "charisma_weight")
+    val charismaWeight: Float = 0f,
+
+    @ColumnInfo(name = "vitality_weight")
+    val vitalityWeight: Float = 0f
 )

@@ -328,12 +328,21 @@ class AchievementRepository @Inject constructor(
         for (prog in allProgress) {
             val def = definitionDao.getById(prog.achievementId) ?: continue
             val points = def.rewardPoints.toFloat()
-            val w = PetStatContributions.getWeights(def.achievementId)
-            strengthRaw += points * w.strength
-            agilityRaw += points * w.agility
-            intelligenceRaw += points * w.intelligence
-            charismaRaw += points * w.charisma
-            vitalityRaw += points * w.vitality
+            val hasCustomWeights = def.strengthWeight + def.agilityWeight + def.intelligenceWeight + def.charismaWeight + def.vitalityWeight > 0f
+            if (hasCustomWeights) {
+                strengthRaw += points * def.strengthWeight
+                agilityRaw += points * def.agilityWeight
+                intelligenceRaw += points * def.intelligenceWeight
+                charismaRaw += points * def.charismaWeight
+                vitalityRaw += points * def.vitalityWeight
+            } else {
+                val w = PetStatContributions.getWeights(def.achievementId)
+                strengthRaw += points * w.strength
+                agilityRaw += points * w.agility
+                intelligenceRaw += points * w.intelligence
+                charismaRaw += points * w.charisma
+                vitalityRaw += points * w.vitality
+            }
         }
 
         val divisor = 10f
