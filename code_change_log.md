@@ -304,3 +304,57 @@
 - **變更摘要**：在等級面板下方插入 PetCard
 - **遇到的問題**：無
 - **備註**：P1-3
+
+## 2026-05-25 14:40:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/repository/AchievementRepository.kt
+- **變更摘要**：修正 roundToInt 未解析引用與呼叫語法錯誤
+- **遇到的問題**：
+  - 問題1：`roundToInt` 未解析引用（Unresolved reference: roundToInt）
+    - 解決方案：新增 `import kotlin.math.roundToInt` 導入
+    - 狀態：✅ 已解決
+  - 問題2：`roundToInt` 仍報未解析，因採用 `roundToInt(value)` 頂層函數語法而非擴展函數語法，且 Float 類型需要擴展調用
+    - 解決方案：改寫為 `(strengthRaw / divisor).roundToInt()` 擴展函數語法
+    - 狀態：✅ 已解決
+- **備註**：無
+
+## 2026-05-25 14:50:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/backup/BackupManager.kt
+- **變更摘要**：備份導出/導入加入寵物資料（name/emoji/level/xp/5stats）
+- **遇到的問題**：
+  - 問題1：JSON 備份未包含寵物資料，恢復時寵物遺失
+    - 解決方案：注入 PetDao，導出時 put("pet", JSONObject)，導入時解析並 `petDao.save()`
+    - 狀態：✅ 已解決
+- **備註**：無
+
+## 2026-05-25 15:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/entity/AchievementEvidence.kt
+- **變更摘要**：PK 從 achievementId 改為自增 id: Long = 0，支持一成就保留多證據照
+- **遇到的問題**：無
+- **備註**：為「閱讀10本書」等多次進度成就提供每步單獨拍照保存
+
+## 2026-05-25 15:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/dao/AchievementEvidenceDao.kt
+- **變更摘要**：getByAchievement 簽名改為回傳 List；新增 getLatestByAchievement() 與 getAllByUser()
+- **遇到的問題**：無
+- **備註**：配合 BackupManager 導出全部證據照
+
+## 2026-05-25 15:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/components/AchievementDetailDialog.kt
+- **變更摘要**：支持滾動多張證據照預覽（高 300dp 限制），修復 loadBitmap @Composable 警告與 heightIn 導入
+- **遇到的問題**：
+  - 問題1：在非 Composable 函數內調用 remember 觸發編譯錯誤
+    - 解決方案：為 `loadBitmap` 加上 `@Composable` 註解
+    - 狀態：✅ 已解決
+  - 問題2：多照片時 Dialog 太高溢出、無法看全
+    - 解決方案：使用 `Modifier.heightIn(max = 300.dp).verticalScroll` 使照片區可滾動，收起按鈕固定在底部
+    - 狀態：✅ 已解決
+  - 問題3：`heightIn` 未解析引用
+    - 解決方案：補上 `import androidx.compose.foundation.layout.heightIn`
+    - 狀態：✅ 已解決
+- **備註**：無
+
+## 2026-05-25 15:15:00 操作類型：修改
+- **文件路徑**：TODO.md
+- **變更摘要**：在 TODO.md 與 todowrite 注入 Phase 1.5 - UI Rebuild 大重構計劃，調整中優先 Phase 2 排程
+- **遇到的問題**：無
+- **備註**：無
