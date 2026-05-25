@@ -257,6 +257,13 @@ fun DashboardScreen(
                 }
             }
 
+            item {
+                PetCard(
+                    pet = uiState.pet,
+                    onRename = { newName -> viewModel.onEvent(DashboardEvent.RenamePet(newName)) }
+                )
+            }
+
             if (uiState.totalCheckins == 0L) {
                 item {
                     Text(

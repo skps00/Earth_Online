@@ -8,6 +8,16 @@ data class AchievementDisplayItem(
     val progress: UserAchievementProgressEntity
 )
 
+data class PetUiState(
+    val name: String = "地球精靈",
+    val level: Int = 1,
+    val strength: Int = 0,
+    val agility: Int = 0,
+    val intelligence: Int = 0,
+    val charisma: Int = 0,
+    val vitality: Int = 0
+)
+
 data class DashboardUiState(
     val totalCheckins: Long = 0L,
     val totalPoints: Long = 0L,
@@ -17,6 +27,7 @@ data class DashboardUiState(
     val levelProgress: Float = 0f,
     val xpToNext: Long = 100L,
     val achievements: List<AchievementDisplayItem> = emptyList(),
+    val pet: PetUiState = PetUiState(),
     val isLoading: Boolean = true,
     val showCheckinConfirmDialog: Boolean = false,
     val pendingLocation: Pair<Double, Double>? = null,
@@ -36,4 +47,5 @@ sealed class DashboardEvent {
     data class EvidencePhotoTaken(val achievementId: String, val success: Boolean) : DashboardEvent()
     data object EvidenceConfirmed : DashboardEvent()
     data object EvidenceRejected : DashboardEvent()
+    data class RenamePet(val newName: String) : DashboardEvent()
 }

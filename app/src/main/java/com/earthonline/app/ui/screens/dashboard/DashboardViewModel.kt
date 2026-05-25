@@ -165,6 +165,12 @@ class DashboardViewModel @Inject constructor(
                     viewModelScope.launch { photoManager.deletePhoto(photoPath) }
                 }
             }
+            is DashboardEvent.RenamePet -> {
+                viewModelScope.launch {
+                    repository.renamePet(event.newName)
+                    loadAchievementDisplay()
+                }
+            }
         }
     }
 
@@ -184,6 +190,7 @@ class DashboardViewModel @Inject constructor(
         val level = repository.computePlayerLevel(totalPoints)
         val progress = repository.computeLevelProgress(totalPoints)
         val xpNext = repository.computeXpToNext(totalPoints)
+        val pet = repository.computePetStats()
 
         _uiState.update {
             it.copy(
@@ -193,7 +200,8 @@ class DashboardViewModel @Inject constructor(
                 playerLevel = level,
                 levelProgress = progress,
                 xpToNext = xpNext,
-                achievements = displayItems
+                achievements = displayItems,
+                pet = pet
             )
         }
     }

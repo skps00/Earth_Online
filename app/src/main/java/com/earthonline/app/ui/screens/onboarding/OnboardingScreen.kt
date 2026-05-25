@@ -64,7 +64,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
         Spacer(modifier = Modifier.height(48.dp))
 
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().weight(1f)) { page ->
-            Column(
+            Column( 
                 modifier = Modifier.fillMaxSize().padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center

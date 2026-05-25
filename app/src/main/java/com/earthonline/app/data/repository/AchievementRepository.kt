@@ -5,10 +5,12 @@ import com.earthonline.app.data.local.AchievementSeedData
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
+import com.earthonline.app.data.local.dao.PetDao
 import com.earthonline.app.data.local.dao.UserAchievementProgressDao
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.AchievementEvidence
 import com.earthonline.app.data.local.entity.CheckInRecord
+import com.earthonline.app.data.local.entity.PetEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.AchievementTriggers
 import com.earthonline.app.domain.model.TriggerType
@@ -27,7 +29,8 @@ class AchievementRepository @Inject constructor(
     private val definitionDao: AchievementDefinitionDao,
     private val progressDao: UserAchievementProgressDao,
     private val checkInRecordDao: CheckInRecordDao,
-    private val evidenceDao: AchievementEvidenceDao
+    private val evidenceDao: AchievementEvidenceDao,
+    private val petDao: PetDao
 ) {
     private val _unlockEvents = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
     val unlockEvents: SharedFlow<UnlockedAchievementEvent> = _unlockEvents
@@ -293,5 +296,54 @@ class AchievementRepository @Inject constructor(
                 }
             }
         } catch (_: Exception) { }
+    }
+
+    suspend fun getPet(): PetEntity {
+        val existing = petDao.get()
+        return existing ?: PetEntity().also { petDao.save(it) }
+    }
+
+    suspend fun renamePet(name: String) {
+        val pet = getPet().copy(name = name)
+        petDao.save(pet)
+    }
+
+    suspend fun computePetStats(): com.earthonline.app.ui.screens.dashboard.PetUiState {
+        val pet = getPet()
+        val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
+            .filter { it.isUnlocked }
+
+        var strength = 0
+        var agility = 0
+        var intelligence = 0
+        var charisma = 0
+        var vitality = 0
+
+        for (prog in allProgress) {
+            val def = definitionDao.getById(prog.achievementId) ?: continue
+            val points = def.rewardPoints.toInt()
+            when {
+                def.achievementId.startsWith("epic_") || def.achievementId.startsWith("ocean_") -> strength += points
+                def.achievementId.startsWith("explore_") -> agility += points
+                def.achievementId.startsWith("career_") -> intelligence += points
+                def.achievementId.startsWith("daily_") -> charisma += points
+                def.achievementId.startsWith("health_") || def.achievementId.startsWith("transport_") -> vitality += points
+                else -> { /* checkin/generic — distribute evenly */ }
+            }
+        }
+
+        val divisor = 100
+        val totalPoints = getTotalPoints()
+        val level = computePlayerLevel(totalPoints)
+
+        return com.earthonline.app.ui.screens.dashboard.PetUiState(
+            name = pet.name,
+            level = level,
+            strength = strength / divisor,
+            agility = agility / divisor,
+            intelligence = intelligence / divisor,
+            charisma = charisma / divisor,
+            vitality = vitality / divisor
+        )
     }
 }
