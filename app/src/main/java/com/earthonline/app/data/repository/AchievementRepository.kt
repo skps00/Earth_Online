@@ -18,6 +18,7 @@ import com.earthonline.app.domain.service.PetStatContributions
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import javax.inject.Singleton
 
 data class UnlockedAchievementEvent(
