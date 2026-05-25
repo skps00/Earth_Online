@@ -211,3 +211,24 @@
     - 解決方案：buildAddressString() 只取 subLocality/locality/subAdminArea/adminArea + countryName；Nominatim fallback 也改為從 address JSON 擷取 suburb/town/city/district/county/state 而非 display_name
     - 狀態：✅ 已解決
 - **備註**：若區域名已包含國名（如 "香港"）則不重複加前綴
+
+## 2026-05-25 14:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/photo/PhotoManager.kt
+- **變更摘要**：新增 compressPhoto()（1080p WebP，質量遞減至 ≤200KB）+ EXIF 旋轉修正 + deletePhoto()；P1-1 + P1-2
+- **遇到的問題**：
+  - 無
+- **備註**：照片從原圖數 MB 壓至 ≤200KB WebP，大幅節省儲存空間
+
+## 2026-05-25 14:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
+- **變更摘要**：evidenceCaptureLauncher 先壓縮照片再存路徑 + 分析標籤；P1-1
+- **遇到的問題**：
+  - 無
+- **備註**：壓縮改在 IO 線程非同步執行，不阻塞 UI
+
+## 2026-05-25 14:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
+- **變更摘要**：注入 PhotoManager，EvidenceRejected 時呼叫 deletePhoto() 清理暫存照；P1-2
+- **遇到的問題**：
+  - 無
+- **備註**：PhotoManager 經 Hilt 注入，確認時保留照片，取消時刪除
