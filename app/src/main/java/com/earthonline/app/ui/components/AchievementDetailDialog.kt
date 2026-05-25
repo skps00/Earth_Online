@@ -74,6 +74,7 @@ fun AchievementDetailDialog(
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
     val evidenceCount = allEvidencePaths.size
 
+    @Composable
     fun loadBitmap(path: String) = remember(path) {
         try {
             val uri = android.net.Uri.parse(path)
