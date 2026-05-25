@@ -232,3 +232,75 @@
 - **遇到的問題**：
   - 無
 - **備註**：PhotoManager 經 Hilt 注入，確認時保留照片，取消時刪除
+
+## 2026-05-25 14:15:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/components/EvidenceConfirmDialog.kt
+- **變更摘要**：新增 photoUri 參數，使用 ContentResolver 載入並顯示照片預覽
+- **遇到的問題**：
+  - 問題1：拍完證據照後看不到照片，只能看 AI 標籤
+    - 解決方案：從 URI 透過 ContentResolver 解碼 Bitmap，在對話框顯示預覽
+    - 狀態：✅ 已解決
+- **備註**：同時修正 AchievementDetailDialog.decodeFile(URI) → ContentResolver
+
+## 2026-05-25 14:15:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/components/AchievementDetailDialog.kt
+- **變更摘要**：修正 Bitmap 載入方式：BitmapFactory.decodeFile(URI) → ContentResolver.openInputStream
+- **遇到的問題**：
+  - 問題1：decodeFile() 傳入 content:// URI 無法載入照片
+    - 解決方案：改為 Uri.parse() + contentResolver.openInputStream() + BitmapFactory.decodeStream()
+    - 狀態：✅ 已解決
+- **備註**：無
+
+## 2026-05-25 14:30:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/entity/PetEntity.kt
+- **變更摘要**：建立寵物 Room Entity（id=1，name 可自訂）
+- **遇到的問題**：無
+- **備註**：P1-3 寵物系統 v1
+
+## 2026-05-25 14:30:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/dao/PetDao.kt
+- **變更摘要**：PetDao：save() + get()，單一寵物 CRUD
+- **遇到的問題**：無
+- **備註**：P1-3
+
+## 2026-05-25 14:30:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/PetCard.kt
+- **變更摘要**：寵物卡片 UI：隨機 emoji + 5 條屬性進度條 + 點擊名字可改名
+- **遇到的問題**：無
+- **備註**：P1-3
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/repository/AchievementRepository.kt
+- **變更摘要**：新增 getPet()/renamePet()/computePetStats()，根據成就分類計算五維屬性
+- **遇到的問題**：無
+- **備註**：屬性從成就 rewardPoints 加總：epic/ocean→力量, explore→敏捷, career→智力, daily→魅力, health/transport→體力
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AppDatabase.kt
+- **變更摘要**：version 7→8，加入 PetEntity + PetDao
+- **遇到的問題**：無
+- **備註**：fallbackToDestructiveMigration 自動處理
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/di/DatabaseModule.kt
+- **變更摘要**：新增 providePetDao()
+- **遇到的問題**：無
+- **備註**：無
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardUiState.kt
+- **變更摘要**：新增 PetUiState（name/level/5 stats）+ DashboardEvent.RenamePet
+- **遇到的問題**：無
+- **備註**：P1-3
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
+- **變更摘要**：loadAchievementDisplay() 加入 computePetStats()；onEvent 加入 RenamePet 處理
+- **遇到的問題**：無
+- **備註**：P1-3
+
+## 2026-05-25 14:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardScreen.kt
+- **變更摘要**：在等級面板下方插入 PetCard
+- **遇到的問題**：無
+- **備註**：P1-3
