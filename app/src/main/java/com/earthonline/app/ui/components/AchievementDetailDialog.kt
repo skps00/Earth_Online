@@ -3,6 +3,7 @@ package com.earthonline.app.ui.components
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
@@ -145,7 +148,10 @@ fun AchievementDetailDialog(
                                 }
                             }
                         } else {
-                            allEvidencePaths.forEachIndexed { i, path ->
+                            Column(
+                                modifier = Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState())
+                            ) {
+                                allEvidencePaths.forEachIndexed { i, path ->
                                 val bitmap = loadBitmap(path)
                                 if (bitmap != null) {
                                     Text("#${i + 1}", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
@@ -154,6 +160,7 @@ fun AchievementDetailDialog(
                                     Spacer(modifier = Modifier.height(6.dp))
                                 }
                             }
+                            }  // close scrollable Column
                             Button(
                                 onClick = { showAllEvidence = false },
                                 modifier = Modifier.fillMaxWidth().height(32.dp),
