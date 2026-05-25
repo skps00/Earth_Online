@@ -83,6 +83,9 @@ class DashboardViewModel @Inject constructor(
         when (event) {
             DashboardEvent.CheckInConfirmed -> {
                 val location = _uiState.value.pendingLocation ?: return
+                val country = _uiState.value.pendingCountry
+                val continent = _uiState.value.pendingContinent
+                val address = _uiState.value.pendingAddress
                 _uiState.update {
                     it.copy(
                         showCheckinConfirmDialog = false,
@@ -91,7 +94,7 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
                 viewModelScope.launch {
-                    val events = repository.recordCheckin(location.first, location.second, _uiState.value.pendingCountry, _uiState.value.pendingContinent, _uiState.value.pendingAddress)
+                    val events = repository.recordCheckin(location.first, location.second, country, continent, address)
                     handleUnlockEvents(events)
                     repository.refreshAll()
                     loadAchievementDisplay()
