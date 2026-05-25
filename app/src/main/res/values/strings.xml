@@ -73,7 +73,7 @@
     <string name="empty_checkin_hint">📍 點擊下方按鈕開始你的第一次打卡！</string>
     <string name="level_format">Lv.%d</string>
     <string name="hint_format">💡 %s</string>
-    <string name="progress_format">%d / %d</string>
+    <string name="progress_format">%1$d / %2$d</string>
 
     <string name="onboarding_title_1">歡迎來到地球 Online</string>
     <string name="onboarding_desc_1">你的人生 RPG 正在進行中\n將現實生活遊戲化，自動記錄你的每一個里程碑</string>
