@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.earthonline.app.R
 import com.earthonline.app.data.backup.BackupManager
 import com.earthonline.app.data.local.entity.CheckInRecord
+import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.repository.AchievementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val repository: AchievementRepository,
     private val backupManager: BackupManager,
+    private val photoManager: PhotoManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -151,12 +153,16 @@ class DashboardViewModel @Inject constructor(
                 }
             }
             DashboardEvent.EvidenceRejected -> {
+                val photoPath = _uiState.value.pendingEvidencePhotoPath
                 _uiState.update {
                     it.copy(
                         pendingEvidenceAchievementId = null,
                         pendingEvidencePhotoPath = null,
                         analyzedLabels = emptyList()
                     )
+                }
+                if (photoPath != null) {
+                    viewModelScope.launch { photoManager.deletePhoto(photoPath) }
                 }
             }
         }

@@ -76,12 +76,13 @@ class MainActivity : ComponentActivity() {
         pendingEvidenceAchievementId = null
 
         if (success && uri != null && achievementId != null) {
-            viewModel.setEvidencePhotoPath(achievementId, uri.toString())
-            viewModel.onEvent(DashboardEvent.EvidencePhotoTaken(achievementId, true))
-
             CoroutineScope(Dispatchers.IO).launch {
+                val compressedUri = photoManager.compressPhoto(uri)
+                viewModel.setEvidencePhotoPath(achievementId, compressedUri.toString())
+                viewModel.onEvent(DashboardEvent.EvidencePhotoTaken(achievementId, true))
+
                 try {
-                    val labels = imageAnalyzer.analyze(uri)
+                    val labels = imageAnalyzer.analyze(compressedUri)
                     viewModel.setAnalyzedLabels(labels)
                 } catch (_: Exception) {
                     viewModel.setAnalyzedLabels(emptyList())

@@ -202,3 +202,12 @@
     - 解決方案：在 `_uiState.update` 之前用 `val address = _uiState.value.pendingAddress` 捕捉值，傳入 `recordCheckin` 用本地變數而非 state
     - 狀態：✅ 已解決
 - **備註**：LocationHelper 改寫是正確但非根因；真正 Bug 是 state 讀寫順序錯誤
+
+## 2026-05-25 13:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/location/LocationHelper.kt
+- **變更摘要**：簡化地址顯示為「國家, 區/市」層級，移除街道細節
+- **遇到的問題**：
+  - 問題1：地址太詳細（街道+區+市+國家），用戶只要「香港, 將軍澳」
+    - 解決方案：buildAddressString() 只取 subLocality/locality/subAdminArea/adminArea + countryName；Nominatim fallback 也改為從 address JSON 擷取 suburb/town/city/district/county/state 而非 display_name
+    - 狀態：✅ 已解決
+- **備註**：若區域名已包含國名（如 "香港"）則不重複加前綴
