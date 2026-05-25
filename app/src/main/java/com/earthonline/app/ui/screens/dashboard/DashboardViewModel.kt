@@ -196,7 +196,9 @@ class DashboardViewModel @Inject constructor(
         val level = repository.computePlayerLevel(totalPoints)
         val progress = repository.computeLevelProgress(totalPoints)
         val xpNext = repository.computeXpToNext(totalPoints)
-        val pet = repository.computePetStats()
+        repository.computeAndSavePetStats()
+        val petEntity = repository.getPet()
+        val pet = repository.petToUiState(petEntity)
 
         _uiState.update {
             it.copy(

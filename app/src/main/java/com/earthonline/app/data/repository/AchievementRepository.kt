@@ -313,7 +313,7 @@ class AchievementRepository @Inject constructor(
         petDao.save(pet)
     }
 
-    suspend fun computePetStats(): com.earthonline.app.ui.screens.dashboard.PetUiState {
+    suspend fun computeAndSavePetStats() {
         val pet = getPet()
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
             .filter { it.isUnlocked }
@@ -333,7 +333,7 @@ class AchievementRepository @Inject constructor(
                 def.achievementId.startsWith("career_") -> intelligence += points
                 def.achievementId.startsWith("daily_") -> charisma += points
                 def.achievementId.startsWith("health_") || def.achievementId.startsWith("transport_") -> vitality += points
-                else -> { /* checkin/generic — distribute evenly */ }
+                else -> { /* checkin/generic */ }
             }
         }
 
@@ -341,15 +341,29 @@ class AchievementRepository @Inject constructor(
         val totalPoints = getTotalPoints()
         val level = computePlayerLevel(totalPoints)
 
+        petDao.save(
+            pet.copy(
+                level = level,
+                xp = totalPoints,
+                strength = strength / divisor,
+                agility = agility / divisor,
+                intelligence = intelligence / divisor,
+                charisma = charisma / divisor,
+                vitality = vitality / divisor
+            )
+        )
+    }
+
+    fun petToUiState(pet: PetEntity): com.earthonline.app.ui.screens.dashboard.PetUiState {
         return com.earthonline.app.ui.screens.dashboard.PetUiState(
             name = pet.name,
             emoji = pet.emoji,
-            level = level,
-            strength = strength / divisor,
-            agility = agility / divisor,
-            intelligence = intelligence / divisor,
-            charisma = charisma / divisor,
-            vitality = vitality / divisor
+            level = pet.level,
+            strength = pet.strength,
+            agility = pet.agility,
+            intelligence = pet.intelligence,
+            charisma = pet.charisma,
+            vitality = pet.vitality
         )
     }
 }
