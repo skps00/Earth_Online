@@ -146,10 +146,10 @@ class BackupManager @Inject constructor(
         val petObj = json.optJSONObject("pet")
         if (petObj != null) {
             petDao.save(com.earthonline.app.data.local.entity.PetEntity(
-                name = petObj.optString("name", "地球精靈"),
-                emoji = petObj.optString("emoji", "🐉"),
-                level = petObj.optInt("level", 1),
-                xp = petObj.optLong("xp", 0),
+                name = petObj.optString("name", AppConstants.DEFAULT_PET_NAME),
+                emoji = petObj.optString("emoji", AppConstants.DEFAULT_PET_EMOJI),
+                level = petObj.optInt("level", AppConstants.DEFAULT_PET_LEVEL),
+                xp = petObj.optLong("xp", AppConstants.DEFAULT_PET_XP),
                 strength = petObj.optInt("strength", 0),
                 agility = petObj.optInt("agility", 0),
                 intelligence = petObj.optInt("intelligence", 0),

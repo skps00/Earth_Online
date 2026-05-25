@@ -29,9 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
 import com.earthonline.app.ui.theme.DialogDark
@@ -39,27 +41,27 @@ import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
 
-private val ALL_PETS = listOf(
-    "🐉" to "龍",
-    "🦊" to "狐狸",
-    "🐱" to "貓咪",
-    "🐶" to "小狗",
-    "🦄" to "獨角獸",
-    "🐲" to "青龍",
-    "🐰" to "兔子",
-    "🐼" to "熊貓",
-    "🦋" to "蝴蝶",
-    "🐙" to "章魚",
-    "🐢" to "烏龜",
-    "🦅" to "老鷹"
+private val ALL_PET_EMOJIS = listOf(
+    "🐉" to R.string.stat_strength,
+    "🦊" to R.string.stat_agility,
+    "🐱" to R.string.stat_intelligence,
+    "🐶" to R.string.stat_charisma,
+    "🦄" to R.string.stat_vitality,
+    "🐲" to R.string.stat_strength,
+    "🐰" to R.string.stat_agility,
+    "🐼" to R.string.stat_charisma,
+    "🦋" to R.string.stat_charisma,
+    "🐙" to R.string.stat_intelligence,
+    "🐢" to R.string.stat_vitality,
+    "🦅" to R.string.stat_agility
 )
 
-private val STAT_EXPLANATIONS = mapOf(
-    "💪 力量" to "解鎖 史詩/隱藏 成就",
-    "⚡ 敏捷" to "解鎖 探索/旅遊 成就",
-    "🧠 智力" to "解鎖 職場/學業 成就",
-    "💬 魅力" to "解鎖 日常/社交 成就",
-    "❤️ 體力" to "解鎖 健康/交通 成就"
+private val STAT_KEYS = listOf(
+    Triple(R.string.stat_strength, R.string.stat_strength_desc, EmeraldGreen),
+    Triple(R.string.stat_agility, R.string.stat_agility_desc, AccentOrange),
+    Triple(R.string.stat_intelligence, R.string.stat_intelligence_desc, Gold),
+    Triple(R.string.stat_charisma, R.string.stat_charisma_desc, EmeraldGreen),
+    Triple(R.string.stat_vitality, R.string.stat_vitality_desc, AccentOrange)
 )
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -72,6 +74,9 @@ fun PetCard(
     var showDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf(pet.name) }
     var selectedEmoji by remember { mutableStateOf(pet.emoji) }
+
+    val clickToChange = stringResource(R.string.click_to_change)
+    val levelLabel = stringResource(R.string.level_format, pet.level)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -96,11 +101,7 @@ fun PetCard(
                             showDialog = true
                         }
                     )
-                    Text(
-                        "點擊更換",
-                        color = TextSecondaryDark,
-                        fontSize = 9.sp
-                    )
+                    Text(clickToChange, color = TextSecondaryDark, fontSize = 9.sp)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -117,38 +118,39 @@ fun PetCard(
                             }
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            "Lv.${pet.level}",
-                            color = AccentOrange,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(levelLabel, color = AccentOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     val statMax = (pet.level * 2 + 10).coerceAtLeast(1)
-                    StatBar("💪 力量", pet.strength, statMax, EmeraldGreen)
-                    StatBar("⚡ 敏捷", pet.agility, statMax, AccentOrange)
-                    StatBar("🧠 智力", pet.intelligence, statMax, Gold)
-                    StatBar("💬 魅力", pet.charisma, statMax, EmeraldGreen)
-                    StatBar("❤️ 體力", pet.vitality, statMax, AccentOrange)
+                    val stats = listOf(pet.strength, pet.agility, pet.intelligence, pet.charisma, pet.vitality)
+                    STAT_KEYS.forEachIndexed { i, (labelRes, _, color) ->
+                        StatBar(stringResource(labelRes), stats[i], statMax, color)
+                    }
                 }
             }
         }
     }
 
     if (showDialog) {
+        val customizeTitle = stringResource(R.string.customize_pet_title)
+        val choosePetLabel = stringResource(R.string.choose_pet_label)
+        val petNameLabel = stringResource(R.string.pet_name_label)
+        val statDescLabel = stringResource(R.string.stat_description_label)
+        val confirmLabel = stringResource(R.string.confirm_label)
+        val cancelLabel = stringResource(R.string.cancel_label)
+
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("自訂寵物", fontWeight = FontWeight.Bold, color = Gold) },
+            title = { Text(customizeTitle, fontWeight = FontWeight.Bold, color = Gold) },
             text = {
                 Column {
-                    Text("選擇寵物：", color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(choosePetLabel, color = TextSecondaryDark, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        ALL_PETS.forEach { (emoji, label) ->
+                        ALL_PET_EMOJIS.forEach { (emoji, _) ->
                             val isSelected = emoji == selectedEmoji
                             Card(
                                 modifier = Modifier.size(52.dp).clickable { selectedEmoji = emoji },
@@ -162,13 +164,12 @@ fun PetCard(
                                     modifier = Modifier.padding(4.dp)
                                 ) {
                                     Text(emoji, fontSize = 22.sp)
-                                    Text(label, color = TextSecondaryDark, fontSize = 8.sp)
                                 }
                             }
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("寵物名字：", color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(petNameLabel, color = TextSecondaryDark, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     TextField(
                         value = renameText,
@@ -184,15 +185,15 @@ fun PetCard(
                         )
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("屬性說明：", color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(statDescLabel, color = TextSecondaryDark, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(4.dp))
-                    STAT_EXPLANATIONS.forEach { (label, desc) ->
+                    STAT_KEYS.forEach { (labelRes, descRes, _) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(label, fontSize = 11.sp)
+                            Text(stringResource(labelRes), fontSize = 11.sp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("←", color = TextSecondaryDark, fontSize = 9.sp)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(desc, color = TextSecondaryDark, fontSize = 10.sp)
+                            Text(stringResource(descRes), color = TextSecondaryDark, fontSize = 10.sp)
                         }
                         Spacer(modifier = Modifier.height(2.dp))
                     }
@@ -204,12 +205,12 @@ fun PetCard(
                     onChangeEmoji(selectedEmoji)
                     showDialog = false
                 }) {
-                    Text("確定", color = Gold)
+                    Text(confirmLabel, color = Gold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("取消", color = TextSecondaryDark)
+                    Text(cancelLabel, color = TextSecondaryDark)
                 }
             },
             containerColor = DialogDark,

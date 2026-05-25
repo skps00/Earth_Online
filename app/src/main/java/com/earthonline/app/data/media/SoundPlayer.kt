@@ -8,8 +8,8 @@ object SoundPlayer {
     private var currentPlayer: MediaPlayer? = null
 
     fun play(context: Context, resourceName: String) {
-        val muted = context            .getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
-            .getBoolean("sound_muted", false)
+        val muted = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(AppConstants.KEY_SOUND_MUTED, false)
         if (muted) return
         stop()
         try {

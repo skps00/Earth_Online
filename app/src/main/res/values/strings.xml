@@ -46,6 +46,10 @@
     <string name="clear_data_warning">這將刪除所有打卡記錄和成就進度，無法復原。</string>
     <string name="data_cleared_toast">資料已清除，請重啟 App</string>
     <string name="cancel_label">取消</string>
+    <string name="confirm_label">確定</string>
+    <string name="skip_label">跳過</string>
+    <string name="start_label">開始</string>
+    <string name="next_label">下一步</string>
     <string name="total_points_label">總點數</string>
     <string name="achievements_label">成就</string>
     <string name="checkin_short_label">打卡</string>
@@ -67,4 +71,34 @@
     <string name="init_failed">初始化失敗</string>
     <string name="xp_to_next">%1$d XP to Lv.%2$d</string>
     <string name="empty_checkin_hint">📍 點擊下方按鈕開始你的第一次打卡！</string>
+    <string name="level_format">Lv.%d</string>
+    <string name="hidden_placeholder">???</string>
+    <string name="hint_format">💡 %s</string>
+    <string name="progress_format">%d / %d</string>
+
+    <string name="onboarding_title_1">歡迎來到地球 Online</string>
+    <string name="onboarding_desc_1">你的人生 RPG 正在進行中\n將現實生活遊戲化，自動記錄你的每一個里程碑</string>
+    <string name="onboarding_title_2">打卡記錄生活</string>
+    <string name="onboarding_desc_2">在任何地方打卡\nGPS 自動辨識國家和大洲\n解鎖探索成就</string>
+    <string name="onboarding_title_3">解鎖成就 + 升級</string>
+    <string name="onboarding_desc_3">129 個成就等你挑戰\n累積點數提升玩家等級\n拍照存證、分享成就</string>
+
+    <string name="click_to_change">點擊更換</string>
+    <string name="customize_pet_title">自訂寵物</string>
+    <string name="choose_pet_label">選擇寵物：</string>
+    <string name="pet_name_label">寵物名字：</string>
+    <string name="stat_description_label">屬性說明：</string>
+    <string name="rename_pet_title">為你的寵物命名</string>
+    <string name="new_name_label">輸入新名字</string>
+
+    <string name="stat_strength">💪 力量</string>
+    <string name="stat_agility">⚡ 敏捷</string>
+    <string name="stat_intelligence">🧠 智力</string>
+    <string name="stat_charisma">💬 魅力</string>
+    <string name="stat_vitality">❤️ 體力</string>
+    <string name="stat_strength_desc">解鎖 史詩/隱藏 成就</string>
+    <string name="stat_agility_desc">解鎖 探索/旅遊 成就</string>
+    <string name="stat_intelligence_desc">解鎖 職場/學業 成就</string>
+    <string name="stat_charisma_desc">解鎖 日常/社交 成就</string>
+    <string name="stat_vitality_desc">解鎖 健康/交通 成就</string>
 </resources>

@@ -14,7 +14,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.earthonline.app.data.location.LocationHelper
+import com.earthonline.app.AppConstants
+import com.earthonline.app.R
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.domain.service.CheckInCoordinator
@@ -94,7 +95,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val exportLauncher = registerForActivityResult(
-        ActivityResultContracts.CreateDocument("application/json")
+        ActivityResultContracts.CreateDocument(AppConstants.MIME_JSON)
     ) { uri ->
         if (uri != null) {
             lifecycleScope.launch {
@@ -130,8 +131,8 @@ class MainActivity : ComponentActivity() {
                         settingsManager = settingsManager,
                         onCheckIn = { requestLocationPermission() },
                         onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
-                        onExportBackup = { exportLauncher.launch("earth_online_backup.json") },
-                        onImportBackup = { importLauncher.launch(arrayOf("application/json")) }
+                        onExportBackup = { exportLauncher.launch(AppConstants.DEFAULT_BACKUP_FILENAME) },
+                        onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) }
                     )
                 }
             }

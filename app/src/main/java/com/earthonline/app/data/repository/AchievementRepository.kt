@@ -346,7 +346,7 @@ class AchievementRepository @Inject constructor(
             }
         }
 
-        val divisor = 10f
+        val divisor = AppConstants.STAT_DIVISOR
         val totalPoints = getTotalPoints()
         val level = computePlayerLevel(totalPoints)
 

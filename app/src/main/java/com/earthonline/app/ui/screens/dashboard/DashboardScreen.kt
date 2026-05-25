@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
@@ -115,16 +116,16 @@ fun DashboardScreen(
     var showHistory by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
     var showOnboarding by remember {
-        val shown = context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
-            .getBoolean("onboarding_shown", false)
+        val shown = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(AppConstants.KEY_ONBOARDING_SHOWN, false)
         mutableStateOf(!shown)
     }
     var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
 
     if (showOnboarding) {
         OnboardingScreen(onDone = {
-            context.getSharedPreferences("earth_online_settings", Context.MODE_PRIVATE)
-                .edit().putBoolean("onboarding_shown", true).apply()
+            context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
+                .edit().putBoolean(AppConstants.KEY_ONBOARDING_SHOWN, true).apply()
             showOnboarding = false
         })
         return

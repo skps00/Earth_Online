@@ -13,8 +13,8 @@ class SettingsManager @Inject constructor(
     private val prefs = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
 
     var soundEnabled: Boolean
-        get() = !prefs.getBoolean("sound_muted", false)
-        set(value) = prefs.edit().putBoolean("sound_muted", !value).apply()
+        get() = !prefs.getBoolean(AppConstants.KEY_SOUND_MUTED, false)
+        set(value) = prefs.edit().putBoolean(AppConstants.KEY_SOUND_MUTED, !value).apply()
 
     fun clearAllData() {
         prefs.edit().clear().apply()

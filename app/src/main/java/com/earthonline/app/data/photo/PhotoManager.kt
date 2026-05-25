@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import com.earthonline.app.AppConstants
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,13 +22,13 @@ class PhotoManager @Inject constructor(
 ) {
     private val photoDir: File
         get() {
-            val dir = File(context.filesDir, "photos")
+            val dir = File(context.filesDir, AppConstants.PHOTOS_DIR)
             if (!dir.exists()) dir.mkdirs()
             return dir
         }
 
     fun createPhotoUri(): Uri {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timestamp = SimpleDateFormat(AppConstants.PHOTO_TIMESTAMP_FORMAT, Locale.getDefault()).format(Date())
         val file = File(photoDir, "EARTH_ONLINE_${timestamp}.jpg")
         return FileProvider.getUriForFile(
             context,
@@ -53,7 +54,7 @@ class PhotoManager @Inject constructor(
 
         if (origWidth <= 0 || origHeight <= 0) return originalUri
 
-        val maxDim = 1080
+        val maxDim = AppConstants.MAX_PHOTO_DIM
         val sampleSize = if (origWidth > maxDim || origHeight > maxDim) {
             var ratio = 1
             while (origWidth / ratio > maxDim || origHeight / ratio > maxDim) ratio *= 2
@@ -69,18 +70,18 @@ class PhotoManager @Inject constructor(
 
         val fixed = fixExifOrientation(originalFile.absolutePath, bitmap)
 
-        var quality = 80
+        var quality = AppConstants.INITIAL_WEBP_QUALITY
         var bytes: ByteArray
         do {
             val stream = ByteArrayOutputStream()
             fixed.compress(Bitmap.CompressFormat.WEBP, quality, stream)
             bytes = stream.toByteArray()
-            quality -= 5
-        } while (bytes.size > 200 * 1024 && quality > 10)
+            quality -= AppConstants.QUALITY_STEP
+        } while (bytes.size > AppConstants.MAX_COMPRESSED_SIZE_BYTES && quality > AppConstants.MIN_WEBP_QUALITY)
 
         fixed.recycle()
 
-        val compressedFile = File(photoDir, originalFile.nameWithoutExtension + ".webp")
+        val compressedFile = File(photoDir, originalFile.nameWithoutExtension + AppConstants.WEBP_EXTENSION)
         compressedFile.writeBytes(bytes)
 
         originalFile.delete()
