@@ -14,6 +14,7 @@ import com.earthonline.app.data.local.entity.PetEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.AchievementTriggers
 import com.earthonline.app.domain.model.TriggerType
+import com.earthonline.app.domain.service.PetStatContributions
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
@@ -318,26 +319,24 @@ class AchievementRepository @Inject constructor(
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
             .filter { it.isUnlocked }
 
-        var strength = 0
-        var agility = 0
-        var intelligence = 0
-        var charisma = 0
-        var vitality = 0
+        var strengthRaw = 0f
+        var agilityRaw = 0f
+        var intelligenceRaw = 0f
+        var charismaRaw = 0f
+        var vitalityRaw = 0f
 
         for (prog in allProgress) {
             val def = definitionDao.getById(prog.achievementId) ?: continue
-            val points = def.rewardPoints.toInt()
-            when {
-                def.achievementId.startsWith("epic_") || def.achievementId.startsWith("ocean_") -> strength += points
-                def.achievementId.startsWith("explore_") -> agility += points
-                def.achievementId.startsWith("career_") -> intelligence += points
-                def.achievementId.startsWith("daily_") -> charisma += points
-                def.achievementId.startsWith("health_") || def.achievementId.startsWith("transport_") -> vitality += points
-                else -> { /* checkin/generic */ }
-            }
+            val points = def.rewardPoints.toFloat()
+            val w = PetStatContributions.getWeights(def.achievementId)
+            strengthRaw += points * w.strength
+            agilityRaw += points * w.agility
+            intelligenceRaw += points * w.intelligence
+            charismaRaw += points * w.charisma
+            vitalityRaw += points * w.vitality
         }
 
-        val divisor = 100
+        val divisor = 100f
         val totalPoints = getTotalPoints()
         val level = computePlayerLevel(totalPoints)
 
@@ -345,11 +344,11 @@ class AchievementRepository @Inject constructor(
             pet.copy(
                 level = level,
                 xp = totalPoints,
-                strength = strength / divisor,
-                agility = agility / divisor,
-                intelligence = intelligence / divisor,
-                charisma = charisma / divisor,
-                vitality = vitality / divisor
+                strength = (strengthRaw / divisor).toInt(),
+                agility = (agilityRaw / divisor).toInt(),
+                intelligence = (intelligenceRaw / divisor).toInt(),
+                charisma = (charismaRaw / divisor).toInt(),
+                vitality = (vitalityRaw / divisor).toInt()
             )
         )
     }
