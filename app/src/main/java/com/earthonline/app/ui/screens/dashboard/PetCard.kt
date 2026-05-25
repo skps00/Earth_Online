@@ -125,11 +125,12 @@ fun PetCard(
                         )
                     }
                     Spacer(modifier = Modifier.height(6.dp))
-                    StatBar("💪 力量", pet.strength, EmeraldGreen)
-                    StatBar("⚡ 敏捷", pet.agility, AccentOrange)
-                    StatBar("🧠 智力", pet.intelligence, Gold)
-                    StatBar("💬 魅力", pet.charisma, EmeraldGreen)
-                    StatBar("❤️ 體力", pet.vitality, AccentOrange)
+                    val statMax = (pet.level * 2 + 10).coerceAtLeast(1)
+                    StatBar("💪 力量", pet.strength, statMax, EmeraldGreen)
+                    StatBar("⚡ 敏捷", pet.agility, statMax, AccentOrange)
+                    StatBar("🧠 智力", pet.intelligence, statMax, Gold)
+                    StatBar("💬 魅力", pet.charisma, statMax, EmeraldGreen)
+                    StatBar("❤️ 體力", pet.vitality, statMax, AccentOrange)
                 }
             }
         }
@@ -218,7 +219,7 @@ fun PetCard(
 }
 
 @Composable
-private fun StatBar(label: String, value: Int, color: androidx.compose.ui.graphics.Color) {
+private fun StatBar(label: String, value: Int, max: Int, color: androidx.compose.ui.graphics.Color) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -230,7 +231,7 @@ private fun StatBar(label: String, value: Int, color: androidx.compose.ui.graphi
         }
         Spacer(modifier = Modifier.height(2.dp))
         LinearProgressIndicator(
-            progress = (value / 10f).coerceIn(0f, 1f),
+            progress = (value.toFloat() / max).coerceIn(0f, 1f),
             modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
             color = color,
             trackColor = color.copy(alpha = 0.15f)

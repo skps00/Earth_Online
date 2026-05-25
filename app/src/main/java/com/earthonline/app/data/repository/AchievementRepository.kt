@@ -336,7 +336,7 @@ class AchievementRepository @Inject constructor(
             vitalityRaw += points * w.vitality
         }
 
-        val divisor = 100f
+        val divisor = 10f
         val totalPoints = getTotalPoints()
         val level = computePlayerLevel(totalPoints)
 
@@ -344,11 +344,11 @@ class AchievementRepository @Inject constructor(
             pet.copy(
                 level = level,
                 xp = totalPoints,
-                strength = (strengthRaw / divisor).toInt(),
-                agility = (agilityRaw / divisor).toInt(),
-                intelligence = (intelligenceRaw / divisor).toInt(),
-                charisma = (charismaRaw / divisor).toInt(),
-                vitality = (vitalityRaw / divisor).toInt()
+                strength = kotlin.math.roundToInt(strengthRaw / divisor),
+                agility = kotlin.math.roundToInt(agilityRaw / divisor),
+                intelligence = kotlin.math.roundToInt(intelligenceRaw / divisor),
+                charisma = kotlin.math.roundToInt(charismaRaw / divisor),
+                vitality = kotlin.math.roundToInt(vitalityRaw / divisor)
             )
         )
     }
