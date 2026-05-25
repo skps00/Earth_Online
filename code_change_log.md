@@ -192,3 +192,13 @@
     - 新方案：getFromLocation(5筆) + 評分機制選最詳細結果 + 從 thoroughfare/subThoroughfare/locality/adminArea 手動組裝地址字串；Geocoder.isPresent() false 時 fallback 到 Nominatim
     - 狀態：待驗證（需在實機/模擬器測試）
 - **備註**：日誌規則觸發 — 查閱後確認 ❌ 未解決，基於失敗記錄提出新路徑
+
+## 2026-05-25 13:15:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
+- **變更摘要**：修補 CheckInConfirmed 在清空 state 前先擷取 country/continent/address 到本地變數
+- **遇到的問題**：
+  - 問題1：打卡確認對話框有顯示地址，但歷史頁只顯示國家名（Hong Kong）
+    - 根本原因：`_uiState.update { it.copy(pendingAddress = "") }` 在 `recordCheckin(...)` 之前執行，導致存入資料庫的 address 永遠是空字串
+    - 解決方案：在 `_uiState.update` 之前用 `val address = _uiState.value.pendingAddress` 捕捉值，傳入 `recordCheckin` 用本地變數而非 state
+    - 狀態：✅ 已解決
+- **備註**：LocationHelper 改寫是正確但非根因；真正 Bug 是 state 讀寫順序錯誤
