@@ -150,12 +150,11 @@ fun PetCard(
                         ALL_PETS.forEach { (emoji, label) ->
                             val isSelected = emoji == selectedEmoji
                             Card(
-                                onClick = { selectedEmoji = emoji },
+                                modifier = Modifier.size(52.dp).clickable { selectedEmoji = emoji },
                                 colors = CardDefaults.cardColors(
                                     containerColor = if (isSelected) Gold.copy(alpha = 0.3f) else CardDark
                                 ),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(52.dp)
+                                shape = RoundedCornerShape(8.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
