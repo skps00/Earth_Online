@@ -354,11 +354,11 @@ class AchievementRepository @Inject constructor(
             pet.copy(
                 level = level,
                 xp = totalPoints,
-                strength = kotlin.math.roundToInt(strengthRaw / divisor),
-                agility = kotlin.math.roundToInt(agilityRaw / divisor),
-                intelligence = kotlin.math.roundToInt(intelligenceRaw / divisor),
-                charisma = kotlin.math.roundToInt(charismaRaw / divisor),
-                vitality = kotlin.math.roundToInt(vitalityRaw / divisor)
+                strength = roundToInt(strengthRaw / divisor),
+                agility = roundToInt(agilityRaw / divisor),
+                intelligence = roundToInt(intelligenceRaw / divisor),
+                charisma = roundToInt(charismaRaw / divisor),
+                vitality = roundToInt(vitalityRaw / divisor)
             )
         )
     }
