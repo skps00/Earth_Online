@@ -6,6 +6,7 @@ import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
+import com.earthonline.app.data.local.dao.PetDao
 import com.earthonline.app.data.local.dao.UserAchievementProgressDao
 import com.earthonline.app.data.local.entity.AchievementEvidence
 import com.earthonline.app.data.local.entity.CheckInRecord
@@ -22,7 +23,8 @@ class BackupManager @Inject constructor(
     private val progressDao: UserAchievementProgressDao,
     private val checkInRecordDao: CheckInRecordDao,
     private val evidenceDao: AchievementEvidenceDao,
-    private val definitionDao: AchievementDefinitionDao
+    private val definitionDao: AchievementDefinitionDao,
+    private val petDao: PetDao
 ) {
     private val userId = AppConstants.LOCAL_USER_ID
 
@@ -71,6 +73,21 @@ class BackupManager @Inject constructor(
                 })
             }
             put("evidence", evidenceArray)
+
+            val pet = petDao.get()
+            if (pet != null) {
+                put("pet", JSONObject().apply {
+                    put("name", pet.name)
+                    put("emoji", pet.emoji)
+                    put("level", pet.level)
+                    put("xp", pet.xp)
+                    put("strength", pet.strength)
+                    put("agility", pet.agility)
+                    put("intelligence", pet.intelligence)
+                    put("charisma", pet.charisma)
+                    put("vitality", pet.vitality)
+                })
+            }
         }
 
         context.contentResolver.openOutputStream(uri)?.use { out ->
@@ -124,6 +141,21 @@ class BackupManager @Inject constructor(
                     timestamp = obj.getLong("timestamp")
                 ))
             }
+        }
+
+        val petObj = json.optJSONObject("pet")
+        if (petObj != null) {
+            petDao.save(com.earthonline.app.data.local.entity.PetEntity(
+                name = petObj.optString("name", "地球精靈"),
+                emoji = petObj.optString("emoji", "🐉"),
+                level = petObj.optInt("level", 1),
+                xp = petObj.optLong("xp", 0),
+                strength = petObj.optInt("strength", 0),
+                agility = petObj.optInt("agility", 0),
+                intelligence = petObj.optInt("intelligence", 0),
+                charisma = petObj.optInt("charisma", 0),
+                vitality = petObj.optInt("vitality", 0)
+            ))
         }
     }
 }
