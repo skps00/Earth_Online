@@ -10,6 +10,7 @@ data class AchievementDisplayItem(
 
 data class PetUiState(
     val name: String = "地球精靈",
+    val emoji: String = "🐉",
     val level: Int = 1,
     val strength: Int = 0,
     val agility: Int = 0,
@@ -48,4 +49,5 @@ sealed class DashboardEvent {
     data object EvidenceConfirmed : DashboardEvent()
     data object EvidenceRejected : DashboardEvent()
     data class RenamePet(val newName: String) : DashboardEvent()
+    data class ChangePetEmoji(val emoji: String) : DashboardEvent()
 }

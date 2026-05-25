@@ -171,6 +171,12 @@ class DashboardViewModel @Inject constructor(
                     loadAchievementDisplay()
                 }
             }
+            is DashboardEvent.ChangePetEmoji -> {
+                viewModelScope.launch {
+                    repository.changePetEmoji(event.emoji)
+                    loadAchievementDisplay()
+                }
+            }
         }
     }
 

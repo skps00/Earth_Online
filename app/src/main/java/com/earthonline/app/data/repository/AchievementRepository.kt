@@ -308,6 +308,11 @@ class AchievementRepository @Inject constructor(
         petDao.save(pet)
     }
 
+    suspend fun changePetEmoji(emoji: String) {
+        val pet = getPet().copy(emoji = emoji)
+        petDao.save(pet)
+    }
+
     suspend fun computePetStats(): com.earthonline.app.ui.screens.dashboard.PetUiState {
         val pet = getPet()
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
@@ -338,6 +343,7 @@ class AchievementRepository @Inject constructor(
 
         return com.earthonline.app.ui.screens.dashboard.PetUiState(
             name = pet.name,
+            emoji = pet.emoji,
             level = level,
             strength = strength / divisor,
             agility = agility / divisor,

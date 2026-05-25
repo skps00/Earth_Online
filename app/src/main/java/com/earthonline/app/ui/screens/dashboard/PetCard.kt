@@ -1,9 +1,10 @@
 package com.earthonline.app.ui.screens.dashboard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +17,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -28,27 +29,49 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
+import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
-import java.util.Random
 
+private val ALL_PETS = listOf(
+    "🐉" to "龍",
+    "🦊" to "狐狸",
+    "🐱" to "貓咪",
+    "🐶" to "小狗",
+    "🦄" to "獨角獸",
+    "🐲" to "青龍",
+    "🐰" to "兔子",
+    "🐼" to "熊貓",
+    "🦋" to "蝴蝶",
+    "🐙" to "章魚",
+    "🐢" to "烏龜",
+    "🦅" to "老鷹"
+)
+
+private val STAT_EXPLANATIONS = mapOf(
+    "💪 力量" to "解鎖 史詩/隱藏 成就",
+    "⚡ 敏捷" to "解鎖 探索/旅遊 成就",
+    "🧠 智力" to "解鎖 職場/學業 成就",
+    "💬 魅力" to "解鎖 日常/社交 成就",
+    "❤️ 體力" to "解鎖 健康/交通 成就"
+)
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PetCard(
     pet: PetUiState,
-    onRename: (String) -> Unit
+    onRename: (String) -> Unit,
+    onChangeEmoji: (String) -> Unit
 ) {
-    val petEmojis = listOf("🐉", "🦊", "🐱", "🐶", "🦄", "🐲", "🐰", "🐼", "🦋", "🐙")
-    val emoji = remember { petEmojis[Random().nextInt(petEmojis.size)] }
-
-    var showRenameDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf(pet.name) }
+    var selectedEmoji by remember { mutableStateOf(pet.emoji) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -60,10 +83,26 @@ fun PetCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(emoji, fontSize = 40.sp, modifier = Modifier.scale(scaleX = -1f, scaleY = 1f))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.width(56.dp)
+                ) {
+                    Text(
+                        pet.emoji,
+                        fontSize = 40.sp,
+                        modifier = Modifier.clickable {
+                            selectedEmoji = pet.emoji
+                            renameText = pet.name
+                            showDialog = true
+                        }
+                    )
+                    Text(
+                        "點擊更換",
+                        color = TextSecondaryDark,
+                        fontSize = 9.sp
+                    )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -72,8 +111,9 @@ fun PetCard(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             modifier = Modifier.clickable {
+                                selectedEmoji = pet.emoji
                                 renameText = pet.name
-                                showRenameDialog = true
+                                showDialog = true
                             }
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -84,7 +124,7 @@ fun PetCard(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     StatBar("💪 力量", pet.strength, EmeraldGreen)
                     StatBar("⚡ 敏捷", pet.agility, AccentOrange)
                     StatBar("🧠 智力", pet.intelligence, Gold)
@@ -95,14 +135,41 @@ fun PetCard(
         }
     }
 
-    if (showRenameDialog) {
+    if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showRenameDialog = false },
-            title = { Text("為你的寵物命名", fontWeight = FontWeight.Bold, color = Gold) },
+            onDismissRequest = { showDialog = false },
+            title = { Text("自訂寵物", fontWeight = FontWeight.Bold, color = Gold) },
             text = {
                 Column {
-                    Text("輸入新名字", color = TextSecondaryDark)
+                    Text("選擇寵物：", color = TextSecondaryDark, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(8.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        ALL_PETS.forEach { (emoji, label) ->
+                            val isSelected = emoji == selectedEmoji
+                            Card(
+                                onClick = { selectedEmoji = emoji },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (isSelected) Gold.copy(alpha = 0.3f) else CardDark
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.size(52.dp)
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Text(emoji, fontSize = 22.sp)
+                                    Text(label, color = TextSecondaryDark, fontSize = 8.sp)
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("寵物名字：", color = TextSecondaryDark, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
                     TextField(
                         value = renameText,
                         onValueChange = { renameText = it },
@@ -116,22 +183,36 @@ fun PetCard(
                             cursorColor = Gold
                         )
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("屬性說明：", color = TextSecondaryDark, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    STAT_EXPLANATIONS.forEach { (label, desc) ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(label, fontSize = 11.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("←", color = TextSecondaryDark, fontSize = 9.sp)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(desc, color = TextSecondaryDark, fontSize = 10.sp)
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                    }
                 }
             },
             confirmButton = {
-                androidx.compose.material3.TextButton(onClick = {
+                TextButton(onClick = {
                     if (renameText.isNotBlank()) onRename(renameText.trim())
-                    showRenameDialog = false
+                    onChangeEmoji(selectedEmoji)
+                    showDialog = false
                 }) {
                     Text("確定", color = Gold)
                 }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showRenameDialog = false }) {
+                TextButton(onClick = { showDialog = false }) {
                     Text("取消", color = TextSecondaryDark)
                 }
             },
-            containerColor = com.earthonline.app.ui.theme.DialogDark,
+            containerColor = DialogDark,
             shape = RoundedCornerShape(16.dp)
         )
     }

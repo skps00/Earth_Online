@@ -260,7 +260,8 @@ fun DashboardScreen(
             item {
                 PetCard(
                     pet = uiState.pet,
-                    onRename = { newName -> viewModel.onEvent(DashboardEvent.RenamePet(newName)) }
+                    onRename = { newName -> viewModel.onEvent(DashboardEvent.RenamePet(newName)) },
+                    onChangeEmoji = { emoji -> viewModel.onEvent(DashboardEvent.ChangePetEmoji(emoji)) }
                 )
             }
 

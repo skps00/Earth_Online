@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "pet")
 data class PetEntity(
     @PrimaryKey val id: Int = 1,
-    @ColumnInfo(name = "name") val name: String = "地球精靈"
+    @ColumnInfo(name = "name") val name: String = "地球精靈",
+    @ColumnInfo(name = "emoji") val emoji: String = "🐉"
 )
