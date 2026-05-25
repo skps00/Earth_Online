@@ -54,12 +54,10 @@ class LocationHelper @Inject constructor(
 
         return addresses.maxByOrNull { addr ->
             var score = 0
-            if (!addr.thoroughfare.isNullOrBlank()) score += 10
-            if (!addr.subThoroughfare.isNullOrBlank()) score += 5
-            if (!addr.locality.isNullOrBlank()) score += 3
-            if (!addr.subLocality.isNullOrBlank()) score += 2
+            if (!addr.subLocality.isNullOrBlank()) score += 10
+            if (!addr.locality.isNullOrBlank()) score += 5
+            if (!addr.subAdminArea.isNullOrBlank()) score += 3
             if (!addr.adminArea.isNullOrBlank()) score += 1
-            if (!addr.getAddressLine(0).isNullOrBlank()) score += 8
             score
         }
     }
@@ -68,32 +66,23 @@ class LocationHelper @Inject constructor(
     private fun buildAddressString(addr: Address?): String {
         if (addr == null) return ""
 
-        val line = addr.getAddressLine(0)
-        if (!line.isNullOrBlank()) {
-            return line
-                .removeSuffix(", ${addr.countryName}")
-                .removeSuffix(addr.countryName ?: "")
-                .trim(',', ' ')
+        val country = addr.countryName ?: ""
+        val district = addr.subLocality
+            ?: addr.locality
+            ?: addr.subAdminArea
+            ?: addr.adminArea
+            ?: ""
+
+        if (district.isBlank()) return country
+        if (country.isNotBlank() && !district.contains(country)) {
+            return "$country, $district"
         }
-
-        val parts = mutableListOf<String>()
-
-        val street = buildString {
-            addr.subThoroughfare?.let { append(it) }
-            addr.thoroughfare?.let { append(" $it") }
-        }.trim()
-        if (street.isNotBlank()) parts.add(street)
-
-        addr.subLocality?.let { if (it.isNotBlank()) parts.add(it) }
-        addr.locality?.let { if (it.isNotBlank()) parts.add(it) }
-        addr.adminArea?.let { if (it.isNotBlank()) parts.add(it) }
-
-        return parts.joinToString(", ")
+        return district
     }
 
     private fun nominationFallback(latitude: Double, longitude: Double): Triple<String, String, String> {
         return try {
-            val url = java.net.URL("https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1")
+            val url = java.net.URL("https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=12&addressdetails=1")
             val conn = url.openConnection() as java.net.HttpURLConnection
             conn.setRequestProperty("User-Agent", "EarthOnlineApp/1.0")
             conn.connectTimeout = 5000
@@ -103,14 +92,32 @@ class LocationHelper @Inject constructor(
             conn.disconnect()
 
             val json = org.json.JSONObject(text)
-            val displayName = json.optString("display_name", "")
             val addressObj = json.optJSONObject("address")
             val country = addressObj?.optString("country", "") ?: ""
+
+            val district = addressObj?.let { obj ->
+                obj.optString("suburb", "")
+                    .ifBlank { obj.optString("town", "") }
+                    .ifBlank { obj.optString("city", "") }
+                    .ifBlank { obj.optString("district", "") }
+                    .ifBlank { obj.optString("county", "") }
+                    .ifBlank { obj.optString("state", "") }
+            } ?: ""
+
+            val display = buildDisplayString(country, district)
             val continent = ContinentMapper.continentOf(country)
 
-            Triple(displayName, country, continent)
+            Triple(display, country, continent)
         } catch (_: Exception) {
             Triple("", "", "")
         }
+    }
+
+    private fun buildDisplayString(country: String, district: String): String {
+        if (district.isBlank()) return country
+        if (country.isNotBlank() && !district.contains(country)) {
+            return "$country, $district"
+        }
+        return district
     }
 }
