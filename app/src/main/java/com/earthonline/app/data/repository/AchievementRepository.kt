@@ -179,6 +179,10 @@ class AchievementRepository @Inject constructor(
     }
 
     suspend fun getEvidence(achievementId: String): AchievementEvidence? {
+        return evidenceDao.getLatestByAchievement(achievementId, AppConstants.LOCAL_USER_ID)
+    }
+
+    suspend fun getAllEvidenceForAchievement(achievementId: String): List<AchievementEvidence> {
         return evidenceDao.getByAchievement(achievementId, AppConstants.LOCAL_USER_ID)
     }
 

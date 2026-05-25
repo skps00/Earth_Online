@@ -227,6 +227,10 @@ class DashboardViewModel @Inject constructor(
         return repository.getEvidence(achievementId)?.photoPath
     }
 
+    suspend fun getAllEvidencePhotos(achievementId: String): List<String> {
+        return repository.getAllEvidenceForAchievement(achievementId).map { it.photoPath }
+    }
+
     suspend fun getAllCheckinRecords(): List<CheckInRecord> {
         return repository.getAllCheckinRecords()
     }

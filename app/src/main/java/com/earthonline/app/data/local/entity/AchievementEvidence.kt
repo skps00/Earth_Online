@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "achievement_evidence")
 data class AchievementEvidence(
-    @PrimaryKey @ColumnInfo(name = "achievement_id") val achievementId: String,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "achievement_id") val achievementId: String,
     @ColumnInfo(name = "user_id") val userId: String,
     @ColumnInfo(name = "photo_path") val photoPath: String,
     @ColumnInfo(name = "detected_labels") val detectedLabels: String,

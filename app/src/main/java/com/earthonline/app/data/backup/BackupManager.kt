@@ -61,9 +61,7 @@ class BackupManager @Inject constructor(
             put("checkinRecords", checkinArray)
 
             val evidenceArray = JSONArray()
-            val allEvidence = progressDao.getAllByUser(userId).mapNotNull {
-                evidenceDao.getByAchievement(it.achievementId, userId)
-            }
+            val allEvidence = evidenceDao.getAllByUser(userId)
             allEvidence.forEach { e ->
                 evidenceArray.put(JSONObject().apply {
                     put("achievementId", e.achievementId)

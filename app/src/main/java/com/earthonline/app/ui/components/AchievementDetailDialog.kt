@@ -56,6 +56,7 @@ import java.util.Locale
 fun AchievementDetailDialog(
     item: AchievementDisplayItem,
     evidencePhotoPath: String?,
+    allEvidencePaths: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onTakeEvidencePhoto: () -> Unit,
     onManualConfirm: () -> Unit
@@ -68,8 +69,17 @@ fun AchievementDetailDialog(
     val isHidden = item.definition.isHidden && !isUnlocked
     var revealed by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var showAllEvidence by remember { mutableStateOf(false) }
 
     val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
+    val evidenceCount = allEvidencePaths.size
+
+    fun loadBitmap(path: String) = remember(path) {
+        try {
+            val uri = android.net.Uri.parse(path)
+            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
+        } catch (_: Exception) { null }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -115,31 +125,55 @@ fun AchievementDetailDialog(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(stringResource(R.string.reward_points_format, item.definition.rewardPoints), style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.SemiBold)
 
-                    if (isUnlocked) {
-                        if (evidencePhotoPath != null) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            val bitmap = remember(evidencePhotoPath) {
-                                try {
-                                    val uri = android.net.Uri.parse(evidencePhotoPath)
-                                    context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
-                                } catch (_: Exception) { null }
-                            }
+                    if (isUnlocked && evidenceCount > 0) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        if (!showAllEvidence) {
+                            val bitmap = evidencePhotoPath?.let { loadBitmap(it) }
                             if (bitmap != null) {
                                 Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)))
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
+                            }
+                            if (evidenceCount > 1) {
+                                Button(
+                                    onClick = { showAllEvidence = true },
+                                    modifier = Modifier.fillMaxWidth().height(32.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text("查看全部 ${evidenceCount} 張證據照", color = Gold, fontSize = 11.sp)
+                                }
+                            }
+                        } else {
+                            allEvidencePaths.forEachIndexed { i, path ->
+                                val bitmap = loadBitmap(path)
+                                if (bitmap != null) {
+                                    Text("#${i + 1}", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(10.dp)))
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                }
+                            }
+                            Button(
+                                onClick = { showAllEvidence = false },
+                                modifier = Modifier.fillMaxWidth().height(32.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("收起", color = TextSecondaryDark, fontSize = 11.sp)
                             }
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = { ShareHelper.shareAchievement(context, item.definition.title, item.definition.description, item.definition.rewardPoints) },
-                            modifier = Modifier.fillMaxWidth().height(40.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Icon(Icons.Filled.Share, null, tint = Gold, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(stringResource(R.string.share_achievement), color = Gold, fontSize = 13.sp)
-                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { ShareHelper.shareAchievement(context, item.definition.title, item.definition.description, item.definition.rewardPoints) },
+                        modifier = Modifier.fillMaxWidth().height(40.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Icon(Icons.Filled.Share, null, tint = Gold, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.share_achievement), color = Gold, fontSize = 13.sp)
                     }
                 }
             }

@@ -172,10 +172,17 @@ fun DashboardScreen(
 
     var selectedAchievement by remember { mutableStateOf<AchievementDisplayItem?>(null) }
     var selectedEvidencePath by remember { mutableStateOf<String?>(null) }
+    var selectedAllEvidencePaths by remember { mutableStateOf<List<String>>(emptyList()) }
 
     LaunchedEffect(selectedAchievement) {
         val id = selectedAchievement?.definition?.achievementId
-        selectedEvidencePath = if (id != null) viewModel.getEvidencePhoto(id) else null
+        if (id != null) {
+            selectedEvidencePath = viewModel.getEvidencePhoto(id)
+            selectedAllEvidencePaths = viewModel.getAllEvidencePhotos(id)
+        } else {
+            selectedEvidencePath = null
+            selectedAllEvidencePaths = emptyList()
+        }
     }
 
     val sections = AchievementCategories.getAll(uiState.achievements)
@@ -421,7 +428,8 @@ fun DashboardScreen(
             AchievementDetailDialog(
                 item = item,
                 evidencePhotoPath = selectedEvidencePath,
-                onDismiss = { selectedAchievement = null; selectedEvidencePath = null },
+                allEvidencePaths = selectedAllEvidencePaths,
+                onDismiss = { selectedAchievement = null; selectedEvidencePath = null; selectedAllEvidencePaths = emptyList() },
                 onTakeEvidencePhoto = {
                     selectedAchievement = null
                     onTakeEvidencePhoto(item.definition.achievementId)
