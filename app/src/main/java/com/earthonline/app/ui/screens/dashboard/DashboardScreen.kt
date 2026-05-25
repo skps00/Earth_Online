@@ -434,6 +434,7 @@ fun DashboardScreen(
 
         if (uiState.pendingEvidenceAchievementId != null && uiState.pendingEvidencePhotoPath != null) {
             EvidenceConfirmDialog(
+                photoUri = uiState.pendingEvidencePhotoPath,
                 analyzedLabels = uiState.analyzedLabels,
                 onConfirm = { viewModel.onEvent(DashboardEvent.EvidenceConfirmed) },
                 onDismiss = { viewModel.onEvent(DashboardEvent.EvidenceRejected) }

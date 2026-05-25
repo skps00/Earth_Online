@@ -1,7 +1,11 @@
 package com.earthonline.app.ui.components
 
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -9,8 +13,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,18 +32,38 @@ import com.earthonline.app.ui.theme.TextSecondaryDark
 
 @Composable
 fun EvidenceConfirmDialog(
+    photoUri: String?,
     analyzedLabels: List<String>,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+    val bitmap = remember(photoUri) {
+        if (photoUri == null) return@remember null
+        try {
+            val uri = Uri.parse(photoUri)
+            context.contentResolver.openInputStream(uri)?.use { stream ->
+                BitmapFactory.decodeStream(stream)
+            }
+        } catch (_: Exception) { null }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.evidence_confirm_title), fontWeight = FontWeight.Bold, color = Gold) },
         text = {
             Column {
                 Text(stringResource(R.string.evidence_confirm_message), color = TextSecondaryDark)
-                if (analyzedLabels.isNotEmpty()) {
+                if (bitmap != null) {
                     Spacer(modifier = Modifier.height(8.dp))
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(12.dp))
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                if (analyzedLabels.isNotEmpty()) {
                     analyzedLabels.forEach { label ->
                         Text("• $label", color = TextSecondaryDark, fontSize = 13.sp)
                     }

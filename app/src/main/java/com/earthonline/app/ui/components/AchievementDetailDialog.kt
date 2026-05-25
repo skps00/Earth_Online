@@ -118,7 +118,12 @@ fun AchievementDetailDialog(
                     if (isUnlocked) {
                         if (evidencePhotoPath != null) {
                             Spacer(modifier = Modifier.height(8.dp))
-                            val bitmap = remember(evidencePhotoPath) { try { BitmapFactory.decodeFile(evidencePhotoPath) } catch (_: Exception) { null } }
+                            val bitmap = remember(evidencePhotoPath) {
+                                try {
+                                    val uri = android.net.Uri.parse(evidencePhotoPath)
+                                    context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
+                                } catch (_: Exception) { null }
+                            }
                             if (bitmap != null) {
                                 Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)))
                                 Spacer(modifier = Modifier.height(8.dp))
