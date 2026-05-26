@@ -95,7 +95,6 @@ fun DashboardScreen(
     viewModel: DashboardViewModel,
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
-    onNavigateToHistory: () -> Unit = {},
     showOnlyAchievementWall: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -237,28 +236,15 @@ fun DashboardScreen(
             }
 
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Button(
+                    onClick = onCheckIn,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
+                    shape = RoundedCornerShape(14.dp)
                 ) {
-                    Button(
-                        onClick = onCheckIn,
-                        modifier = Modifier.weight(1f).height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Icon(Icons.Filled.LocationOn, null, tint = Color.White, modifier = Modifier.size(22.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.checkin_label), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    }
-                    Button(
-                        onClick = { unlockEvent = null; onNavigateToHistory() },
-                        modifier = Modifier.weight(0.4f).height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = CardDark),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Text(stringResource(R.string.history_label), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    }
+                    Icon(Icons.Filled.LocationOn, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(stringResource(R.string.checkin_label), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
 

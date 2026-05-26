@@ -117,8 +117,7 @@ fun AppNavigation(
                 DashboardScreen(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
-                    onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    onNavigateToHistory = { navController.navigate(Screen.History.route) }
+                    onTakeEvidencePhoto = onTakeEvidencePhoto
                 )
             }
 
