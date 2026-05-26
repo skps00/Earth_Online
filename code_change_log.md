@@ -358,3 +358,27 @@
 - **變更摘要**：在 TODO.md 與 todowrite 注入 Phase 1.5 - UI Rebuild 大重構計劃，調整中優先 Phase 2 排程
 - **遇到的問題**：無
 - **備註**：無
+
+## 2026-05-25 16:00:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/navigation/Screen.kt
+- **變更摘要**：建立 Screen sealed class 定義 4 個底部導航目標（Dashboard / Achievements / History / Settings）
+- **遇到的問題**：無
+- **備註**：U-1 導航系統搭建
+
+## 2026-05-25 16:00:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/navigation/AppNavigation.kt
+- **變更摘要**：實作 AppNavigation — NavHost + BottomNavBar + 4 頁籤導航，承擔 Onboarding 邏輯管理
+- **遇到的問題**：無
+- **備註**：U-1 + U-2 + U-5 一併完成
+
+## 2026-05-25 16:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardScreen.kt
+- **變更摘要**：移除 flag-based 導航（showHistory/showSettings），新增 Nav 回調參數，加入 showOnlyAchievementWall 模式供成就 Tab 使用
+- **遇到的問題**：無
+- **備註**：U-1 完成後 DashboardScreen 不再包含 History/Settings 條件渲染
+
+## 2026-05-25 16:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
+- **變更摘要**：改呼叫 AppNavigation 而非直接渲染 DashboardScreen
+- **遇到的問題**：無
+- **備註**：U-1
