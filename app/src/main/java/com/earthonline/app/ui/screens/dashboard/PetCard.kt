@@ -1,7 +1,11 @@
 package com.earthonline.app.ui.screens.dashboard
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,6 +27,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,10 +44,13 @@ import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.CardDark
+import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 import com.earthonline.app.ui.theme.TextSecondaryDark
+import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 private val ALL_PET_EMOJIS = listOf(
     "🐉" to R.string.stat_strength,
@@ -54,6 +65,19 @@ private val ALL_PET_EMOJIS = listOf(
     "🐙" to R.string.stat_intelligence,
     "🐢" to R.string.stat_vitality,
     "🦅" to R.string.stat_agility
+)
+
+private val SPEECH_BUBBLES = listOf(
+    "今天去哪冒險？",
+    "力量充沛！",
+    "一起探索吧～",
+    "新成就快到手了！",
+    "打卡了沒呀？",
+    "加油加油！",
+    "世界很大，去看看吧",
+    "乾巴爹！",
+    "休息是為了走更遠的路",
+    "我在這裡陪著你 ✨"
 )
 
 private val STAT_KEYS = listOf(
@@ -74,6 +98,22 @@ fun PetCard(
     var showDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf(pet.name) }
     var selectedEmoji by remember { mutableStateOf(pet.emoji) }
+    var bounceTrigger by remember { mutableStateOf(0) }
+    val bounceScale by animateFloatAsState(
+        targetValue = if (bounceTrigger > 0) 1.3f else 1f,
+        animationSpec = spring(dampingRatio = 0.4f, stiffness = 400f),
+        finishedListener = { if (bounceTrigger > 0) bounceTrigger = 0 }
+    )
+
+    var bubbleIndex by remember { mutableStateOf(-1) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(5000 + Random.nextLong(5000))
+            bubbleIndex = Random.nextInt(SPEECH_BUBBLES.size)
+            delay(4000)
+            bubbleIndex = -1
+        }
+    }
 
     val clickToChange = stringResource(R.string.click_to_change)
     val levelLabel = stringResource(R.string.level_format, pet.level)
@@ -88,20 +128,44 @@ fun PetCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.width(56.dp)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.width(56.dp).height(80.dp)
                 ) {
-                    Text(
-                        pet.emoji,
-                        fontSize = 40.sp,
-                        modifier = Modifier.clickable {
-                            selectedEmoji = pet.emoji
-                            renameText = pet.name
-                            showDialog = true
+                    if (bubbleIndex >= 0) {
+                        Box(
+                            modifier = Modifier.align(Alignment.TopCenter).offset(y = (-2).dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                SPEECH_BUBBLES[bubbleIndex],
+                                color = DeepBlue,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 6.dp, vertical = 3.dp)
+                            )
                         }
-                    )
-                    Text(clickToChange, color = TextSecondaryDark, fontSize = 9.sp)
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.align(Alignment.Center)
+                    ) {
+                        Text(
+                            pet.emoji,
+                            fontSize = 40.sp,
+                            modifier = Modifier
+                                .scale(bounceScale)
+                                .clickable {
+                                    bounceTrigger++
+                                    selectedEmoji = pet.emoji
+                                    renameText = pet.name
+                                    showDialog = true
+                                }
+                        )
+                        Text(clickToChange, color = TextSecondaryDark, fontSize = 9.sp)
+                    }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -112,6 +176,7 @@ fun PetCard(
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             modifier = Modifier.clickable {
+                                bounceTrigger++
                                 selectedEmoji = pet.emoji
                                 renameText = pet.name
                                 showDialog = true
@@ -220,7 +285,7 @@ fun PetCard(
 }
 
 @Composable
-private fun StatBar(label: String, value: Int, max: Int, color: androidx.compose.ui.graphics.Color) {
+private fun StatBar(label: String, value: Int, max: Int, color: Color) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
