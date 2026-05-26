@@ -76,7 +76,6 @@ import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
-import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -96,14 +95,10 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    settingsManager: SettingsManager,
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
-    onExportBackup: () -> Unit,
-    onImportBackup: () -> Unit,
     onNavigateToHistory: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
-    onNavigateToAchievements: () -> Unit = {},
     onNavigateToDashboard: () -> Unit = {},
     showOnlyAchievementWall: Boolean = false
 ) {

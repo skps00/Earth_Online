@@ -116,28 +116,19 @@ fun AppNavigation(
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
                     viewModel = viewModel,
-                    settingsManager = settingsManager,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    onExportBackup = onExportBackup,
-                    onImportBackup = onImportBackup,
                     onNavigateToHistory = { navController.navigate(Screen.History.route) },
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
-                    onNavigateToAchievements = { navController.navigate(Screen.Achievements.route) }
+                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
                 )
             }
 
             composable(Screen.Achievements.route) {
                 DashboardScreen(
                     viewModel = viewModel,
-                    settingsManager = settingsManager,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    onExportBackup = onExportBackup,
-                    onImportBackup = onImportBackup,
                     showOnlyAchievementWall = true,
-                    onNavigateToHistory = { navController.navigate(Screen.History.route) },
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                     onNavigateToDashboard = { navController.navigate(Screen.Dashboard.route) }
                 )
             }
