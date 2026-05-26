@@ -118,8 +118,7 @@ fun AppNavigation(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    onNavigateToHistory = { navController.navigate(Screen.History.route) },
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
+                    onNavigateToHistory = { navController.navigate(Screen.History.route) }
                 )
             }
 

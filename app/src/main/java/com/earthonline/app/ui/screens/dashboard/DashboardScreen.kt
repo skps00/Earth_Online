@@ -29,8 +29,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -98,7 +96,6 @@ fun DashboardScreen(
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
     onNavigateToHistory: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {},
     showOnlyAchievementWall: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -173,18 +170,7 @@ fun DashboardScreen(
         ) {
             if (!showOnlyAchievementWall) {
             item {
-                Box {
-                    DashboardHeader()
-                    Button(
-                        onClick = onNavigateToSettings,
-                        modifier = Modifier.align(Alignment.TopEnd).padding(top = 48.dp, end = 12.dp).size(36.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.1f)),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(4.dp)
-                    ) {
-                        Icon(Icons.Filled.Settings, "設定", tint = Gold.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
-                    }
-                }
+                DashboardHeader()
             }
 
             item {
