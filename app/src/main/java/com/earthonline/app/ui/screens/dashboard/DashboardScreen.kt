@@ -269,6 +269,38 @@ fun DashboardScreen(
                     }
                 }
             }
+
+            val nextMilestone = remember(uiState.achievements) {
+                uiState.achievements
+                    .filter { !it.progress.isUnlocked && it.definition.triggerGoal > 0 }
+                    .maxByOrNull { it.progress.currentProgress.toFloat() / it.definition.triggerGoal }
+            }
+            if (nextMilestone != null && uiState.totalCheckins > 0L) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = CardDark.copy(alpha = 0.7f)),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text("🎯 下個里程碑", color = Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                nextMilestone.definition.title,
+                                color = TextSecondaryDark,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                "${nextMilestone.progress.currentProgress} / ${nextMilestone.definition.triggerGoal}",
+                                color = AccentOrange,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+            }
             }
 
             if (showOnlyAchievementWall) {
@@ -277,6 +309,7 @@ fun DashboardScreen(
                 }
             }
 
+            if (showOnlyAchievementWall) {
             item {
                 Text(
                     text = stringResource(R.string.achievement_wall),
@@ -375,6 +408,7 @@ fun DashboardScreen(
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+            }
             }
         }
 
