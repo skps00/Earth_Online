@@ -149,6 +149,12 @@ fun DashboardScreen(
     val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
     val coroutineScope = rememberCoroutineScope()
 
+    val nextMilestone = remember(uiState.achievements) {
+        uiState.achievements
+            .filter { !it.progress.isUnlocked && it.definition.triggerGoal > 0 }
+            .maxByOrNull { it.progress.currentProgress.toFloat() / it.definition.triggerGoal }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -270,11 +276,6 @@ fun DashboardScreen(
                 }
             }
 
-            val nextMilestone = remember(uiState.achievements) {
-                uiState.achievements
-                    .filter { !it.progress.isUnlocked && it.definition.triggerGoal > 0 }
-                    .maxByOrNull { it.progress.currentProgress.toFloat() / it.definition.triggerGoal }
-            }
             if (nextMilestone != null && uiState.totalCheckins > 0L) {
                 item {
                     Card(
