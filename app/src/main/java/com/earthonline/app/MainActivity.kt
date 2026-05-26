@@ -21,8 +21,7 @@ import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.domain.service.CheckInCoordinator
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.screens.dashboard.DashboardEvent
-import com.earthonline.app.ui.screens.dashboard.DashboardScreen
-import com.earthonline.app.ui.screens.dashboard.DashboardViewModel
+import com.earthonline.app.ui.navigation.AppNavigation
 import com.earthonline.app.ui.theme.EarthOnlineTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -126,7 +125,7 @@ class MainActivity : ComponentActivity() {
                     val vm: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     viewModel = vm
 
-                    DashboardScreen(
+                    AppNavigation(
                         viewModel = vm,
                         settingsManager = settingsManager,
                         onCheckIn = { requestLocationPermission() },

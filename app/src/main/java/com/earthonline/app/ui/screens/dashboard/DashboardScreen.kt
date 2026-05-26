@@ -1,6 +1,5 @@
 ﻿package com.earthonline.app.ui.screens.dashboard
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.content.Intent
 import androidx.compose.animation.animateColorAsState
@@ -60,13 +59,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
@@ -79,9 +76,6 @@ import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
-import com.earthonline.app.ui.screens.history.CheckInHistoryScreen
-import com.earthonline.app.ui.screens.onboarding.OnboardingScreen
-import com.earthonline.app.ui.screens.settings.SettingsScreen
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementLocked
@@ -106,30 +100,17 @@ fun DashboardScreen(
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
     onExportBackup: () -> Unit,
-    onImportBackup: () -> Unit
+    onImportBackup: () -> Unit,
+    onNavigateToHistory: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
+    onNavigateToDashboard: () -> Unit = {},
+    showOnlyAchievementWall: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
-    var showHistory by remember { mutableStateOf(false) }
-    var showSettings by remember { mutableStateOf(false) }
-    var showOnboarding by remember {
-        val shown = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
-            .getBoolean(AppConstants.KEY_ONBOARDING_SHOWN, false)
-        mutableStateOf(!shown)
-    }
-    var historyRecords by remember { mutableStateOf<List<CheckInRecord>>(emptyList()) }
-
-    if (showOnboarding) {
-        OnboardingScreen(onDone = {
-            context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
-                .edit().putBoolean(AppConstants.KEY_ONBOARDING_SHOWN, true).apply()
-            showOnboarding = false
-        })
-        return
-    }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
@@ -137,23 +118,6 @@ fun DashboardScreen(
             unlockEventKey++
             unlockEvent = event
         }
-    }
-
-    LaunchedEffect(showHistory) {
-        if (showHistory) historyRecords = viewModel.getAllCheckinRecords()
-    }
-
-    if (showSettings) {
-        SettingsScreen(
-            settingsManager = settingsManager, onBack = { showSettings = false },
-            onExportBackup = onExportBackup, onImportBackup = onImportBackup
-        )
-        return
-    }
-
-    if (showHistory) {
-        CheckInHistoryScreen(records = historyRecords, onBack = { showHistory = false })
-        return
     }
 
     if (uiState.isLoading) {
@@ -207,11 +171,12 @@ fun DashboardScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            if (!showOnlyAchievementWall) {
             item {
                 Box {
                     DashboardHeader()
                     Button(
-                        onClick = { showSettings = true },
+                        onClick = onNavigateToSettings,
                         modifier = Modifier.align(Alignment.TopEnd).padding(top = 48.dp, end = 12.dp).size(36.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.1f)),
                         shape = RoundedCornerShape(8.dp),
@@ -301,13 +266,19 @@ fun DashboardScreen(
                         Text(stringResource(R.string.checkin_label), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
                     Button(
-                        onClick = { unlockEvent = null; showHistory = true },
+                        onClick = { unlockEvent = null; onNavigateToHistory() },
                         modifier = Modifier.weight(0.4f).height(56.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CardDark),
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(stringResource(R.string.history_label), color = Gold, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }
+                }
+            }
+
+            if (showOnlyAchievementWall) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
