@@ -88,7 +88,7 @@ fun AppNavigation(
                             Icon(
                                 screen.icon,
                                 contentDescription = screen.label,
-                                tint = if (selected) DeepBlue else TextSecondaryDark
+                                tint = if (selected) Color.White else TextSecondaryDark
                             )
                         },
                         label = {
@@ -96,7 +96,7 @@ fun AppNavigation(
                                 screen.label,
                                 fontSize = 10.sp,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (selected) DeepBlue else TextSecondaryDark
+                                color = if (selected) Color.White else TextSecondaryDark
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
