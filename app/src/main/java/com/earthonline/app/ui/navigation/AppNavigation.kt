@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -131,10 +132,9 @@ fun AppNavigation(
             }
 
             composable(Screen.History.route) {
-                val records = remember { mutableListOf<com.earthonline.app.data.local.entity.CheckInRecord>() }
-                androidx.compose.runtime.LaunchedEffect(Unit) {
-                    records.clear()
-                    records.addAll(viewModel.getAllCheckinRecords())
+                var records by remember { mutableStateOf(emptyList<com.earthonline.app.data.local.entity.CheckInRecord>()) }
+                LaunchedEffect(Unit) {
+                    records = viewModel.getAllCheckinRecords()
                 }
                 CheckInHistoryScreen(
                     records = records,
