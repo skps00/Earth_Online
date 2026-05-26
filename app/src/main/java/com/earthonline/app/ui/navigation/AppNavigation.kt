@@ -128,8 +128,7 @@ fun AppNavigation(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    showOnlyAchievementWall = true,
-                    onNavigateToDashboard = { navController.navigate(Screen.Dashboard.route) }
+                    showOnlyAchievementWall = true
                 )
             }
 

@@ -99,7 +99,6 @@ fun DashboardScreen(
     onTakeEvidencePhoto: (String) -> Unit,
     onNavigateToHistory: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
-    onNavigateToDashboard: () -> Unit = {},
     showOnlyAchievementWall: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
