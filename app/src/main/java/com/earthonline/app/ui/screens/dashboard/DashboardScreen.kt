@@ -275,6 +275,7 @@ fun DashboardScreen(
                     }
                 }
             }
+            }
 
             if (showOnlyAchievementWall) {
                 item {
