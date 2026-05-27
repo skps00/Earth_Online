@@ -3,6 +3,7 @@ package com.earthonline.app.ui.screens.history
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,18 +28,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.CheckInRecord
+import com.earthonline.app.ui.components.EmptyState
 import com.earthonline.app.ui.theme.AccentOrange
-import com.earthonline.app.ui.theme.CardDark
-import com.earthonline.app.ui.theme.DeepBlue
-import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -62,51 +59,63 @@ fun CheckInHistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.checkin_history_title), color = Gold) },
+                title = { Text(stringResource(R.string.checkin_history_title), color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_label), tint = MaterialTheme.colorScheme.primary)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlue)
-                .padding(padding),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
-        ) {
-            grouped.forEach { (country, list) ->
-                item {
-                    Text(
-                        text = "$country (${list.size})",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Gold,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
-                    )
-                }
-                items(list.sortedByDescending { it.timestamp }) { record ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = CardDark),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = dateFormat.format(Date(record.timestamp)),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = AccentOrange
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = record.address.ifBlank { record.country.ifBlank { "${record.latitude}, ${record.longitude}" } },
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondaryDark
-                            )
+        if (records.isEmpty()) {
+            EmptyState(
+                icon = "\uD83D\uDCCD",
+                title = stringResource(R.string.empty_history_title),
+                description = stringResource(R.string.empty_history_desc),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(padding)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(padding),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                grouped.forEach { (country, list) ->
+                    item {
+                        Text(
+                            text = stringResource(R.string.country_count_format, country, list.size),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        )
+                    }
+                    items(list.sortedByDescending { it.timestamp }) { record ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = dateFormat.format(Date(record.timestamp)),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = AccentOrange
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = record.address.ifBlank { record.country.ifBlank { stringResource(R.string.coord_fallback_format, record.latitude, record.longitude) } },
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }

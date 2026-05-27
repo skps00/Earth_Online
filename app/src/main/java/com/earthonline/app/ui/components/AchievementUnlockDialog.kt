@@ -110,7 +110,7 @@ fun AchievementUnlockDialog(
                             dragOffset = (dragOffset + dragAmount).coerceAtMost(0f)
                         }
                     },
-                colors = CardDefaults.cardColors(containerColor = DeepBlue),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 shape = RoundedCornerShape(20.dp)
             ) {
                 Box(
@@ -118,7 +118,7 @@ fun AchievementUnlockDialog(
                         .fillMaxWidth()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(GoldDark.copy(alpha = 0.3f), DeepBlue)
+                                colors = listOf(GoldDark.copy(alpha = 0.3f), MaterialTheme.colorScheme.background)
                             )
                         )
                 ) {
@@ -126,7 +126,7 @@ fun AchievementUnlockDialog(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(stringResource(R.string.achievement_unlocked), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                        Text(stringResource(R.string.achievement_unlocked), color = MaterialTheme.colorScheme.primary, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                         Spacer(modifier = Modifier.height(6.dp))
 
                         // Achievement icon with firefly particles
@@ -156,16 +156,16 @@ fun AchievementUnlockDialog(
                                     .background(Brush.radialGradient(listOf(Gold, GoldDark, GoldDark.copy(alpha = 0.3f)))),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("★", fontSize = 24.sp, color = DeepBlue)
+                                Text("\u2605", fontSize = 24.sp, color = MaterialTheme.colorScheme.background)
                             }
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Text(event.achievement.title, style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                        Text(event.achievement.description, style = MaterialTheme.typography.bodySmall, color = Color(0xFFB0B0B0), textAlign = TextAlign.Center)
+                        Text(event.achievement.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Text(event.achievement.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(stringResource(R.string.reward_points_format, event.achievement.rewardPoints), fontSize = 16.sp, color = Gold, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.reward_points_format, event.achievement.rewardPoints), fontSize = 16.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Box(

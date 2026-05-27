@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,10 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
-import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -58,7 +57,10 @@ fun OnboardingScreen(onDone: () -> Unit) {
 
     Column(
         modifier = Modifier.fillMaxSize().background(
-            Brush.verticalGradient(listOf(DeepBlue, Color(0xFF16213E)))
+            Brush.verticalGradient(listOf(
+                MaterialTheme.colorScheme.background,
+                MaterialTheme.colorScheme.surface
+            ))
         ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -72,9 +74,9 @@ fun OnboardingScreen(onDone: () -> Unit) {
             ) {
                 Text(pages[page][0] as String, fontSize = 72.sp)
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(stringResource(pages[page][1] as Int), color = Gold, fontWeight = FontWeight.Bold, fontSize = 24.sp, textAlign = TextAlign.Center)
+                Text(stringResource(pages[page][1] as Int), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(pages[page][2] as Int), color = TextSecondaryDark, fontSize = 15.sp, textAlign = TextAlign.Center, lineHeight = 22.sp)
+                Text(stringResource(pages[page][2] as Int), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp, textAlign = TextAlign.Center, lineHeight = 22.sp)
             }
         }
 
@@ -100,7 +102,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f)),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(skipLabel, color = TextSecondaryDark, fontSize = 14.sp)
+                Text(skipLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
             }
             Button(
                 onClick = {

@@ -22,6 +22,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -41,14 +42,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AccentOrange
-import com.earthonline.app.ui.theme.CardDark
 import com.earthonline.app.ui.theme.DeepBlue
-import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -101,16 +100,16 @@ fun PetCard(
     var bounceTrigger by remember { mutableStateOf(0) }
     val bounceScale by animateFloatAsState(
         targetValue = if (bounceTrigger > 0) 1.3f else 1f,
-        animationSpec = spring(dampingRatio = 0.4f, stiffness = 400f),
+        animationSpec = spring(dampingRatio = AppConstants.BOUNCE_DAMPING_RATIO, stiffness = AppConstants.BOUNCE_STIFFNESS),
         finishedListener = { if (bounceTrigger > 0) bounceTrigger = 0 }
     )
 
     var bubbleIndex by remember { mutableStateOf(-1) }
     LaunchedEffect(Unit) {
         while (true) {
-            delay(5000 + Random.nextLong(5000))
+            delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
             bubbleIndex = Random.nextInt(SPEECH_BUBBLES.size)
-            delay(4000)
+            delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
             bubbleIndex = -1
         }
     }
@@ -120,7 +119,7 @@ fun PetCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -164,7 +163,7 @@ fun PetCard(
                                     showDialog = true
                                 }
                         )
-                        Text(clickToChange, color = TextSecondaryDark, fontSize = 9.sp)
+                        Text(clickToChange, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -172,7 +171,7 @@ fun PetCard(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             pet.name,
-                            color = Gold,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             modifier = Modifier.clickable {
@@ -206,10 +205,10 @@ fun PetCard(
 
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(customizeTitle, fontWeight = FontWeight.Bold, color = Gold) },
-            text = {
+            title = { Text(customizeTitle, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) },
+            text = { 
                 Column {
-                    Text(choosePetLabel, color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(choosePetLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -220,7 +219,7 @@ fun PetCard(
                             Card(
                                 modifier = Modifier.size(52.dp).clickable { selectedEmoji = emoji },
                                 colors = CardDefaults.cardColors(
-                                    containerColor = if (isSelected) Gold.copy(alpha = 0.3f) else CardDark
+                                    containerColor = if (isSelected) Gold.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surfaceVariant
                                 ),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
@@ -234,7 +233,7 @@ fun PetCard(
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(petNameLabel, color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(petNameLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     TextField(
                         value = renameText,
@@ -243,22 +242,22 @@ fun PetCard(
                         modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Gold,
-                            unfocusedTextColor = TextSecondaryDark,
-                            focusedContainerColor = CardDark,
-                            unfocusedContainerColor = CardDark,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                             cursorColor = Gold
                         )
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(statDescLabel, color = TextSecondaryDark, fontSize = 13.sp)
+                    Text(statDescLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     STAT_KEYS.forEach { (labelRes, descRes, _) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(stringResource(labelRes), fontSize = 11.sp)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("←", color = TextSecondaryDark, fontSize = 9.sp)
+                            Text("←", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(stringResource(descRes), color = TextSecondaryDark, fontSize = 10.sp)
+                            Text(stringResource(descRes), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                         }
                         Spacer(modifier = Modifier.height(2.dp))
                     }
@@ -270,15 +269,15 @@ fun PetCard(
                     onChangeEmoji(selectedEmoji)
                     showDialog = false
                 }) {
-                    Text(confirmLabel, color = Gold)
+                    Text(confirmLabel, color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(cancelLabel, color = TextSecondaryDark)
+                    Text(cancelLabel, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
-            containerColor = DialogDark,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
     }
@@ -292,7 +291,7 @@ private fun StatBar(label: String, value: Int, max: Int, color: Color) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(label, color = TextSecondaryDark, fontSize = 11.sp)
+            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
             Text("$value", color = color, fontSize = 11.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(2.dp))

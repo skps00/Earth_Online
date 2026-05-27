@@ -44,14 +44,8 @@ import com.earthonline.app.domain.model.Rarity
 import com.earthonline.app.domain.model.TriggerType
 import com.earthonline.app.ui.screens.dashboard.AchievementDisplayItem
 import com.earthonline.app.ui.share.ShareHelper
-import com.earthonline.app.ui.theme.AchievementLocked
-import com.earthonline.app.ui.theme.CardDark
-import com.earthonline.app.ui.theme.DeepBlue
-import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextPrimaryDark
-import com.earthonline.app.ui.theme.TextSecondaryDark
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -92,16 +86,16 @@ fun AchievementDetailDialog(
             Text(
                 text = if (isHidden && !revealed) "???" else item.definition.title,
                 fontWeight = FontWeight.Bold,
-                color = if (isUnlocked) Gold else if (isHidden && !revealed) Rarity.LEGENDARY.color.copy(alpha = 0.7f) else TextPrimaryDark
+                color = if (isUnlocked) MaterialTheme.colorScheme.primary else if (isHidden && !revealed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
             )
         },
         text = {
             if (isHidden && !revealed) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.hidden_achievement_label), style = MaterialTheme.typography.bodyMedium, color = TextSecondaryDark)
+                    Text(stringResource(R.string.hidden_achievement_label), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (item.definition.hint.isNotBlank()) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("💡 ${item.definition.hint}", style = MaterialTheme.typography.bodySmall, color = Rarity.RARE.color)
+                        Text("\uD83D\uDCA1 ${item.definition.hint}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
@@ -115,20 +109,20 @@ fun AchievementDetailDialog(
                 }
             } else {
                 Column {
-                    Text(item.definition.description, style = MaterialTheme.typography.bodyMedium, color = TextSecondaryDark)
+                    Text(item.definition.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(12.dp))
-                    LinearProgressIndicator(progress = progressFraction, modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)), color = if (isUnlocked) Gold else EmeraldGreen, trackColor = AchievementLocked.copy(alpha = 0.3f))
+                    LinearProgressIndicator(progress = progressFraction, modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)), color = if (isUnlocked) Gold else EmeraldGreen, trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(if (isUnlocked) stringResource(R.string.unlocked_badge) else "$progress / $goal", style = MaterialTheme.typography.labelSmall, color = if (isUnlocked) Gold else TextSecondaryDark)
+                    Text(if (isUnlocked) stringResource(R.string.unlocked_badge) else stringResource(R.string.progress_format, progress, goal), style = MaterialTheme.typography.labelSmall, color = if (isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                     if (isUnlocked && item.progress.unlockedDate != null) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("${stringResource(R.string.unlock_time_label)}: ${dateFormat.format(Date(item.progress.unlockedDate))}", style = MaterialTheme.typography.labelSmall, color = Gold.copy(alpha = 0.7f))
+                        Text("${stringResource(R.string.unlock_time_label)}: ${dateFormat.format(Date(item.progress.unlockedDate))}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(stringResource(R.string.not_unlocked_yet), style = MaterialTheme.typography.labelSmall, color = TextSecondaryDark)
+                        Text(stringResource(R.string.not_unlocked_yet), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(stringResource(R.string.reward_points_format, item.definition.rewardPoints), style = MaterialTheme.typography.titleMedium, color = Gold, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.reward_points_format, item.definition.rewardPoints), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
 
                     if (isUnlocked && evidenceCount > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -142,10 +136,10 @@ fun AchievementDetailDialog(
                                 Button(
                                     onClick = { showAllEvidence = true },
                                     modifier = Modifier.fillMaxWidth().height(32.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text("查看全部 ${evidenceCount} 張證據照", color = Gold, fontSize = 11.sp)
+                                    Text(stringResource(R.string.view_all_evidence, evidenceCount), color = MaterialTheme.colorScheme.primary, fontSize = 11.sp)
                                 }
                             }
                         } else {
@@ -155,7 +149,7 @@ fun AchievementDetailDialog(
                                 allEvidencePaths.forEachIndexed { i, path ->
                                 val bitmap = loadBitmap(path)
                                 if (bitmap != null) {
-                                    Text("#${i + 1}", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Text("#${i + 1}", color = MaterialTheme.colorScheme.primary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(10.dp)))
                                     Spacer(modifier = Modifier.height(6.dp))
@@ -165,24 +159,26 @@ fun AchievementDetailDialog(
                             Button(
                                 onClick = { showAllEvidence = false },
                                 modifier = Modifier.fillMaxWidth().height(32.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("收起", color = TextSecondaryDark, fontSize = 11.sp)
+                                Text(stringResource(R.string.collapse_evidence), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = { ShareHelper.shareAchievement(context, item.definition.title, item.definition.description, item.definition.rewardPoints) },
-                        modifier = Modifier.fillMaxWidth().height(40.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Icon(Icons.Filled.Share, null, tint = Gold, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.share_achievement), color = Gold, fontSize = 13.sp)
+                    if (isUnlocked) {
+                        Button(
+                            onClick = { ShareHelper.shareAchievement(context, item.definition.title, item.definition.description, item.definition.rewardPoints) },
+                            modifier = Modifier.fillMaxWidth().height(40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Gold.copy(alpha = 0.2f)),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(Icons.Filled.Share, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.share_achievement), color = MaterialTheme.colorScheme.primary, fontSize = 13.sp)
+                        }
                     }
                 }
             }
@@ -190,15 +186,15 @@ fun AchievementDetailDialog(
         dismissButton = {
             if (isManual && !isUnlocked && (!isHidden || revealed)) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = onTakeEvidencePhoto, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = Gold), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.evidence_take_photo), color = DeepBlue, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+                    Button(onClick = onTakeEvidencePhoto, modifier = Modifier.weight(1f).height(48.dp),                         colors = ButtonDefaults.buttonColors(containerColor = Gold), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.evidence_take_photo), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
                     Button(onClick = onManualConfirm, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = EmeraldGreen), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.manual_confirm_btn), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
                 }
             }
         },
         confirmButton = {
-            Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth().height(44.dp), colors = ButtonDefaults.buttonColors(containerColor = CardDark), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark, fontSize = 14.sp) }
+            Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth().height(44.dp), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), shape = RoundedCornerShape(12.dp)) { Text(stringResource(R.string.food_confirm_no), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) }
         },
-        containerColor = DialogDark,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp)
     )
 }

@@ -73,17 +73,13 @@ import com.earthonline.app.ui.components.AchievementCard
 import com.earthonline.app.ui.components.AchievementDetailDialog
 import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
+import com.earthonline.app.ui.components.DashboardShimmer
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
 import com.earthonline.app.ui.share.ShareCardGenerator
-import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AchievementUnlocked
 import com.earthonline.app.ui.theme.AccentOrange
-import com.earthonline.app.ui.theme.CardDark
-import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextPrimaryDark
-import com.earthonline.app.ui.theme.TextSecondaryDark
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -111,16 +107,7 @@ fun DashboardScreen(
     }
 
     if (uiState.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(R.string.loading),
-                style = MaterialTheme.typography.headlineMedium,
-                color = TextSecondaryDark
-            )
-        }
+        DashboardShimmer(modifier = Modifier.fillMaxSize())
         return
     }
 
@@ -158,9 +145,9 @@ fun DashboardScreen(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            DeepBlue,
-                            Color(0xFF16213E),
-                            Color(0xFF0F3460)
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
                 ),
@@ -175,40 +162,40 @@ fun DashboardScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = CardDark),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Lv.${uiState.playerLevel}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                            Text(stringResource(R.string.level_format, uiState.playerLevel), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 22.sp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 LinearProgressIndicator(
                                     progress = uiState.levelProgress,
                                     modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
                                     color = Gold,
-                                    trackColor = AchievementLocked.copy(alpha = 0.3f)
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
-                                Text("${uiState.xpToNext} XP to Lv.${uiState.playerLevel + 1}", color = TextSecondaryDark, fontSize = 10.sp)
+                                Text(stringResource(R.string.xp_to_next, uiState.xpToNext, uiState.playerLevel + 1), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("🏆", fontSize = 18.sp)
-                                Text("${uiState.totalPoints}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text(stringResource(R.string.total_points_label), color = TextSecondaryDark, fontSize = 10.sp)
+                                Text("${uiState.totalPoints}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text(stringResource(R.string.total_points_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("✅", fontSize = 18.sp)
-                                Text("${uiState.unlockedCount}/${uiState.totalAchievements}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text(stringResource(R.string.achievements_label), color = TextSecondaryDark, fontSize = 10.sp)
+                                Text("${uiState.unlockedCount}/${uiState.totalAchievements}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text(stringResource(R.string.achievements_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("📍", fontSize = 18.sp)
-                                Text("${uiState.totalCheckins}", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text(stringResource(R.string.checkin_short_label), color = TextSecondaryDark, fontSize = 10.sp)
+                                Text("${uiState.totalCheckins}", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text(stringResource(R.string.checkin_short_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                         }
                     }
@@ -227,7 +214,7 @@ fun DashboardScreen(
                 item {
                     Text(
                         stringResource(R.string.empty_checkin_hint),
-                        color = TextSecondaryDark,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -252,15 +239,15 @@ fun DashboardScreen(
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = CardDark.copy(alpha = 0.7f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("🎯 下個里程碑", color = Gold, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.milestone_hint), color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 nextMilestone.definition.title,
-                                color = TextSecondaryDark,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -287,7 +274,7 @@ fun DashboardScreen(
                 Text(
                     text = stringResource(R.string.achievement_wall),
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Gold,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -313,13 +300,13 @@ fun DashboardScreen(
                         ) {
                             Text(
                                 text = sections[index].first,
-                                color = if (isSelected) Gold else Color.White.copy(alpha = 0.55f),
+                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                 fontSize = 14.sp
                             )
                             Text(
                                 text = "$unlockedCount/$totalCount",
-                                color = if (isSelected) Gold.copy(alpha = 0.7f) else Color.White.copy(alpha = 0.35f),
+                                color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 fontSize = 10.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -357,7 +344,7 @@ fun DashboardScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.not_unlocked_yet),
-                                color = TextSecondaryDark
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     } else {

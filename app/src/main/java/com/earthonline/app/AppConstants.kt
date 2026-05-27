@@ -7,6 +7,7 @@ object AppConstants {
 
     const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
     const val KEY_SOUND_MUTED = "sound_muted"
+    const val KEY_DARK_MODE = "dark_mode"
 
     const val DEFAULT_PET_NAME = "地球精靈"
     const val DEFAULT_PET_EMOJI = "🐉"
@@ -31,4 +32,13 @@ object AppConstants {
 
     const val STAT_DIVISOR = 10f
     const val TOTAL_ACHIEVEMENT_COUNT = 129
+
+    const val BOUNCE_DAMPING_RATIO = 0.4f
+    const val BOUNCE_STIFFNESS = 400f
+    const val SPEECH_BUBBLE_MIN_INTERVAL_MS = 5000L
+    const val SPEECH_BUBBLE_MAX_EXTRA_MS = 5000L
+    const val SPEECH_BUBBLE_DISPLAY_MS = 4000L
+    const val CARD_ANIMATION_DURATION_MS = 600
+    const val CROSSFADE_DURATION_MS = 300
+    const val INDICATOR_ANIMATION_DURATION_MS = 300
 }

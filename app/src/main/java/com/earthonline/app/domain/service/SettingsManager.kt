@@ -16,6 +16,10 @@ class SettingsManager @Inject constructor(
         get() = !prefs.getBoolean(AppConstants.KEY_SOUND_MUTED, false)
         set(value) = prefs.edit().putBoolean(AppConstants.KEY_SOUND_MUTED, !value).apply()
 
+    var darkModeEnabled: Boolean
+        get() = prefs.getBoolean(AppConstants.KEY_DARK_MODE, true)
+        set(value) = prefs.edit().putBoolean(AppConstants.KEY_DARK_MODE, value).apply()
+
     fun clearAllData() {
         prefs.edit().clear().apply()
         context.deleteDatabase(AppConstants.DATABASE_NAME)

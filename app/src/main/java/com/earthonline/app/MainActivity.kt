@@ -11,6 +11,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -121,7 +125,8 @@ class MainActivity : ComponentActivity() {
         checkLocationPermission()
 
         setContent {
-            EarthOnlineTheme {
+            var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
+            EarthOnlineTheme(darkTheme = darkMode) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val vm: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     viewModel = vm
@@ -132,7 +137,11 @@ class MainActivity : ComponentActivity() {
                         onCheckIn = { requestLocationPermission() },
                         onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
                         onExportBackup = { exportLauncher.launch(AppConstants.DEFAULT_BACKUP_FILENAME) },
-                        onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) }
+                        onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) },
+                        onToggleDarkMode = { enabled ->
+                            settingsManager.darkModeEnabled = enabled
+                            darkMode = enabled
+                        }
                     )
                 }
             }

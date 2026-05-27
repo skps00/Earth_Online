@@ -12,3 +12,6 @@ local.properties
 *.dex
 *.class
 .DS_Store
+
+# CodeGraph index
+.codegraph/

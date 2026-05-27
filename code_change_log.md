@@ -1,4 +1,4 @@
-# 代碼變更與問題日誌
+﻿# 代碼變更與問題日誌
 
 ## 2026-05-24 18:51:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardScreen.kt
@@ -382,3 +382,87 @@
 - **變更摘要**：改呼叫 AppNavigation 而非直接渲染 DashboardScreen
 - **遇到的問題**：無
 - **備註**：U-1
+
+## 2026-05-26 10:00:00 操作類型：UI/UX 全面重構（6 Phase）
+- **文件路徑**：多檔案（詳見下方子項目）
+- **變更摘要**：全面重構 UI/UX — 設計系統標準化 / BottomNavBar 動畫化 / 成就牆增強 / 主題切換 / 空狀態與錯誤處理 / 細節優化
+- **遇到的問題**：無
+- **備註**：詳細子項目如下
+
+### Phase 1: 設計系統標準化
+- **文件路徑**：Color.kt / Theme.kt / strings.xml / AppConstants.kt
+- **變更摘要**：
+  - Color.kt：新增 SurfaceCard/OutlineVariant/ShimmerBase/ShimmerHighlight/BackgroundGradientTop~Bottom 語義色彩，修正 TextSecondaryDark 對比度 #A0A0A0→#B0B0B0
+  - Theme.kt：新增 AppTypography 客製字型系統（Display/H1~H2/Title/Body/Label 層級）
+  - strings.xml：新增 milestone_hint/empty_history_*/view_all_evidence/collapse_evidence/error_*/evidence_count_label/nav_*/theme_dark_mode
+  - AppConstants.kt：新增 BOUNCE_*/SPEECH_BUBBLE_*/CARD_ANIMATION_*/CROSSFADE_*/INDICATOR_ANIMATION_DURATION 動畫常數 + KEY_DARK_MODE
+- **狀態**：✅ 已解決
+
+### Phase 2: BottomNavBar 改善
+- **文件路徑**：AppNavigation.kt（完整重寫）
+- **變更摘要**：
+  - 自訂 AnimatedBottomBar composable：金色滑動指示器（Gold.copy(alpha=0.6f)）+ 頁籤 offset 動畫
+  - 選中 icon scale 動畫：1.0→1.18 spring(dampingRatio=0.5f, stiffness=500f)
+  - NavHost 頁面轉場：slideInHorizontally + fadeIn tween(250ms)
+  - Material ripple with rememberRipple
+  - 內容字串改用 R.string.nav_* 資源
+- **狀態**：✅ 已解決
+
+### Phase 3: 成就牆增強
+- **文件路徑**：AchievementCard.kt / AchievementDetailDialog.kt / DashboardScreen.kt
+- **變更摘要**：
+  - AchievementCard：Epic/Legendary 解鎖後 glow 效果（radialGradient 背景 + animateFloatAsState alpha）
+  - 卡片圖標改用 radialGradient 背景
+  - AchievementDetailDialog.kt：移除硬編碼 "查看全部/收起"，改用 view_all_evidence/collapse_evidence 字串資源
+- **狀態**：✅ 已解決
+
+### Phase 4: 主題與無障礙
+- **文件路徑**：SettingsManager.kt / SettingsScreen.kt / MainActivity.kt / AppConstants.kt
+- **變更摘要**：
+  - SettingsManager 新增 darkModeEnabled 屬性（SharedPreferences KEY_DARK_MODE，預設 true）
+  - SettingsScreen 新增深色主題切換開關（DarkMode/LightMode 圖標 + Gold Switch）
+  - MainActivity 傳入 settingsManager.darkModeEnabled 到 EarthOnlineTheme
+- **狀態**：✅ 已解決
+
+### Phase 5: 空狀態與錯誤處理
+- **文件路徑**：EmptyState.kt（新增）/ ShimmerEffect.kt（新增）/ ErrorState.kt（新增）/ CheckInHistoryScreen.kt / DashboardScreen.kt
+- **變更摘要**：
+  - EmptyState：可重用空狀態元件（emoji icon + 標題 + 描述 + 可選按鈕）
+  - DashboardShimmer：骨架屏載入動畫（header/card/pet/button 占位符 + infiniteRepeatable 漸變掃光）
+  - ErrorState：可重用錯誤狀態元件
+  - CheckInHistoryScreen：無記錄時顯示 📍 空狀態（取代空白頁面）
+  - DashboardScreen：載入中 spinner 改用 DashboardShimmer 骨架屏
+- **狀態**：✅ 已解決
+
+### Phase 6: 細節優化
+- **文件路徑**：PetCard.kt
+- **變更摘要**：
+  - 動畫系數改用 AppConstants：BOUNCE_DAMPING_RATIO/BOUNCE_STIFFNESS/SPEECH_BUBBLE_*
+  - 硬編碼魔法數字 0.4f/400f/5000/4000 全數移除
+  - 新增 import com.earthonline.app.AppConstants
+- **狀態**：✅ 已解決
+
+## 2026-05-26 11:00:00 操作類型：修復Bug
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/components/AchievementDetailDialog.kt
+- **變更摘要**：未解鎖成就不應顯示「分享成就」按鈕 — 加入 if (isUnlocked) 條件判斷
+- **遇到的問題**：
+  - 問題1：成就詳情對話框在未解鎖狀態下仍顯示「分享成就」按鈕
+    - 原因：分享按鈕區塊無 isUnlocked 判斷，只被 !isHidden 條件控制
+    - 解決方案：在第 176 行分享按鈕外層包覆 if (isUnlocked) { ... }
+    - 狀態：✅ 已解決
+- **備註**：UI/UX 重構系列遺漏的條件判斷
+## 2026-05-26 12:00:00 操作類型：淺色主題色彩重構
+- **文件路徑**：13 個 UI 檔案（見下方）
+- **變更摘要**：將所有 UI 元件的硬編碼深色主題色彩替換為 MaterialTheme.colorScheme 引用，實現淺色/深色主題切換
+- **遇到的問題**：
+  - 問題1：replaceAll 破壞 import 宣告（CardDark/TextSecondaryDark 被替換為無效路徑）
+    - 解決方案：改為逐個 edit 調用，避免 import 受影響
+    - 狀態：✅ 已解決
+  - 問題2：BottomNavBar 選中文字 Color.White 在淺色背景不可見
+    - 解決方案：改用 MaterialTheme.colorScheme.primary（dark=Gold, light=GoldDark）
+    - 狀態：✅ 已解決
+- **備註**：
+  - Theme.kt：Dark/LightColorScheme 皆新增 surfaceVariant + onSurfaceVariant
+  - 對應關係：CardDark→surfaceVariant, DeepBlue(背景)→background, TextSecondaryDark→onSurfaceVariant, TextPrimaryDark→onSurface, DialogDark→surface
+  - 受影響檔案：AppNavigation.kt, DashboardScreen.kt, DasboardHeader.kt, CheckInHistoryScreen.kt, SettingsScreen.kt, OnboardingScreen.kt, PetCard.kt, AchievementCard.kt, AchievementDetailDialog.kt, AchievementUnlockDialog.kt, CheckInConfirmDialog.kt, EvidenceConfirmDialog.kt, EmptyState.kt, ErrorState.kt
+- **狀態**：✅ 已解決

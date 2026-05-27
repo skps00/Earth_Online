@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,11 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.earthonline.app.R
-import com.earthonline.app.ui.theme.AchievementLocked
-import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
-import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 
 @Composable
 fun CheckInConfirmDialog(
@@ -29,12 +26,12 @@ fun CheckInConfirmDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.checkin_confirm_title), fontWeight = FontWeight.Bold, color = Gold) },
+        title = { Text(stringResource(R.string.checkin_confirm_title), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) },
         text = {
             Column {
-                Text(address, color = TextSecondaryDark)
+                Text(address, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("${stringResource(R.string.checkin_action)}?", color = TextSecondaryDark)
+                Text("${stringResource(R.string.checkin_action)}?", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         confirmButton = {
@@ -43,11 +40,11 @@ fun CheckInConfirmDialog(
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)) {
-                Text(stringResource(R.string.food_confirm_no), color = TextSecondaryDark)
+            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                Text(stringResource(R.string.food_confirm_no), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
-        containerColor = DialogDark,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp)
     )
 }

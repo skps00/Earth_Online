@@ -3,14 +3,21 @@ package com.earthonline.app.ui.components
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,12 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
-import com.earthonline.app.ui.theme.AchievementLocked
-import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
-import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EvidenceConfirmDialog(
     photoUri: String?,
@@ -38,34 +42,30 @@ fun EvidenceConfirmDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val bitmap = remember(photoUri) {
-        if (photoUri == null) return@remember null
-        try {
-            val uri = Uri.parse(photoUri)
-            context.contentResolver.openInputStream(uri)?.use { stream ->
-                BitmapFactory.decodeStream(stream)
-            }
-        } catch (_: Exception) { null }
-    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.evidence_confirm_title), fontWeight = FontWeight.Bold, color = Gold) },
+        title = { Text(stringResource(R.string.evidence_confirm_title), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) },
         text = {
             Column {
-                Text(stringResource(R.string.evidence_confirm_message), color = TextSecondaryDark)
-                if (bitmap != null) {
+                Text(stringResource(R.string.evidence_confirm_message), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (photoUri != null) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(12.dp))
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    val bitmap = remember(photoUri) {
+                        try {
+                            context.contentResolver.openInputStream(Uri.parse(photoUri))?.use { BitmapFactory.decodeStream(it) }
+                        } catch (_: Exception) { null }
+                    }
+                    if (bitmap != null) {
+                        Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)))
+                    }
                 }
                 if (analyzedLabels.isNotEmpty()) {
-                    analyzedLabels.forEach { label ->
-                        Text("• $label", color = TextSecondaryDark, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FlowRow {
+                        analyzedLabels.forEach { label ->
+                            Text("\uD83C\uDFF7\uFE0F $label", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(end = 8.dp, bottom = 4.dp))
+                        }
                     }
                 }
             }
@@ -76,11 +76,11 @@ fun EvidenceConfirmDialog(
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked)) {
-                Text(stringResource(R.string.evidence_retry_btn), color = TextSecondaryDark)
+            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                Text(stringResource(R.string.evidence_retry_btn), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
-        containerColor = DialogDark,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp)
     )
 }

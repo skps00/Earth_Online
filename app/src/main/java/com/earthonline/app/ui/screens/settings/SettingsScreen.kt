@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
@@ -26,9 +29,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -51,15 +59,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.domain.service.SettingsManager
-import com.earthonline.app.ui.theme.AchievementLocked
 import com.earthonline.app.ui.theme.AccentOrange
-import com.earthonline.app.ui.theme.CardDark
-import com.earthonline.app.ui.theme.DeepBlue
 import com.earthonline.app.ui.theme.DestructiveRed
-import com.earthonline.app.ui.theme.DialogDark
 import com.earthonline.app.ui.theme.EmeraldGreen
-import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,10 +69,12 @@ fun SettingsScreen(
     settingsManager: SettingsManager,
     onBack: () -> Unit,
     onExportBackup: () -> Unit,
-    onImportBackup: () -> Unit
+    onImportBackup: () -> Unit,
+    onToggleDarkMode: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     var soundOn by remember { mutableStateOf(settingsManager.soundEnabled) }
+    var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
     var showClearDialog by remember { mutableStateOf(false) }
 
     BackHandler(enabled = true) { onBack() }
@@ -78,26 +82,26 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.settings_title), color = Gold) },
+                title = { Text(stringResource(R.string.settings_title), color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_label), tint = Gold)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back_label), tint = MaterialTheme.colorScheme.primary)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlue)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DeepBlue)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(16.dp)
         ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardDark),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
@@ -107,9 +111,9 @@ fun SettingsScreen(
                     Icon(
                         if (soundOn) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
                         null,
-                        tint = if (soundOn) EmeraldGreen else TextSecondaryDark
+                        tint = if (soundOn) EmeraldGreen else MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Text(stringResource(R.string.sound_label), color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Text(stringResource(R.string.sound_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                     Switch(
                         checked = soundOn,
                         onCheckedChange = {
@@ -125,15 +129,77 @@ fun SettingsScreen(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardDark),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                var expanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(if (darkMode) Icons.Filled.DarkMode else Icons.Filled.LightMode, null, tint = MaterialTheme.colorScheme.primary)
+                        Text(
+                            if (darkMode) stringResource(R.string.theme_dark_mode) else stringResource(R.string.theme_light_mode),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp,
+                            modifier = Modifier.weight(1f).padding(start = 12.dp)
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Filled.DarkMode, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(R.string.theme_dark_mode), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            },
+                            onClick = {
+                                darkMode = true
+                                settingsManager.darkModeEnabled = true
+                                onToggleDarkMode(true)
+                                expanded = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Filled.LightMode, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(R.string.theme_light_mode), color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            },
+                            onClick = {
+                                darkMode = false
+                                settingsManager.darkModeEnabled = false
+                                onToggleDarkMode(false)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Filled.Settings, null, tint = TextSecondaryDark)
-                    Text(stringResource(R.string.app_permissions_label), color = TextSecondaryDark, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Icon(Icons.Filled.Settings, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.app_permissions_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                 }
             }
 
@@ -157,7 +223,7 @@ fun SettingsScreen(
             Button(
                 onClick = { showClearDialog = true },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = AchievementLocked),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(Icons.Filled.Delete, null, tint = DestructiveRed)
@@ -169,8 +235,8 @@ fun SettingsScreen(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text(stringResource(R.string.confirm_clear_label), fontWeight = FontWeight.Bold, color = Gold) },
-            text = { Text(stringResource(R.string.clear_data_warning), color = TextSecondaryDark) },
+            title = { Text(stringResource(R.string.confirm_clear_label), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) },
+            text = { Text(stringResource(R.string.clear_data_warning), color = MaterialTheme.colorScheme.onSurfaceVariant) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -182,9 +248,9 @@ fun SettingsScreen(
                 ) { Text(stringResource(R.string.confirm_clear_label), color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) { Text(stringResource(R.string.cancel_label), color = TextSecondaryDark) }
+                TextButton(onClick = { showClearDialog = false }) { Text(stringResource(R.string.cancel_label), color = MaterialTheme.colorScheme.onSurfaceVariant) }
             },
-            containerColor = DialogDark,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(16.dp)
         )
     }

@@ -13,8 +13,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.earthonline.app.R
-import com.earthonline.app.ui.theme.Gold
-import com.earthonline.app.ui.theme.TextSecondaryDark
 
 @Composable
 fun DashboardHeader() {
@@ -25,14 +23,14 @@ fun DashboardHeader() {
         Text(
             text = stringResource(R.string.dashboard_title),
             style = MaterialTheme.typography.headlineLarge,
-            color = Gold,
+            color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(R.string.life_rpg_subtitle),
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondaryDark,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
     }

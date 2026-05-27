@@ -6,6 +6,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import androidx.core.content.getSystemService
+import com.earthonline.app.AppConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class LocationHelper @Inject constructor(
             }
 
             val geocoder = Geocoder(context, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(latitude, longitude, 5)
+            val addresses = geocoder.getFromLocation(latitude, longitude, AppConstants.MAX_GEOCODER_RESULTS)
                 ?.filter { it.latitude != 0.0 || it.longitude != 0.0 }
 
             val addr = selectBestAddress(addresses)
@@ -85,8 +86,8 @@ class LocationHelper @Inject constructor(
             val url = java.net.URL("https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=12&addressdetails=1")
             val conn = url.openConnection() as java.net.HttpURLConnection
             conn.setRequestProperty("User-Agent", "EarthOnlineApp/1.0")
-            conn.connectTimeout = 5000
-            conn.readTimeout = 5000
+            conn.connectTimeout = AppConstants.NOMINATIM_CONNECT_TIMEOUT_MS
+            conn.readTimeout = AppConstants.NOMINATIM_READ_TIMEOUT_MS
 
             val text = conn.inputStream.bufferedReader().readText()
             conn.disconnect()
