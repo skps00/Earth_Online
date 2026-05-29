@@ -38,7 +38,10 @@ data class DashboardUiState(
     val pendingEvidenceAchievementId: String? = null,
     val pendingEvidencePhotoPath: String? = null,
     val analyzedLabels: List<String> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val walkingMinutes: Int = 0,
+    val bikingMinutes: Int = 0,
+    val bikingKm: Int = 0
 )
 
 sealed class DashboardEvent {

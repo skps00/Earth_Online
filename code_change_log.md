@@ -466,3 +466,42 @@
   - 對應關係：CardDark→surfaceVariant, DeepBlue(背景)→background, TextSecondaryDark→onSurfaceVariant, TextPrimaryDark→onSurface, DialogDark→surface
   - 受影響檔案：AppNavigation.kt, DashboardScreen.kt, DasboardHeader.kt, CheckInHistoryScreen.kt, SettingsScreen.kt, OnboardingScreen.kt, PetCard.kt, AchievementCard.kt, AchievementDetailDialog.kt, AchievementUnlockDialog.kt, CheckInConfirmDialog.kt, EvidenceConfirmDialog.kt, EmptyState.kt, ErrorState.kt
 - **狀態**：✅ 已解決
+## 2026-05-27 18:00:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/activity/ActivityRecognitionManager.kt
+- **變更摘要**：建立 Activity Recognition Manager — 使用 Transition API 自動偵測走路/跑步/騎行/駕駛
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-05-27 18:00:00 操作類型：修改
+- **文件路徑**：app/build.gradle.kts / AndroidManifest.xml / MainActivity.kt / AchievementRepository.kt / DashboardUiState.kt / DashboardViewModel.kt / DashboardScreen.kt
+- **變更摘要**：整合 Activity Recognition + 活動數據顯示 + 自動解鎖 transport_bike / transport_bike_100 成就
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+## 2026-05-27 19:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/repository/AchievementRepository.kt
+- **變更摘要**：修正 tryAutoUnlock() — 改為回傳 UnlockedAchievementEvent? 而非直接 emit 到 repository flow，讓 ViewModel 能收到解鎖事件顯示解鎖動畫
+- **遇到的問題**：
+  - evaluateActivityAchievements() 透過 tryAutoUnlock() 解鎖成就，但 ViewModel 沒有訂閱 repository.unlockEvents
+  - 成就已在資料庫解鎖但 UI 無彈窗動畫
+  - 修改 tryAutoUnlock() 為回傳事件，evaluateActivityAchievements() 收集後透過 Pair 回傳給 ViewModel 的 handleUnlockEvents()
+  - 狀態：✅ 已解決
+
+## 2026-05-27 19:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
+- **變更摘要**：loadAchievementDisplay() 改用 Pair 解構 evaluateActivityAchievements() 的活動數據與解鎖事件，並呼叫 handleUnlockEvents()
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-05-27 19:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/domain/service/SettingsManager.kt
+- **變更摘要**：clearAllData() 加入清除 activity_stats SharedPreferences
+- **遇到的問題**：
+  - ActivityRecognition 使用獨立 SharedPreferences ("activity_stats")
+  - clearAllData() 未清除該檔案，導致舊活動數據殘留
+  - 狀態：✅ 已解決
+
+## 2026-05-27 19:00:00 操作類型：新增 — P2-2 完成
+- **文件路徑**：ActivityRecognitionManager.kt / AchievementRepository.kt / DashboardViewModel.kt / DashboardUiState.kt / DashboardScreen.kt / MainActivity.kt / build.gradle.kts / AndroidManifest.xml
+- **變更摘要**：完成 Activity Recognition 活動識別功能 — 自動偵測走路/騎行/駕駛，Dashboard 顯示活動統計，自動解鎖 transport_bike / transport_bike_100
+- **遇到的問題**：解鎖動畫不顯示（ViewModel 未接收事件—已修正）
+- **狀態**：✅ 已解決

@@ -22,6 +22,7 @@ class SettingsManager @Inject constructor(
 
     fun clearAllData() {
         prefs.edit().clear().apply()
+        context.getSharedPreferences("activity_stats", Context.MODE_PRIVATE).edit().clear().apply()
         context.deleteDatabase(AppConstants.DATABASE_NAME)
     }
 }

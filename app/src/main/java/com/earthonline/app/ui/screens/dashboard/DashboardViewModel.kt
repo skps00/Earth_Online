@@ -187,6 +187,8 @@ class DashboardViewModel @Inject constructor(
     private suspend fun loadAchievementDisplay() {
         repository.syncAutoTrackFromHistory()
         repository.refreshAll()
+        val (activity, activityEvents) = repository.evaluateActivityAchievements()
+        handleUnlockEvents(activityEvents)
         val definitions = repository.getAllDefinitions()
         val allProgress = repository.getAllAchievementProgress()
         val displayItems = AchievementDisplayMapper.map(definitions, allProgress)
@@ -209,12 +211,25 @@ class DashboardViewModel @Inject constructor(
                 levelProgress = progress,
                 xpToNext = xpNext,
                 achievements = displayItems,
-                pet = pet
+                pet = pet,
+                isLoading = false,
+                walkingMinutes = activity.first,
+                bikingMinutes = activity.second,
+                bikingKm = activity.third
             )
         }
     }
 
     fun onUnlockEventHandled() {
+    }
+
+    fun injectTestActivityData() {
+        android.widget.Toast.makeText(context, "Injecting test activity data...", android.widget.Toast.LENGTH_SHORT).show()
+        viewModelScope.launch {
+            repository.injectTestActivityData()
+            loadAchievementDisplay()
+            android.widget.Toast.makeText(context, "Done! Walking: ${_uiState.value.walkingMinutes}min Biking: ${_uiState.value.bikingMinutes}min", android.widget.Toast.LENGTH_LONG).show()
+        }
     }
 
     fun retryLoad() {

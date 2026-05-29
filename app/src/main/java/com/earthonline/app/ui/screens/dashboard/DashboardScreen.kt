@@ -198,6 +198,24 @@ fun DashboardScreen(
                                 Text(stringResource(R.string.checkin_short_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("\uD83D\uDEB6", fontSize = 18.sp)
+                                Text("${uiState.walkingMinutes}min", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text("Walking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                            }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("\uD83D\uDEB4", fontSize = 18.sp)
+                                Text("${uiState.bikingMinutes}min", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text("Biking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                            }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("\uD83D\uDEDE", fontSize = 18.sp)
+                                Text("${uiState.bikingKm}km", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text("Distance", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                            }
+                        }
                     }
                 }
             }
@@ -417,7 +435,19 @@ fun DashboardScreen(
                 onDismiss = { viewModel.onEvent(DashboardEvent.EvidenceRejected) }
             )
         }
-    }
-}
+                        }
+                        if (uiState.walkingMinutes == 0 && uiState.bikingMinutes == 0 && uiState.bikingKm == 0) {
+                            Text(
+                                "\uD83E\uDDEA Tap to test activity tracking",
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                                fontSize = 11.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { viewModel.injectTestActivityData() }
+                                    .padding(top = 6.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
 
 

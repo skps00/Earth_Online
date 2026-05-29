@@ -1,6 +1,7 @@
 package com.earthonline.app.data.repository
 
 import com.earthonline.app.AppConstants
+import com.earthonline.app.data.activity.ActivityRecognitionManager
 import com.earthonline.app.data.local.AchievementSeedData
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
@@ -32,7 +33,8 @@ class AchievementRepository @Inject constructor(
     private val progressDao: UserAchievementProgressDao,
     private val checkInRecordDao: CheckInRecordDao,
     private val evidenceDao: AchievementEvidenceDao,
-    private val petDao: PetDao
+    private val petDao: PetDao,
+    private val activityRecognitionManager: ActivityRecognitionManager
 ) {
     private val _unlockEvents = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
     val unlockEvents: SharedFlow<UnlockedAchievementEvent> = _unlockEvents
@@ -302,6 +304,35 @@ class AchievementRepository @Inject constructor(
                 }
             }
         } catch (_: Exception) { }
+    }
+
+    suspend fun evaluateActivityAchievements(): Pair<Triple<Int, Int, Int>, List<UnlockedAchievementEvent>> {
+        val walkMin = activityRecognitionManager.getWalkingMinutes()
+        val bikeMin = activityRecognitionManager.getBikingMinutes()
+        val bikeKm = activityRecognitionManager.getBikingKm()
+        val userId = AppConstants.LOCAL_USER_ID
+        val now = System.currentTimeMillis()
+        val events = mutableListOf<UnlockedAchievementEvent>()
+
+        if (bikeMin > 0) tryAutoUnlock(userId, "transport_bike", now)?.let { events.add(it) }
+        if (bikeKm >= 100) tryAutoUnlock(userId, "transport_bike_100", now)?.let { events.add(it) }
+
+        return Triple(walkMin, bikeMin, bikeKm) to events
+    }
+
+    private suspend fun tryAutoUnlock(userId: String, achievementId: String, now: Long): UnlockedAchievementEvent? {
+        val def = definitionDao.getById(achievementId) ?: return null
+        val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return null
+        if (!progress.isUnlocked) {
+            progressDao.setProgressById(userId, achievementId, def.triggerGoal)
+            progressDao.unlockAchievement(userId, achievementId, now)
+            return UnlockedAchievementEvent(def, now)
+        }
+        return null
+    }
+
+    suspend fun injectTestActivityData() {
+        activityRecognitionManager.injectTestData()
     }
 
     suspend fun getPet(): PetEntity {

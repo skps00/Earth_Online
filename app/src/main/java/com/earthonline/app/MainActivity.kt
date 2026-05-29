@@ -22,6 +22,7 @@ import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
+import com.earthonline.app.data.activity.ActivityRecognitionManager
 import com.earthonline.app.domain.service.CheckInCoordinator
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.screens.dashboard.DashboardEvent
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingsManager: SettingsManager
+
+    @Inject
+    lateinit var activityRecognitionManager: ActivityRecognitionManager
 
     private lateinit var viewModel: DashboardViewModel
 
@@ -123,6 +127,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkLocationPermission()
+        activityRecognitionManager.startTracking()
 
         setContent {
             var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
