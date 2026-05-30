@@ -58,6 +58,14 @@ class MainActivity : ComponentActivity() {
     private var pendingEvidenceUri: android.net.Uri? = null
     private var pendingEvidenceAchievementId: String? = null
     private var hasLocationPermission = false
+    private var hasActivityPermission = false
+
+    private val activityPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasActivityPermission = granted
+        if (granted) activityRecognitionManager.startTracking()
+    }
 
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -127,7 +135,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkLocationPermission()
-        activityRecognitionManager.startTracking()
+        checkActivityPermission()
 
         setContent {
             var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
@@ -185,5 +193,14 @@ class MainActivity : ComponentActivity() {
     private fun checkLocationPermission() {
         hasLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkActivityPermission() {
+        hasActivityPermission = ContextCompat.checkSelfPermission(this, "com.google.android.gms.permission.ACTIVITY_RECOGNITION") == PackageManager.PERMISSION_GRANTED
+        if (hasActivityPermission) {
+            activityRecognitionManager.startTracking()
+        } else {
+            activityPermissionLauncher.launch("com.google.android.gms.permission.ACTIVITY_RECOGNITION")
+        }
     }
 }

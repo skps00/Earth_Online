@@ -148,14 +148,4 @@ class ActivityRecognitionManager @Inject constructor(
     fun getDrivingMinutes(): Int = prefs.getLong(KEY_DRIVE_MIN, 0).toInt()
     fun getBikingKm(): Int = prefs.getLong(KEY_BIKE_KM, 0).toInt()
     fun getDrivingKm(): Int = prefs.getLong(KEY_DRIVE_KM, 0).toInt()
-
-    /** For testing: simulate activity data */
-    fun injectTestData() {
-        prefs.edit()
-            .putLong(KEY_WALK_MIN, 15)
-            .putLong(KEY_BIKE_MIN, 60)
-            .putLong(KEY_BIKE_KM, 120)
-            .putLong(KEY_DRIVE_MIN, 30)
-            .apply()
-    }
 }

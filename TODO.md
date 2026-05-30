@@ -1,34 +1,74 @@
 # 🌍 地球 Online — 開發任務
 
-> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 32/39 完成 (82%)
+> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 40/56 完成 (71%)
 
 ---
 
-## ⏳ 待辦 (Phase 2 — 中優先)
+## 🔴 Phase 1.8 — Google Play 合規修復
 
-| # | 任務 | 類型 | 說明 |
-|---|---|---|---|
-| P2-1 | Health Connect 重接 | API | 步數 / 睡眠 / 運動時長 / 卡路里 |
-| P2-2 | 活動識別 | API | Activity Recognition（步行 / 跑步 / 騎行 / 駕駛） |
-| P2-3 | 藍牙社交偵測 | API | BluetoothAdapter 掃描附近裝置數 |
-| P2-4 | 日曆事件 | API | CalendarContract（聚會 / 旅行 / 會議） |
-| P2-5 | 故事化等級面板 | UI | 地球地圖解鎖區域 + ContinentMapper 擴充 |
-| P2-6 | 寵物 v2 互動 | UI | 隨機氣泡對話深化 + 點擊反饋 |
-| P2-7 | 寵物 v2 商店 | UI | 裝飾商店 + 貨幣系統（金幣打卡獲得） |
+| # | 任務 | 說明 | 狀態 |
+|---|------|------|:--:|
+| **C-1** | 更新隱私權政策 | PRIVACY.md + privacy.html：加入活動識別/Nominatim/ML Kit 說明 | ✅ |
+| **C-2** | 修正 allowBackup | 改為 false，避免自動備份上傳 | ✅ |
+| **C-3** | 移除 usesCleartextTraffic | 已無需明文 HTTP，移除安全風險 | ✅ |
+| **C-4** | 移除未用權限 READ_MEDIA_IMAGES | Manifest 有宣告但從未使用 | ✅ |
+| **C-5** | 隱私權政策公開 URL | https://skps00.github.io/Earth_Online/privacy.html | ✅ |
+| **C-6** | P2-2a 權限請求對話框 | ACTIVITY_RECOGNITION 執行階段請求 + 隱私說明 | ⬜ |
+| **C-7** | clearAllData 含照片清除 | 刪除 filesDir/photos/ 孤兒檔案 | ✅ |
+| **C-8** | Settings 加入隱私權政策連結 | 設定頁可點擊連結到隱私權政策 | ✅ |
+| **C-9** | EXIF GPS 剝離 | WebP 轉換已自動移除 + 原 JPEG 已刪除，不需額外處理 | ✅ |
 
 ---
 
-## 📋 待辦 (Phase 3 — 低優先)
+## 🔴 Phase 1.7 — Stitch 設計系統套用
 
-| # | 任務 | 類型 |
-|---|---|---|
-| P3-1 | IAP 裝飾商店 | Google Play Billing |
-| P3-2 | 本地自訂成就 | 新 DAO + UI |
-| P3-3 | 成就擴充路線 | 0 → 300 → 1000+ |
-| P3-4 | 足跡地圖 | react-leaflet + 霓虹標記 |
-| P3-5 | Google Drive 備份 | AppData 雲端儲存 |
-| P3-6 | 語言切換 | 英文版 / 多語言 |
-| P3-7 | ProGuard | R8 代碼混淆 |
+| # | 任務 | 說明 | 狀態 |
+|---|------|------|:--:|
+| **S-1** | 字型 Press Start 2P | 標題/成就名套用像素字型 | ⬜ |
+| **S-2** | 調色板更新 | Dark: `#161308` bg / `#FFF6DF` gold | ⬜ |
+| **S-3** | 稀有度邊框規範化 | Common 無/Rare `#4169E1` 1dp/Epic `#800080` 1.5dp/Legendary `#FFD700` 2dp+glow | ⬜ |
+| **S-4** | 動畫參數標準化 | 按鈕 `scale(0.95)` 100ms / 成就 `spring(0.6)` 500ms | ⬜ |
+| **S-5** | 卡片陰影/深度 | Dark: inner shadow / Light: elevation 2dp | ⬜ |
+| **S-6** | 自訂相機畫面 | CameraX RPG 風格 + Reticle + 閃光燈/相簿/格線 | ✅ |
+
+---
+
+## 🟡 Phase 2 — 中優先
+
+| # | 任務 | 說明 | 狀態 |
+|---|------|------|:--:|
+| P2-1 | Health Connect 重接 | 步數 / 睡眠 / 運動時長 / 卡路里 | ⏸️ |
+| P2-2 | 活動識別 | Activity Recognition — 走路/騎行/駕駛自動偵測 | ⚠️ |
+>
+> ⚠️ 已完成自動偵測與成就解鎖，但缺執行階段權限請求對話框。`ACTIVITY_RECOGNITION` 在 API 29+ 是危險權限，需 `ActivityResultContracts.RequestPermission()`。
+| P2-3 | 藍牙社交偵測 | BluetoothAdapter 掃描附近裝置數 | ⬜ |
+| P2-4 | 日曆事件 | CalendarContract — 聚會/旅行/會議 | ⬜ |
+| P2-5 | 故事化等級面板 | 地球地圖解鎖區域 + ContinentMapper 擴充 | ⬜ |
+| P2-6 | 寵物 v2 互動 | 隨機氣泡對話深化 + 點擊反饋 | ⬜ |
+| P2-7 | 寵物 v2 商店 | 裝飾商店 + 貨幣系統（金幣打卡獲得） | ⬜ |
+
+### P2-2 剩餘工作
+
+| # | 任務 | 說明 | 狀態 |
+|---|------|------|:--:|
+| P2-2a | 權限請求對話框 | `ActivityResultContracts.RequestPermission()` + 隱私說明 | ⬜ |
+| P2-2b | 隱私權政策更新 | `PRIVACY.md` 加入活動識別數據說明 | ⬜ |
+
+> ⏸️ P2-1 — Health Connect 暫停。Samsung S23U 上 `getOrCreate()` 拋 `IllegalStateException`，`1.1.0` 需 compileSdk 36+AGP 8.9。見 `code_change_log.md`。
+
+---
+
+## 🟢 Phase 3 — 低優先
+
+| # | 任務 |
+|---|------|
+| P3-1 | IAP 裝飾商店 (Google Play Billing) |
+| P3-2 | 本地自訂成就 (新 DAO + UI) |
+| P3-3 | 成就擴充路線 (0 → 300 → 1000+) |
+| P3-4 | 足跡地圖 |
+| P3-5 | Google Drive 備份 |
+| P3-6 | 語言切換 |
+| P3-7 | ProGuard (R8) |
 
 ### 雲端方案（待決定）
 
@@ -45,7 +85,7 @@
 ### Phase 1.5 — UI/UX 大重構
 
 | # | 任務 | 說明 |
-|---|---|---|
+|---|------|------|
 | U-1 | 導航系統搭建 | Screen sealed class + NavHost + 4 頁籤 |
 | U-2 | RPG HUD 底部導航列 | 滑動指示器 + scale 動畫 + 頁面轉場 |
 | U-3 | 狀態面板重構 | 角色卡 + 寵物 + 快速打卡 + 里程碑提示 |
@@ -56,7 +96,7 @@
 ### Phase 1.6 — 淺色主題與修復
 
 | # | 任務 | 說明 |
-|---|---|---|
+|---|------|------|
 | T-1 | 設計系統標準化 | 語義色 + 字型系統 + 動畫常數 |
 | T-2 | 淺色/深色主題切換 | 下拉選單 + colorScheme 全局適配 |
 | T-3 | 空狀態元件 | EmptyState + ShimmerEffect + ErrorState |
@@ -87,3 +127,5 @@
 | Onboarding 首次引導 (3 頁) |
 | 隱私權政策 + 商店文案 |
 | Hilt DI + MVVM 架構 |
+| RPG 風格自訂相機畫面 (CameraX + Reticle) |
+| Activity Recognition 活動識別 (Walking/Biking/Driving) |

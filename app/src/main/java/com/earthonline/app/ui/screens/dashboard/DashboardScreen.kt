@@ -436,18 +436,6 @@ fun DashboardScreen(
             )
         }
                         }
-                        if (uiState.walkingMinutes == 0 && uiState.bikingMinutes == 0 && uiState.bikingKm == 0) {
-                            Text(
-                                "\uD83E\uDDEA Tap to test activity tracking",
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                                fontSize = 11.sp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.injectTestActivityData() }
-                                    .padding(top = 6.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
                     }
 
 

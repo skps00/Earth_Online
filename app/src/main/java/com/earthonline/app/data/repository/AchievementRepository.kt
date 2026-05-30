@@ -331,10 +331,6 @@ class AchievementRepository @Inject constructor(
         return null
     }
 
-    suspend fun injectTestActivityData() {
-        activityRecognitionManager.injectTestData()
-    }
-
     suspend fun getPet(): PetEntity {
         val existing = petDao.get()
         return existing ?: PetEntity().also { petDao.save(it) }

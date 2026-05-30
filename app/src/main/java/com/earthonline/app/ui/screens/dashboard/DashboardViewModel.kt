@@ -223,15 +223,6 @@ class DashboardViewModel @Inject constructor(
     fun onUnlockEventHandled() {
     }
 
-    fun injectTestActivityData() {
-        android.widget.Toast.makeText(context, "Injecting test activity data...", android.widget.Toast.LENGTH_SHORT).show()
-        viewModelScope.launch {
-            repository.injectTestActivityData()
-            loadAchievementDisplay()
-            android.widget.Toast.makeText(context, "Done! Walking: ${_uiState.value.walkingMinutes}min Biking: ${_uiState.value.bikingMinutes}min", android.widget.Toast.LENGTH_LONG).show()
-        }
-    }
-
     fun retryLoad() {
         viewModelScope.launch {
             loadAchievementDisplay()

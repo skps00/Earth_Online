@@ -3,66 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>地球 Online — 隱私權政策</title>
+<title>地球 Online — 私隱政策</title>
 <style>
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #333; background: #fafafa; }
-h1 { color: #1A1A2E; border-bottom: 2px solid #1A1A2E; padding-bottom: 10px; }
-h2 { color: #16213E; margin-top: 32px; }
-.date { color: #888; font-size: 14px; }
-table { border-collapse: collapse; width: 100%; margin: 16px 0; }
-th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
-th { background: #f0f0f0; }
-.contact { background: #e8f4fd; padding: 16px; border-radius: 8px; margin-top: 32px; }
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:20px;line-height:1.7;color:#333}
+h1{color:#1A1A2E}h2{color:#0F3460;margin-top:30px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f5f5f5}code{background:#f0f0f0;padding:2px 6px;border-radius:4px}
 </style>
 </head>
 <body>
-
-<h1>地球 Online — 隱私權政策</h1>
-<p class="date">最後更新日期：2026 年 5 月 25 日</p>
+<h1>私隱政策</h1>
+<p><strong>最後更新日期：2026 年 5 月 31 日</strong></p>
 
 <h2>概述</h2>
-<p>「地球 Online」是一款<strong>純本機運行</strong>的遊戲化生活記錄 App。我們<strong>不會收集、上傳或分享您的任何個人數據</strong>。</p>
+<p>「地球 Online」是一款純本機運行的遊戲化生活記錄 App。我們<strong>不會收集、上傳或分享您的任何個人數據</strong>至我們的伺服器（我們根本沒有伺服器）。</p>
 
 <h2>我們不使用以下技術</h2>
 <ul>
 <li>不收集個人身份信息</li>
 <li>不連接遠端伺服器</li>
-<li>不使用第三方分析工具（如 Google Analytics）</li>
+<li>不使用第三方分析工具</li>
 <li>不多載廣告 SDK</li>
 <li>不追蹤您的使用行為</li>
 </ul>
 
 <h2>權限說明</h2>
-<p>本 App 請求以下權限，但所有數據僅存儲於您的設備本地：</p>
-
+<p>本 App 請求以下權限，所有數據<strong>預設僅存儲於您的設備本地</strong>：</p>
 <table>
 <tr><th>權限</th><th>用途</th><th>數據去向</th></tr>
-<tr><td>位置 (GPS)</td><td>記錄打卡地點</td><td>僅存於設備本地資料庫</td></tr>
+<tr><td>位置 (GPS)</td><td>記錄打卡地點</td><td>設備 Room 資料庫；Geocoder 不可用時發送至 Nominatim API</td></tr>
 <tr><td>相機</td><td>拍攝成就證據照片</td><td>僅存於設備內部儲存空間</td></tr>
-<tr><td>儲存空間</td><td>匯出/匯入備份檔案</td><td>由您手動選擇儲存位置</td></tr>
+<tr><td>活動識別</td><td>自動偵測步行/騎行/駕駛</td><td>存於設備 SharedPreferences，不上傳</td></tr>
+<tr><td>網路</td><td>Nominatim 地址反查詢（後備）</td><td>發送經緯度至 nominatim.openstreetmap.org</td></tr>
 </table>
+
+<h2>活動識別數據</h2>
+<p>本 App 使用裝置的活動識別功能（透過 Google Play Services）自動偵測您的運動類型，以自動解鎖相關成就。追蹤的數據（步行分鐘數、騎行分鐘數、騎行估算距離）僅存於設備，不會離開您的裝置。</p>
+
+<h2>ML Kit 影像標籤</h2>
+<p>本 App 使用 Google ML Kit 的裝置端影像標籤功能分析證據照片。所有分析<strong>完全在裝置上執行</strong>，照片不會被上傳。</p>
+
+<h2>第三方 API：Nominatim (OpenStreetMap)</h2>
+<p>當裝置不支援 Android Geocoder 時，本 App 會將<strong>經緯度座標</strong>發送至 <code>nominatim.openstreetmap.org</code> 以獲取地址。此為後備方案。</p>
+<p>Nominatim 私隱政策：<a href="https://operations.osmfoundation.org/policies/nominatim/">https://operations.osmfoundation.org/policies/nominatim/</a></p>
 
 <h2>數據安全</h2>
 <ul>
 <li>所有數據以本地 SQLite 資料庫（Room）儲存</li>
-<li>照片儲存於 App 內部目錄（其他 App 無法存取）</li>
-<li>您可以隨時從「設定」頁面清除所有數據</li>
-<li>您可以隨時匯出 JSON 備份檔案自行保管</li>
+<li>不使用 Android 自動備份功能</li>
+<li>可隨時從「設定」頁面清除所有數據（含照片）</li>
+<li>可隨時匯出 JSON 備份檔案自行保管</li>
 </ul>
 
-<h2>無第三方分享</h2>
-<p>我們<strong>不向任何第三方傳輸或分享</strong>您的數據。本 App 無後端伺服器。</p>
+<h2>無雲端分享</h2>
+<p>我們<strong>不向任何第三方商業機構傳輸或分享</strong>您的數據。唯一的例外是 Nominatim API（將 GPS 座標轉換為地名的必要步驟）。</p>
 
 <h2>兒童隱私</h2>
-<p>本 App 不針對 13 歲以下兒童設計，也不會有意收集兒童的個人信息。</p>
+<p>本 App 不針對 13 歲以下兒童設計。</p>
 
-<h2>政策變更</h2>
-<p>若未來隱私權政策有變更，將在 App 內更新並通知用戶。</p>
-
-<div class="contact">
 <h2>聯絡我們</h2>
-<p>如有隱私相關問題，請聯繫：skps00@proton.me</p>
-</div>
-
+<p><strong>skps00@proton.me</strong></p>
 </body>
 </html>

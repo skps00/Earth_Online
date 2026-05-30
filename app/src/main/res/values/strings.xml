@@ -108,6 +108,7 @@
     <string name="nav_settings">設定</string>
     <string name="theme_dark_mode">深色主題</string>
     <string name="theme_light_mode">淺色主題</string>
+    <string name="privacy_policy_label">私隱政策</string>
     <string name="empty_history_title">尚無打卡記錄</string>
     <string name="empty_history_desc">到任何地點打卡，記錄你的冒險旅程</string>
     <string name="view_all_evidence">查看全部 %1$d 張證據照</string>
