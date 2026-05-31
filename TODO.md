@@ -1,6 +1,17 @@
 # 🌍 地球 Online — 開發任務
 
-> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░ 40/56 完成 (71%)
+> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 46/56 完成 (82%)
+
+---
+
+## ✅ 規則重構 (Phase 1-4) — 全部完成
+
+| Phase | 規則 | 內容 | 狀態 |
+|-------|------|------|:--:|
+| **1** | 規則六 | 14 處靜默吞異常 → `Log.e(TAG, msg, e)` | ✅ |
+| **2** | 規則四 | 4 個長函數分解為 23 個小型函數 | ✅ |
+| **3** | 規則五 | 3 個測試檔，16 個測試案例 | ✅ |
+| **4** | 規則十一 | 自我檢查：無密鑰、無 TODO、等 | ✅ |
 
 ---
 
@@ -13,7 +24,7 @@
 | **C-3** | 移除 usesCleartextTraffic | 已無需明文 HTTP，移除安全風險 | ✅ |
 | **C-4** | 移除未用權限 READ_MEDIA_IMAGES | Manifest 有宣告但從未使用 | ✅ |
 | **C-5** | 隱私權政策公開 URL | https://skps00.github.io/Earth_Online/privacy.html | ✅ |
-| **C-6** | P2-2a 權限請求對話框 | ACTIVITY_RECOGNITION 執行階段請求 + 隱私說明 | ⬜ |
+| **C-6** | P2-2a 權限請求對話框 | A+B+C：ActivityPermissionDialog + Dashboard 提示 + Settings 開關 | ✅ |
 | **C-7** | clearAllData 含照片清除 | 刪除 filesDir/photos/ 孤兒檔案 | ✅ |
 | **C-8** | Settings 加入隱私權政策連結 | 設定頁可點擊連結到隱私權政策 | ✅ |
 | **C-9** | EXIF GPS 剝離 | WebP 轉換已自動移除 + 原 JPEG 已刪除，不需額外處理 | ✅ |
@@ -51,8 +62,8 @@
 
 | # | 任務 | 說明 | 狀態 |
 |---|------|------|:--:|
-| P2-2a | 權限請求對話框 | `ActivityResultContracts.RequestPermission()` + 隱私說明 | ⬜ |
-| P2-2b | 隱私權政策更新 | `PRIVACY.md` 加入活動識別數據說明 | ⬜ |
+| P2-2a | 權限請求對話框 | A+B+C：對話框 + Dashboard 提示 + Settings 開關 | ✅ |
+| P2-2b | 隱私權政策更新 | PRIVACY.md 已加入活動識別說明（C-1 一併處理） | ✅ |
 
 > ⏸️ P2-1 — Health Connect 暫停。Samsung S23U 上 `getOrCreate()` 拋 `IllegalStateException`，`1.1.0` 需 compileSdk 36+AGP 8.9。見 `code_change_log.md`。
 

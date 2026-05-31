@@ -1,5 +1,8 @@
 package com.earthonline.app.data.repository
 
+// 成就倉儲 — 管理成就解鎖、打卡記錄、寵物屬性計算的核心資料層
+
+import android.util.Log
 import com.earthonline.app.AppConstants
 import com.earthonline.app.data.activity.ActivityRecognitionManager
 import com.earthonline.app.data.local.AchievementSeedData
@@ -22,11 +25,15 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 import javax.inject.Singleton
 
+// 成就解鎖事件 — 包含成就定義與解鎖時間戳記
+private const val TAG = "AchievementRepository"
+
 data class UnlockedAchievementEvent(
     val achievement: AchievementDefinitionEntity,
     val unlockedDate: Long
 )
 
+// 成就倉儲實作 — 注入所有底層 DAO 與活動識別管理器
 @Singleton
 class AchievementRepository @Inject constructor(
     private val definitionDao: AchievementDefinitionDao,
@@ -36,18 +43,22 @@ class AchievementRepository @Inject constructor(
     private val petDao: PetDao,
     private val activityRecognitionManager: ActivityRecognitionManager
 ) {
+    // 成就解鎖事件流 — 供 ViewModel 訂閱顯示解鎖動畫
     private val _unlockEvents = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
     val unlockEvents: SharedFlow<UnlockedAchievementEvent> = _unlockEvents
 
+    // 總打卡數事件流 — replay=1 確保新訂閱者能取得最新值
     private val _totalCheckins = MutableSharedFlow<Long>(replay = 1)
     val totalCheckins: SharedFlow<Long> = _totalCheckins
 
+    // 初始化種子成就定義與進度 — 僅在首次啟動時呼叫
     suspend fun initializeAchievements() {
         val definitions = AchievementSeedData.create()
         definitionDao.insertAll(definitions)
         progressDao.insertAll(AchievementSeedData.createProgress(definitions, AppConstants.LOCAL_USER_ID))
     }
 
+    // 記錄打卡並檢查成就解鎖 — 回傳本次打卡觸發的所有解鎖事件
     suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = "", address: String = ""): List<UnlockedAchievementEvent> {
         val userId = AppConstants.LOCAL_USER_ID
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
@@ -56,16 +67,19 @@ class AchievementRepository @Inject constructor(
             CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, address = address, timestamp = System.currentTimeMillis())
         )
 
+        // 更新 LOCATION_CHECKIN_COUNT 類型的所有成就進度
         val uniqueCount = checkInRecordDao.countUniqueLocations(userId).toLong()
         progressDao.setProgressByType(userId, triggerType, uniqueCount)
         _totalCheckins.emit(uniqueCount)
 
         val events = mutableListOf<UnlockedAchievementEvent>()
+        // 先檢查打卡計數型成就，再檢查自動追蹤型成就
         events.addAll(checkAndUnlock(userId, triggerType))
         events.addAll(evaluateAutoTrackAchievements(country, continent))
         return events
     }
 
+    // 評估自動追蹤成就 — 依國家和洲別檢查探索成就
     private suspend fun evaluateAutoTrackAchievements(country: String, continent: String): List<UnlockedAchievementEvent> {
         val userId = AppConstants.LOCAL_USER_ID
         val events = mutableListOf<UnlockedAchievementEvent>()
@@ -83,6 +97,7 @@ class AchievementRepository @Inject constructor(
         return events
     }
 
+    // 自動追蹤國家數量及洲數量成就 — 檢查 explore_5countries 等進度型成就
     private suspend fun autoTrackExploreCountry(countryCount: Long): List<UnlockedAchievementEvent> {
         val exploreIds = AchievementTriggers.countryCountAchievements
         val events = mutableListOf<UnlockedAchievementEvent>()
@@ -116,6 +131,7 @@ class AchievementRepository @Inject constructor(
         return events
     }
 
+    // 自動解鎖特定國家成就 — 如到達日本即解鎖 explore_japan
     private suspend fun autoTrackSpecificCountry(country: String): List<UnlockedAchievementEvent> {
         val achievementId = AchievementTriggers.countryTriggers[country] ?: return emptyList()
         val userId = AppConstants.LOCAL_USER_ID
@@ -129,6 +145,7 @@ class AchievementRepository @Inject constructor(
         return listOf(event)
     }
 
+    // 自動解鎖特定洲成就 — 如到達亞洲即解鎖 explore_asia
     private suspend fun autoTrackSpecificContinent(continent: String): List<UnlockedAchievementEvent> {
         val achievementId = AchievementTriggers.continentTriggers[continent] ?: return emptyList()
         val userId = AppConstants.LOCAL_USER_ID
@@ -142,6 +159,7 @@ class AchievementRepository @Inject constructor(
         return listOf(event)
     }
 
+    // 手動確認成就 — 遞增進度，可附照片與 AI 標籤作為證據
     suspend fun confirmManualAchievement(
         achievementId: String,
         photoPath: String? = null,
@@ -180,22 +198,27 @@ class AchievementRepository @Inject constructor(
         return null
     }
 
+    // 取得指定成就的最新證據記錄
     suspend fun getEvidence(achievementId: String): AchievementEvidence? {
         return evidenceDao.getLatestByAchievement(achievementId, AppConstants.LOCAL_USER_ID)
     }
 
+    // 取得指定成就的所有證據記錄（支援多次進度拍照）
     suspend fun getAllEvidenceForAchievement(achievementId: String): List<AchievementEvidence> {
         return evidenceDao.getByAchievement(achievementId, AppConstants.LOCAL_USER_ID)
     }
 
+    // 取得當前使用者的所有成就進度
     suspend fun getAllAchievementProgress(): List<UserAchievementProgressEntity> {
         return progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
     }
 
+    // 取得所有成就定義
     suspend fun getAllDefinitions(): List<AchievementDefinitionEntity> {
         return definitionDao.getAll()
     }
 
+    // 計算所有已解鎖成就的總獎勵分數
     suspend fun getTotalPoints(): Long {
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
         return allProgress.filter { it.isUnlocked }.sumOf { progress ->
@@ -203,22 +226,27 @@ class AchievementRepository @Inject constructor(
         }
     }
 
+    // 取得已解鎖成就的總數量
     suspend fun getUnlockedCount(): Int {
         return progressDao.getAllByUser(AppConstants.LOCAL_USER_ID).count { it.isUnlocked }
     }
 
+    // 取得使用者打卡總次數
     suspend fun getCheckinCount(): Int {
         return checkInRecordDao.countByUser(AppConstants.LOCAL_USER_ID)
     }
 
+    // 取得使用者的所有打卡記錄
     suspend fun getAllCheckinRecords(): List<CheckInRecord> {
         return checkInRecordDao.getAllByUser(AppConstants.LOCAL_USER_ID)
     }
 
+    // 取得不重複打卡地點數量（經緯度去重）
     suspend fun getUniqueLocationCount(): Int {
         return checkInRecordDao.countUniqueLocations(AppConstants.LOCAL_USER_ID)
     }
 
+    // 檢查並解鎖達到目標值的成就 — 遍歷未鎖定成就，進度達標則解鎖
     private suspend fun checkAndUnlock(
         userId: String,
         triggerType: String
@@ -244,27 +272,33 @@ class AchievementRepository @Inject constructor(
         return events
     }
 
+    // 重新發送總打卡數事件 — 供外部強制刷新 UI
     suspend fun refreshTotalCheckins() {
         val count = checkInRecordDao.countUniqueLocations(AppConstants.LOCAL_USER_ID).toLong()
         _totalCheckins.emit(count)
     }
 
+    // 刷新所有資料 — 供導入備份後重整狀態
     suspend fun refreshAll() {
         refreshTotalCheckins()
     }
 
+    // 等級縮放係數 — 用於平方根等級公式，值越大升級越慢
     private val LEVEL_SCALE = 100.0
 
+    // 根據總分計算玩家等級 — 使用平方根公式 sqrt(points / 100) + 1
     fun computePlayerLevel(totalPoints: Long): Int {
         return (kotlin.math.sqrt(totalPoints.toDouble() / LEVEL_SCALE) + 1).toInt()
     }
 
+    // 計算升到下一級所需經驗值
     fun computeXpToNext(totalPoints: Long): Long {
         val currentLevel = computePlayerLevel(totalPoints)
         val nextLevelXp = (currentLevel.toLong() * currentLevel.toLong()) * LEVEL_SCALE.toLong()
         return (nextLevelXp - totalPoints).coerceAtLeast(0)
     }
 
+    // 計算當前等級進度百分比 — 回傳 0f~1f 供進度條使用
     fun computeLevelProgress(totalPoints: Long): Float {
         val currentLevel = computePlayerLevel(totalPoints)
         val currentLevelXp = ((currentLevel - 1).toLong() * (currentLevel - 1).toLong()) * LEVEL_SCALE.toLong()
@@ -275,6 +309,7 @@ class AchievementRepository @Inject constructor(
         return (earned.toFloat() / totalNeeded.toFloat()).coerceIn(0f, 1f)
     }
 
+    // 從歷史記錄同步自動追蹤成就 — 用於備份匯入後重新評估
     suspend fun syncAutoTrackFromHistory() {
         try {
             val userId = AppConstants.LOCAL_USER_ID
@@ -303,9 +338,12 @@ class AchievementRepository @Inject constructor(
                     _unlockEvents.emit(UnlockedAchievementEvent(def, System.currentTimeMillis()))
                 }
             }
-        } catch (_: Exception) { }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to sync auto-track achievements from history", e)
+        }
     }
 
+    // 評估活動成就 — 回傳活動數據 (走路/騎行/騎行公里) 與解鎖事件
     suspend fun evaluateActivityAchievements(): Pair<Triple<Int, Int, Int>, List<UnlockedAchievementEvent>> {
         val walkMin = activityRecognitionManager.getWalkingMinutes()
         val bikeMin = activityRecognitionManager.getBikingMinutes()
@@ -320,6 +358,7 @@ class AchievementRepository @Inject constructor(
         return Triple(walkMin, bikeMin, bikeKm) to events
     }
 
+    // 嘗試自動解鎖單一成就 — 若未解鎖則設為滿進度並解鎖
     private suspend fun tryAutoUnlock(userId: String, achievementId: String, now: Long): UnlockedAchievementEvent? {
         val def = definitionDao.getById(achievementId) ?: return null
         val progress = progressDao.getByUserAndAchievement(userId, achievementId) ?: return null
@@ -331,21 +370,25 @@ class AchievementRepository @Inject constructor(
         return null
     }
 
+    // 取得寵物實體 — 尚無則新建預設寵物
     suspend fun getPet(): PetEntity {
         val existing = petDao.get()
         return existing ?: PetEntity().also { petDao.save(it) }
     }
 
+    // 重新命名寵物
     suspend fun renamePet(name: String) {
         val pet = getPet().copy(name = name)
         petDao.save(pet)
     }
 
+    // 更換寵物表情符號
     suspend fun changePetEmoji(emoji: String) {
         val pet = getPet().copy(emoji = emoji)
         petDao.save(pet)
     }
 
+    // 根據已解鎖成就計算並保存寵物五維屬性（力量/敏捷/智力/魅力/體力）
     suspend fun computeAndSavePetStats() {
         val pet = getPet()
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
@@ -360,6 +403,7 @@ class AchievementRepository @Inject constructor(
         for (prog in allProgress) {
             val def = definitionDao.getById(prog.achievementId) ?: continue
             val points = def.rewardPoints.toFloat()
+            // 若成就定義有自訂屬性權重則優先使用，否則使用分類預設權重
             val hasCustomWeights = def.strengthWeight + def.agilityWeight + def.intelligenceWeight + def.charismaWeight + def.vitalityWeight > 0f
             if (hasCustomWeights) {
                 strengthRaw += points * def.strengthWeight
@@ -394,6 +438,7 @@ class AchievementRepository @Inject constructor(
         )
     }
 
+    // 將 PetEntity 轉換為 UI 層 PetUiState
     fun petToUiState(pet: PetEntity): com.earthonline.app.ui.screens.dashboard.PetUiState {
         return com.earthonline.app.ui.screens.dashboard.PetUiState(
             name = pet.name,

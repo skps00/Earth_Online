@@ -13,22 +13,23 @@ import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.local.entity.PetEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 
+// Room 本地資料庫：定義所有實體、版本號，並暴露各 DAO 的抽象方法
 @Database(
     entities = [
-        AchievementDefinitionEntity::class,
-        UserAchievementProgressEntity::class,
-        CheckInRecord::class,
-        AchievementEvidence::class,
-        PetEntity::class
+        AchievementDefinitionEntity::class, // 成就定義表
+        UserAchievementProgressEntity::class, // 使用者成就進度表
+        CheckInRecord::class, // 打卡記錄表
+        AchievementEvidence::class, // 成就證據表
+        PetEntity::class // 寵物表
     ],
-    version = 12,
-    exportSchema = false
+    version = 12, // 資料庫版本號
+    exportSchema = false // 不匯出 schema 檔案
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun achievementDefinitionDao(): AchievementDefinitionDao
-    abstract fun userAchievementProgressDao(): UserAchievementProgressDao
-    abstract fun checkInRecordDao(): CheckInRecordDao
-    abstract fun achievementEvidenceDao(): AchievementEvidenceDao
-    abstract fun petDao(): PetDao
+    abstract fun achievementDefinitionDao(): AchievementDefinitionDao // 成就定義 DAO
+    abstract fun userAchievementProgressDao(): UserAchievementProgressDao // 使用者成就進度 DAO
+    abstract fun checkInRecordDao(): CheckInRecordDao // 打卡記錄 DAO
+    abstract fun achievementEvidenceDao(): AchievementEvidenceDao // 成就證據 DAO
+    abstract fun petDao(): PetDao // 寵物 DAO
 }

@@ -1,5 +1,7 @@
 package com.earthonline.app.data.backup
 
+// 備份管理器 — 將成就進度、打卡記錄、證據和寵物資料匯出／匯入為 JSON
+
 import android.content.Context
 import android.net.Uri
 import com.earthonline.app.AppConstants
@@ -17,6 +19,7 @@ import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// 備份管理器 — 注入 Context 與所有 DAO 進行完整資料匯出匯入
 @Singleton
 class BackupManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -28,6 +31,7 @@ class BackupManager @Inject constructor(
 ) {
     private val userId = AppConstants.LOCAL_USER_ID
 
+    // 匯出所有資料為 JSON 到指定 URI — 含成就進度、打卡記錄、證據、寵物
     suspend fun exportToUri(uri: Uri) {
         val json = JSONObject().apply {
             put("version", 1)
@@ -93,6 +97,7 @@ class BackupManager @Inject constructor(
         }
     }
 
+    // 從 URI 匯入 JSON 資料 — 使用 insertReplace 避免主鍵衝突
     suspend fun importFromUri(uri: Uri) {
         val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText() ?: return
         val json = JSONObject(jsonString)

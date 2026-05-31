@@ -1,5 +1,7 @@
 package com.earthonline.app.ui.screens.dashboard
 
+// 儀表板標題列，顯示應用程式名稱與副標題
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.earthonline.app.R
 
+// 渲染儀表板頂部標題與副標題
 @Composable
 fun DashboardHeader() {
     Column(

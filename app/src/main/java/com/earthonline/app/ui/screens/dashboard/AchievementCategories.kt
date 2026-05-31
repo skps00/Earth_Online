@@ -1,16 +1,21 @@
 package com.earthonline.app.ui.screens.dashboard
 
+// 成就分類定義，依觸發類型與 ID 前綴將成就分為簽到、探索、職涯等類別
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.earthonline.app.R
 import com.earthonline.app.domain.model.TriggerType
 
+// 成就分類，包含標題與篩選條件
 data class AchievementCategory(
     val title: String,
     val predicate: (AchievementDisplayItem) -> Boolean
 )
 
+// 成就分類工具，依觸發類型與 ID 前綴將成就分組
 object AchievementCategories {
+    // 依分類篩選並回傳非空分組列表
     @Composable
     fun getAll(items: List<AchievementDisplayItem>): List<Pair<String, List<AchievementDisplayItem>>> {
         val categories = listOf(

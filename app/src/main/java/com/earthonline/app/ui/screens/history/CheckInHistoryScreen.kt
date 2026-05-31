@@ -1,5 +1,7 @@
 package com.earthonline.app.ui.screens.history
 
+// 打卡歷史畫面，按國家分組顯示過往簽到記錄
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -40,6 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// 渲染打卡歷史清單，按國家分組顯示時間戳與地址
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckInHistoryScreen(

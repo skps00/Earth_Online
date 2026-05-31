@@ -1,5 +1,7 @@
 package com.earthonline.app.ui.screens.dashboard
 
+// 寵物卡片元件，顯示寵物表情、名稱、等級與屬性，支援更名與換裝
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -87,6 +89,7 @@ private val STAT_KEYS = listOf(
     Triple(R.string.stat_vitality, R.string.stat_vitality_desc, AccentOrange)
 )
 
+// 渲染寵物卡片，包含表情動畫、對話泡泡、屬性條與自訂對話框
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PetCard(
@@ -283,6 +286,7 @@ fun PetCard(
     }
 }
 
+// 渲染單條屬性進度條，顯示標籤、數值與彩色進度指示器
 @Composable
 private fun StatBar(label: String, value: Int, max: Int, color: Color) {
     Column {

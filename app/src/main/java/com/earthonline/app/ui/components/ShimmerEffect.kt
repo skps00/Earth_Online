@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 骨架屏載入動畫：儀表板載入時的閃爍占位符，模擬頁面佈局結構
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -30,6 +31,7 @@ import com.earthonline.app.ui.theme.CardDark
 import com.earthonline.app.ui.theme.ShimmerBase
 import com.earthonline.app.ui.theme.ShimmerHighlight
 
+// 渲染儀表板骨架屏：無限循環漸變掃光動畫，模擬標頭、卡片、寵物、按鈕佈局
 @Composable
 fun DashboardShimmer(modifier: Modifier = Modifier) {
     val transition = rememberInfiniteTransition()
@@ -50,68 +52,80 @@ fun DashboardShimmer(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Header shimmer
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .height(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(brush, RoundedCornerShape(4.dp))
-        )
+        ShimmerHeader(brush)
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Status card shimmer
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(brush, RoundedCornerShape(16.dp))
-        )
+        ShimmerStatusCard(brush)
         Spacer(modifier = Modifier.height(16.dp))
+        ShimmerPetCard(brush)
+        Spacer(modifier = Modifier.height(16.dp))
+        ShimmerButton(brush)
+    }
+}
 
-        // Pet card shimmer
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+// 渲染標頭文字骨架屏占位符
+@Composable
+private fun ShimmerHeader(brush: Brush) {
+    // Header shimmer
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.5f)
+            .height(20.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(brush, RoundedCornerShape(4.dp))
+    )
+}
+
+// 渲染狀態卡片骨架屏占位符
+@Composable
+private fun ShimmerStatusCard(brush: Brush) {
+    // Status card shimmer
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(brush, RoundedCornerShape(16.dp))
+    )
+}
+
+// 渲染寵物卡片骨架屏占位符
+@Composable
+private fun ShimmerPetCard(brush: Brush) {
+    // Pet card shimmer
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.size(56.dp).clip(CircleShape).background(brush, CircleShape)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
             Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(brush, CircleShape)
+                modifier = Modifier.fillMaxWidth(0.6f).height(14.dp)
+                    .clip(RoundedCornerShape(4.dp)).background(brush, RoundedCornerShape(4.dp))
             )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
+            Spacer(modifier = Modifier.height(8.dp))
+            repeat(5) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(14.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(brush, RoundedCornerShape(4.dp))
+                    modifier = Modifier.fillMaxWidth(0.7f).height(8.dp)
+                        .clip(RoundedCornerShape(2.dp)).background(brush, RoundedCornerShape(2.dp))
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                repeat(5) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(brush, RoundedCornerShape(2.dp))
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button shimmer
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(brush, RoundedCornerShape(14.dp))
-        )
     }
+}
+
+// 渲染按鈕骨架屏占位符
+@Composable
+private fun ShimmerButton(brush: Brush) {
+    // Button shimmer
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(brush, RoundedCornerShape(14.dp))
+    )
 }

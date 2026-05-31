@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.navigation
 
+// 應用主導航：管理 Onboarding 引導、底部頁籤導航、各頁面路由與轉場動畫
 import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
@@ -59,6 +60,7 @@ import com.earthonline.app.ui.screens.onboarding.OnboardingScreen
 import com.earthonline.app.ui.screens.settings.SettingsScreen
 import com.earthonline.app.ui.theme.Gold
 
+// 應用導航入口：判斷是否顯示 Onboarding、建構 Scaffold + NavHost + BottomBar，管理頁面轉場
 @Composable
 fun AppNavigation(
     viewModel: DashboardViewModel,
@@ -67,7 +69,8 @@ fun AppNavigation(
     onTakeEvidencePhoto: (String) -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onToggleDarkMode: (Boolean) -> Unit
+    onToggleDarkMode: (Boolean) -> Unit,
+    onRequestActivityPermission: () -> Unit
 ) {
     val context = LocalContext.current
     var showOnboarding by remember {
@@ -118,7 +121,8 @@ fun AppNavigation(
                 DashboardScreen(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
-                    onTakeEvidencePhoto = onTakeEvidencePhoto
+                    onTakeEvidencePhoto = onTakeEvidencePhoto,
+                    onRequestActivityPermission = onRequestActivityPermission
                 )
             }
 
@@ -127,7 +131,8 @@ fun AppNavigation(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    showOnlyAchievementWall = true
+                    showOnlyAchievementWall = true,
+                    onRequestActivityPermission = onRequestActivityPermission
                 )
             }
 
@@ -155,6 +160,7 @@ fun AppNavigation(
     }
 }
 
+// 動畫底部導航列：金色滑動指示器 + 選中 icon 縮放彈跳 + Material ripple 點擊效果
 @Composable
 private fun AnimatedBottomBar(
     currentRoute: String,

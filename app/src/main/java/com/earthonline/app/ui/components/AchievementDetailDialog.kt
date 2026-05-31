@@ -1,6 +1,8 @@
 package com.earthonline.app.ui.components
 
+// 成就詳情對話框：顯示成就完整資訊、進度、證據照片預覽，支援拍照證據與手動確認
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +52,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val TAG = "AchievementDetailDialog"
+
+// 顯示成就詳情對話框：含描述、進度條、解鎖時間、獎勵點數、證據照片瀏覽與分享按鈕
 @Composable
 fun AchievementDetailDialog(
     item: AchievementDisplayItem,
@@ -77,7 +82,10 @@ fun AchievementDetailDialog(
         try {
             val uri = android.net.Uri.parse(path)
             context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
-        } catch (_: Exception) { null }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to load bitmap from path: $path", e)
+            null
+        }
     }
 
     AlertDialog(

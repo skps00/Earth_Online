@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 成就解鎖彈窗：頂部彈出式卡片，含螢火蟲粒子環繞星星特效、滑動關閉，自動定時消失
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -63,6 +64,7 @@ private const val DIALOG_FADE_MS = 500L
 private const val DIALOG_WIDTH_FRACTION = 0.92f
 private const val DISMISS_DRAG_THRESHOLD_DP = 60f
 
+// 渲染成就解鎖彈窗：頂部卡片從上方滑入，螢火蟲粒子繞星旋轉，播放音效後自動消失
 @Composable
 fun AchievementUnlockDialog(
     event: UnlockedAchievementEvent,

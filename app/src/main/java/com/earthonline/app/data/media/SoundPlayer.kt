@@ -1,12 +1,18 @@
 package com.earthonline.app.data.media
 
+// 音效播放器 — 播放 raw 資源中的音效檔，支援靜音控制
+
 import com.earthonline.app.AppConstants
 import android.content.Context
 import android.media.MediaPlayer
+import android.util.Log
 
+// 單例音效播放器 — 同一時間只播放一個音效
 object SoundPlayer {
+    private const val TAG = "SoundPlayer"
     private var currentPlayer: MediaPlayer? = null
 
+    // 播放指定資源名稱的音效 — 靜音時跳過，播放完自動釋放
     fun play(context: Context, resourceName: String) {
         val muted = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(AppConstants.KEY_SOUND_MUTED, false)
@@ -23,9 +29,12 @@ object SoundPlayer {
                     currentPlayer = null
                 }
             }
-        } catch (_: Exception) { }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to play sound: $resourceName", e)
+        }
     }
 
+    // 停止並釋放當前播放器
     fun stop() {
         currentPlayer?.stop()
         currentPlayer?.release()

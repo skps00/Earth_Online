@@ -1,6 +1,8 @@
 package com.earthonline.app.ui.components
 
+// 證據照片確認對話框：顯示拍攝的照片預覽與 AI 分析標籤，供使用者確認或重拍
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.EmeraldGreen
 
+private const val TAG = "EvidenceConfirmDialog"
+
+// 顯示證據照片確認對話框：預覽照片與 AI 分析標籤，供確認上傳或重拍
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EvidenceConfirmDialog(
@@ -54,7 +59,10 @@ fun EvidenceConfirmDialog(
                     val bitmap = remember(photoUri) {
                         try {
                             context.contentResolver.openInputStream(Uri.parse(photoUri))?.use { BitmapFactory.decodeStream(it) }
-                        } catch (_: Exception) { null }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to load evidence photo", e)
+                            null
+                        }
                     }
                     if (bitmap != null) {
                         Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)))

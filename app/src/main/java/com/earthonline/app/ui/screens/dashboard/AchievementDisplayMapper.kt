@@ -1,10 +1,13 @@
 package com.earthonline.app.ui.screens.dashboard
 
+// 成就顯示映射器，將資料庫實體轉換為 UI 顯示項目並排序
+
 import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
 
+// 成就顯示映射器，將資料庫實體轉換為 UI 顯示項目並排序
 object AchievementDisplayMapper {
 
     private val allowedTypes = setOf(
@@ -13,6 +16,7 @@ object AchievementDisplayMapper {
         TriggerType.AUTO_TRACK.value
     )
 
+    // 將成就定義與進度配對，僅保留允許類型並依解鎖狀態排序
     fun map(
         definitions: List<AchievementDefinitionEntity>,
         allProgress: List<UserAchievementProgressEntity>

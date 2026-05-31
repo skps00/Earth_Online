@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 空狀態元件：當列表無資料時顯示 emoji 圖示、標題、描述與可選操作按鈕
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.ui.theme.Gold
 
+// 渲染空狀態畫面：居中顯示 emoji、標題、描述與可選操作按鈕
 @Composable
 fun EmptyState(
     icon: String,

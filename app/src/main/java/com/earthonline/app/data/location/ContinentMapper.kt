@@ -1,5 +1,8 @@
 package com.earthonline.app.data.location
 
+// 洲別映射器 — 將國家名稱映射到所屬洲別字串
+
+// 以 HashMap 維護國家到洲別的對應關係
 object ContinentMapper {
     private val map = mapOf(
         "China" to "Asia", "Japan" to "Asia", "Korea" to "Asia", "India" to "Asia",
@@ -14,5 +17,6 @@ object ContinentMapper {
         "Morocco" to "Africa"
     )
 
+    // 根據國家名稱回傳所屬洲別 — 未收錄國家回傳空字串
     fun continentOf(country: String): String = map[country] ?: ""
 }

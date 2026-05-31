@@ -1,10 +1,13 @@
 package com.earthonline.app.data.activity
 
+// 活動識別管理器 — 使用 Google Activity Transition API 自動偵測並記錄活動時長與距離
+
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionEvent
@@ -15,10 +18,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// 活動識別管理器 — 使用 SharedPreferences 持久化累計活動統計
 @Singleton
 class ActivityRecognitionManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    // 活動統計儲存鍵值定義
     companion object {
         private const val PREFS = "activity_stats"
         private const val KEY_WALK_MIN = "total_walk_minutes"
@@ -28,12 +33,14 @@ class ActivityRecognitionManager @Inject constructor(
         private const val KEY_BIKE_KM = "total_bike_km"
         private const val KEY_DRIVE_KM = "total_drive_km"
         private const val REQUEST_CODE = 1001
+        private const val TAG = "ActivityRecognitionManager"
     }
 
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private var lastActivityTime = 0L
     private var currentActivity: Int = DetectedActivity.UNKNOWN
 
+    // 接收活動轉換廣播 — 由 Activity Transition API 觸發
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent == null) return
@@ -46,6 +53,7 @@ class ActivityRecognitionManager @Inject constructor(
         }
     }
 
+    // 初始化時註冊廣播接收器 — RECEIVER_NOT_EXPORTED 防止外部應用發送
     init {
         context.registerReceiver(
             receiver,
@@ -54,6 +62,7 @@ class ActivityRecognitionManager @Inject constructor(
         )
     }
 
+    // 啟動活動追蹤 — 註冊走路／跑步／騎行／駕駛的進入與離開轉換監聽
     fun startTracking() {
         val transitions = listOf(
             ActivityTransition.Builder()
@@ -100,9 +109,12 @@ class ActivityRecognitionManager @Inject constructor(
         try {
             ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent)
-        } catch (_: Exception) { }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to request activity transition updates", e)
+        }
     }
 
+    // 處理活動轉換事件 — 進入時記錄開始時間，離開時累計時長與預估距離
     private fun handleTransition(event: ActivityTransitionEvent) {
         val now = System.currentTimeMillis()
         val durationMinutes = if (lastActivityTime > 0 && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
@@ -116,6 +128,7 @@ class ActivityRecognitionManager @Inject constructor(
             lastActivityTime = now
         } else {
             currentActivity = DetectedActivity.UNKNOWN
+            // 使用平均速度估算距離（km），騎行 15km/h，駕駛 40km/h
             val speedKmh = when (event.activityType) {
                 DetectedActivity.ON_BICYCLE -> 15.0
                 DetectedActivity.IN_VEHICLE -> 40.0
@@ -138,10 +151,12 @@ class ActivityRecognitionManager @Inject constructor(
         }
     }
 
+    // 累加指定統計項目的數值
     private fun incrementStat(key: String, amount: Int) {
         prefs.edit().putLong(key, prefs.getLong(key, 0) + amount).apply()
     }
 
+    // 以下為各活動統計的 getter — 從 SharedPreferences 讀取累計數值
     fun getWalkingMinutes(): Int = prefs.getLong(KEY_WALK_MIN, 0).toInt()
     fun getRunningMinutes(): Int = prefs.getLong(KEY_RUN_MIN, 0).toInt()
     fun getBikingMinutes(): Int = prefs.getLong(KEY_BIKE_MIN, 0).toInt()

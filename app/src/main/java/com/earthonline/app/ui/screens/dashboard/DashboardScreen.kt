@@ -1,5 +1,7 @@
 ﻿package com.earthonline.app.ui.screens.dashboard
 
+// 儀表板主畫面，顯示玩家等級、成就牆、寵物卡片與打卡按鈕
+
 import android.graphics.BitmapFactory
 import android.content.Intent
 import androidx.compose.animation.animateColorAsState
@@ -75,6 +77,7 @@ import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.DashboardShimmer
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
+import com.earthonline.app.ui.components.ActivityPermissionDialog
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementUnlocked
 import com.earthonline.app.ui.theme.AccentOrange
@@ -85,13 +88,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// 渲染儀表板主畫面，包含統計卡片、寵物、成就分類分頁及各種對話框
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
-    showOnlyAchievementWall: Boolean = false
+    showOnlyAchievementWall: Boolean = false,
+    onRequestActivityPermission: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -435,7 +440,11 @@ fun DashboardScreen(
                 onDismiss = { viewModel.onEvent(DashboardEvent.EvidenceRejected) }
             )
         }
-                        }
-                    }
-
-
+        if (uiState.showActivityPermissionDialog) {
+            ActivityPermissionDialog(
+                onGrant = { viewModel.grantActivityPermission(); onRequestActivityPermission() },
+                onDismiss = { viewModel.dismissActivityPermissionDialog() }
+            )
+        }
+    }
+}

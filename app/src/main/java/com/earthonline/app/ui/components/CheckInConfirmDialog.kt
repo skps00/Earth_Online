@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 打卡確認對話框：顯示當前地址，供使用者確認是否在此位置打卡
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.EmeraldGreen
 
+// 顯示打卡確認對話框：顯示地址並詢問是否確認打卡
 @Composable
 fun CheckInConfirmDialog(
     address: String,

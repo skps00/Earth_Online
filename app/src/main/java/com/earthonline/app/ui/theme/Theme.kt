@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.theme
 
+// Material3 主題配置：深色/淺色雙方案色系選用、自訂字型層級、狀態欄顏色聯動
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -10,11 +11,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 
+// 深色主題色系：金色為主色、翡翠綠為次要、深海藍為背景
 private val DarkColorScheme = darkColorScheme(
     primary = Gold,
     secondary = EmeraldGreen,
@@ -30,6 +31,7 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = TextSecondaryDark
 )
 
+// 客製字型系統：定義 Display 至 Label 各層級的字重、字級與字距
 private val AppTypography = Typography(
     displayLarge = Typography().displayLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
     headlineLarge = Typography().headlineLarge.copy(fontWeight = FontWeight.Bold),
@@ -43,6 +45,7 @@ private val AppTypography = Typography(
     labelSmall = Typography().labelSmall.copy(fontSize = 10.sp)
 )
 
+// 淺色主題色系：深金為主色、淺灰藍為背景
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFFC49B00),
     secondary = EmeraldGreen,
@@ -58,6 +61,7 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = Color(0xFF64748B)
 )
 
+// 應用主題包裝器：根據 darkTheme 參數選用深/淺色系，設定狀態欄顏色與 MaterialTheme
 @Composable
 fun EarthOnlineTheme(
     darkTheme: Boolean = true,

@@ -1,5 +1,8 @@
 package com.earthonline.app.data.photo
 
+// 照片管理器 — 處理拍照、壓縮為 WebP、EXIF 旋轉修正與刪除
+
+import android.util.Log
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,10 +19,14 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// 照片管理器 — 管理照片目錄與 FileProvider URI 生成
+private const val TAG = "PhotoManager"
+
 @Singleton
 class PhotoManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    // 照片儲存目錄 — 不存在時自動建立
     private val photoDir: File
         get() {
             val dir = File(context.filesDir, AppConstants.PHOTOS_DIR)
@@ -27,6 +34,7 @@ class PhotoManager @Inject constructor(
             return dir
         }
 
+    // 建立新照片的 FileProvider URI — 以時間戳記命名
     fun createPhotoUri(): Uri {
         val timestamp = SimpleDateFormat(AppConstants.PHOTO_TIMESTAMP_FORMAT, Locale.getDefault()).format(Date())
         val file = File(photoDir, "EARTH_ONLINE_${timestamp}.jpg")
@@ -37,12 +45,14 @@ class PhotoManager @Inject constructor(
         )
     }
 
+    // 從 URI 取得對應的 File 物件 — 用於檢查檔案是否存在
     fun getPhotoFileFromUri(uri: Uri): File? {
         val filename = uri.lastPathSegment ?: return null
         val file = File(photoDir, filename)
         return if (file.exists()) file else null
     }
 
+    // 壓縮照片 — 縮小至最大尺寸、修正 EXIF 旋轉、轉 WebP 並遞減質量至目標大小
     fun compressPhoto(originalUri: Uri): Uri {
         val originalFile = getPhotoFileFromUri(originalUri)
             ?: return originalUri
@@ -54,6 +64,7 @@ class PhotoManager @Inject constructor(
 
         if (origWidth <= 0 || origHeight <= 0) return originalUri
 
+        // 計算採樣比例：若圖片任一邊超過最大尺寸則等比縮小
         val maxDim = AppConstants.MAX_PHOTO_DIM
         val sampleSize = if (origWidth > maxDim || origHeight > maxDim) {
             var ratio = 1
@@ -70,6 +81,7 @@ class PhotoManager @Inject constructor(
 
         val fixed = fixExifOrientation(originalFile.absolutePath, bitmap)
 
+        // 遞減 WebP 質量直到檔案大小達標或質量低於下限
         var quality = AppConstants.INITIAL_WEBP_QUALITY
         var bytes: ByteArray
         do {
@@ -93,14 +105,18 @@ class PhotoManager @Inject constructor(
         )
     }
 
+    // 刪除指定 URI 的照片檔案 — 用於取消證據照時清理
     fun deletePhoto(uriString: String) {
         try {
             val uri = Uri.parse(uriString)
             val file = getPhotoFileFromUri(uri)
             file?.delete()
-        } catch (_: Exception) { }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to delete photo: $uriString", e)
+        }
     }
 
+    // 根據 EXIF 旋轉資訊修正 Bitmap 方向 — 處理拍照時的旋轉標記
     private fun fixExifOrientation(path: String, bitmap: Bitmap): Bitmap {
         return try {
             val exif = ExifInterface(path)
@@ -120,7 +136,8 @@ class PhotoManager @Inject constructor(
             val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
             if (rotated != bitmap) bitmap.recycle()
             rotated
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fix EXIF orientation", e)
             bitmap
         }
     }

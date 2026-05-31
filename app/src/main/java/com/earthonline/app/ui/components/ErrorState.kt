@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 錯誤狀態元件：顯示錯誤圖示、標題、描述與重試按鈕
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AccentOrange
 
+// 渲染錯誤狀態畫面：顯示警告圖示、錯誤訊息與重試按鈕
 @Composable
 fun ErrorState(
     title: String = stringResource(R.string.error_generic_title),

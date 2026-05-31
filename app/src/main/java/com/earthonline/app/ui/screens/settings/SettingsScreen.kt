@@ -1,7 +1,10 @@
 package com.earthonline.app.ui.screens.settings
 
+// 設定畫面，包含音效、主題、活動追蹤、備份與資料清除功能
+
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material3.AlertDialog
@@ -65,6 +69,9 @@ import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.DestructiveRed
 import com.earthonline.app.ui.theme.EmeraldGreen
 
+private const val TAG = "SettingsScreen"
+
+// 渲染設定畫面，提供音效開關、主題切換、活動追蹤、隱私政策、備份還原與清除資料
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -78,6 +85,7 @@ fun SettingsScreen(
     var soundOn by remember { mutableStateOf(settingsManager.soundEnabled) }
     var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
     var showClearDialog by remember { mutableStateOf(false) }
+    var activityTracking by remember { mutableStateOf(settingsManager.activityTrackingEnabled) }
 
     BackHandler(enabled = true) { onBack() }
 
@@ -192,14 +200,38 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Filled.DirectionsRun, null,
+                        tint = if (activityTracking) EmeraldGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text("Activity Tracking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Switch(
+                        checked = activityTracking,
+                        onCheckedChange = {
+                            activityTracking = it
+                            settingsManager.activityTrackingEnabled = it
+                        },
+                        colors = SwitchDefaults.colors(checkedTrackColor = EmeraldGreen)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        val intent = android.content.Intent(
-                            android.content.Intent.ACTION_VIEW,
-                            android.net.Uri.parse("https://skps00.github.io/Earth_Online/privacy.html")
-                        )
-                        try { context.startActivity(intent) } catch (_: Exception) { }
+                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://skps00.github.io/Earth_Online/privacy.html"))
+                        try { context.startActivity(intent) } catch (e: Exception) { Log.e(TAG, "Failed to open privacy policy URL", e) }
                     },
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)

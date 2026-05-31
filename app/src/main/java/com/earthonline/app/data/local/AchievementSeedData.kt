@@ -4,8 +4,10 @@ import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
 
+// 成就種子資料：定義 129 個預設成就及其初始進度，用於資料庫首次初始化
 object AchievementSeedData {
 
+    // 建立所有預設成就定義，涵蓋打卡、探索、海洋、職涯、日常、史詩、健康、交通等分類
     fun create(): List<AchievementDefinitionEntity> = listOf(
         AchievementDefinitionEntity("checkin_1", "初次打卡", "在 1 個地點打卡", "ic_achievement_photo_1", TriggerType.LOCATION_CHECKIN_COUNT.value, 1L, false, 10, strengthWeight = 0f, agilityWeight = 0.6f, intelligenceWeight = 0f, charismaWeight = 0.4f, vitalityWeight = 0f),
         AchievementDefinitionEntity("checkin_3", "三度到訪", "在 3 個不同地點打卡", "ic_achievement_photo_2", TriggerType.LOCATION_CHECKIN_COUNT.value, 3L, false, 15, strengthWeight = 0f, agilityWeight = 0.5f, intelligenceWeight = 0.2f, charismaWeight = 0.3f, vitalityWeight = 0f),
@@ -133,6 +135,7 @@ object AchievementSeedData {
         AchievementDefinitionEntity("daily_photo_album", "回憶收集者", "整理一本實體相簿", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 50, strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0.5f, charismaWeight = 0.5f, vitalityWeight = 0f),
     )
 
+    // 為指定用戶建立所有成就的初始進度記錄（未解鎖、進度為 0）
     fun createProgress(definitions: List<AchievementDefinitionEntity>, userId: String): List<UserAchievementProgressEntity> {
         return definitions.map { def ->
             UserAchievementProgressEntity(

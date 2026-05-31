@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.components
 
+// 成就卡片元件：顯示單一成就的進度、稀有度、解鎖狀態，支援點擊查看詳情
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,6 +42,7 @@ import com.earthonline.app.ui.screens.dashboard.AchievementDisplayItem
 import com.earthonline.app.ui.theme.EmeraldGreen
 import com.earthonline.app.ui.theme.Gold
 
+// 渲染成就卡片：含圖標、標題、說明、進度條、稀有度標籤，解鎖後顯示金色邊框與光暈
 @Composable
 fun AchievementCard(
     item: AchievementDisplayItem,
@@ -167,7 +169,7 @@ fun AchievementCard(
                     )
                     if (!isHidden || isUnlocked) {
                         Text(
-                            text = rarity.label,
+                            text = stringResource(rarity.labelResId),
                             style = MaterialTheme.typography.labelSmall,
                             color = rarity.color.copy(alpha = 0.8f)
                         )

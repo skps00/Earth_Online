@@ -1,5 +1,8 @@
 package com.earthonline.app.ui.screens.camera
 
+// 相機畫面，用於拍攝成就證據照片，支援閃光燈、準星與相簿選取
+
+import android.util.Log
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
@@ -78,6 +81,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+private const val TAG = "CameraScreen"
+
+// 渲染相機取景畫面，包含準星動畫、閃光燈控制、證據縮圖列與快門按鈕
 @Composable
 fun CameraScreen(
     achievementId: String,
@@ -404,6 +410,7 @@ fun CameraScreen(
     }
 }
 
+// 渲染證據縮圖，從檔案路徑載入並顯示照片
 @Composable
 private fun EvidenceThumbnail(photoPath: String) {
     val context = LocalContext.current
@@ -416,7 +423,9 @@ private fun EvidenceThumbnail(photoPath: String) {
                 context.contentResolver.openInputStream(uri)?.use { stream ->
                     bitmap = BitmapFactory.decodeStream(stream)
                 }
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load evidence thumbnail", e)
+            }
         }
     }
 
@@ -429,6 +438,7 @@ private fun EvidenceThumbnail(photoPath: String) {
     }
 }
 
+// 渲染網格切換圖示，以四個圓角矩形表示準星顯示狀態
 @Composable
 private fun GridIcon(active: Boolean = true) {
     val c = if (active) Gold.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.3f)

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -35,6 +36,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// 應用程式主入口 Activity，管理權限請求、拍照證據、備份匯入匯出等啟動器
+private const val TAG = "MainActivity"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -60,6 +64,7 @@ class MainActivity : ComponentActivity() {
     private var hasLocationPermission = false
     private var hasActivityPermission = false
 
+    // 活動識別權限請求，授權後啟動活動追蹤
     private val activityPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -67,6 +72,7 @@ class MainActivity : ComponentActivity() {
         if (granted) activityRecognitionManager.startTracking()
     }
 
+    // 相機權限請求，授權後啟動證據拍照
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -75,6 +81,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 位置權限請求，授權後執行打卡
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -84,6 +91,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 拍照完成後壓縮照片、AI 分析標籤並儲存證據路徑
     private val evidenceCaptureLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
@@ -101,7 +109,8 @@ class MainActivity : ComponentActivity() {
                 try {
                     val labels = imageAnalyzer.analyze(compressedUri)
                     viewModel.setAnalyzedLabels(labels)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.e(TAG, "AI image analysis failed", e)
                     viewModel.setAnalyzedLabels(emptyList())
                 }
             }
@@ -110,6 +119,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 備份匯出：建立 JSON 文件供 SAF 選擇儲存位置
     private val exportLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument(AppConstants.MIME_JSON)
     ) { uri ->
@@ -121,6 +131,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 備份匯入：開啟文件選擇器選取 JSON 備份檔
     private val importLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
@@ -132,6 +143,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 初始化：檢查權限狀態，設定 Compose UI、主題與導航回調
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkLocationPermission()
@@ -144,23 +156,25 @@ class MainActivity : ComponentActivity() {
                     val vm: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     viewModel = vm
 
-                    AppNavigation(
-                        viewModel = vm,
-                        settingsManager = settingsManager,
-                        onCheckIn = { requestLocationPermission() },
-                        onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
-                        onExportBackup = { exportLauncher.launch(AppConstants.DEFAULT_BACKUP_FILENAME) },
-                        onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) },
-                        onToggleDarkMode = { enabled ->
-                            settingsManager.darkModeEnabled = enabled
-                            darkMode = enabled
-                        }
-                    )
+                        AppNavigation(
+                            viewModel = vm,
+                            settingsManager = settingsManager,
+                            onCheckIn = { requestLocationPermission() },
+                            onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
+                            onExportBackup = { exportLauncher.launch(AppConstants.DEFAULT_BACKUP_FILENAME) },
+                            onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) },
+                            onToggleDarkMode = { enabled ->
+                                settingsManager.darkModeEnabled = enabled
+                                darkMode = enabled
+                            },
+                            onRequestActivityPermission = { requestActivityPermission() }
+                        )
                 }
             }
         }
     }
 
+    // 執行打卡：檢查位置權限後委託 CheckInCoordinator 處理
     private fun handleCheckIn() {
         if (!hasLocationPermission) { requestLocationPermission(); return }
         if (!checkInCoordinator.performCheckIn(viewModel)) {
@@ -168,10 +182,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 請求精確位置權限
     private fun requestLocationPermission() {
         locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
+    // 處理證據拍照：檢查相機權限，已授權則直接啟動
     private fun handleEvidencePhoto(achievementId: String) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED
@@ -183,6 +199,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // 建立照片 URI 並啟動相機應用
     private fun launchEvidenceCapture(achievementId: String) {
         val uri = photoManager.createPhotoUri()
         pendingEvidenceUri = uri
@@ -190,17 +207,22 @@ class MainActivity : ComponentActivity() {
         evidenceCaptureLauncher.launch(uri)
     }
 
+    // 檢查精確或粗略位置權限是否已授權
     private fun checkLocationPermission() {
         hasLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
+    // 請求 Google Play 服務的活動識別權限
+    private fun requestActivityPermission() {
+        activityPermissionLauncher.launch("com.google.android.gms.permission.ACTIVITY_RECOGNITION")
+    }
+
+    // 檢查活動識別權限，已授權則啟動追蹤
     private fun checkActivityPermission() {
         hasActivityPermission = ContextCompat.checkSelfPermission(this, "com.google.android.gms.permission.ACTIVITY_RECOGNITION") == PackageManager.PERMISSION_GRANTED
         if (hasActivityPermission) {
             activityRecognitionManager.startTracking()
-        } else {
-            activityPermissionLauncher.launch("com.google.android.gms.permission.ACTIVITY_RECOGNITION")
         }
     }
 }

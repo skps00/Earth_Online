@@ -1,5 +1,6 @@
 package com.earthonline.app.ui.navigation
 
+// 導航目標定義：密封類別封裝 4 個底部頁籤（儀表板、成就、歷史、設定）的路由、標籤與圖示
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
