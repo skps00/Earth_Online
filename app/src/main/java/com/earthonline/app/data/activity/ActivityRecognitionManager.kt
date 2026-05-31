@@ -46,7 +46,7 @@ class ActivityRecognitionManager @Inject constructor(
             if (intent == null) return
             if (ActivityTransitionResult.hasResult(intent)) {
                 val result = ActivityTransitionResult.extractResult(intent) ?: return
-                for (event in result.transitionEvents) {
+                for (event in result .transitionEvents) {
                     handleTransition(event)
                 }
             }

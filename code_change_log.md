@@ -424,3 +424,16 @@
 - **變更摘要**：新增 3 個測試類（16 個測試案例）：稀有度計算、觸發類型解析、XP/等級數學
 - **遇到的問題**：無
 - **狀態**：✅ 已解決
+
+## 2026-06-01 14:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AchievementSeedData.kt
+- **變更摘要**：將 9 個洲/國家探索成就的 TriggerType 從 MANUAL_CONFIRM 改為 AUTO_TRACK（explore_japan、explore_australia、explore_asia、explore_europe、explore_africa、explore_north_america、explore_south_america、explore_oceania、explore_antarctica）
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：explore_first_abroad、explore_border、explore_dateline 保持 MANUAL_CONFIRM 不變
+## 2026-06-01 15:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AchievementSeedData.kt
+- **變更摘要**：修正 9 個國家/洲成就 triggerType — MANUAL_CONFIRM → AUTO_TRACK（explore_japan/australia/asia/europe/africa/north_america/south_america/oceania/antarctica）
+- **遇到的問題**：無
+- **備註**：這些成就已由 autoTrackSpecificCountry/Continent 方法自動偵測（透過 AchievementTriggers 映射表），改 triggerType 僅為語義一致性。explore_first_abroad/border/dateline 保持 MANUAL_CONFIRM（需額外偵測邏輯）
+- **狀態**：✅ 已解決
