@@ -1,5 +1,20 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 08:50:00 操作類型：新增
+- **文件路徑**：app/src/test/java/com/earthonline/app/data/repository/ScreenTimeAchievementTest.kt
+- **變更摘要**：新增 6 個單元測試案例驗證 evaluateScreenTimeAchievements()
+- **遇到的問題**：
+  - 問題1：DashboardViewModel 編輯時損壞變數宣告（val definitions 前綴匹配）
+    - 解決方案：手動修復為 `val definitions = repository.getAllDefinitions()`
+    - 狀態：✅ 已解決
+  - 問題2：AchievementRepositoryTest 缺少 screenTimeManager 參數（建構子新增參數）
+    - 解決方案：於 setup() 新增 mock 並傳遞給建構子，同時加入 import
+    - 狀態：✅ 已解決
+  - 問題3：ScreenTimeAchievementTest.rewardPoints 型別錯誤（Long vs Int）
+    - 解決方案：將 mockAchievement 的 rewardPoints 參數型別改為 Int
+    - 狀態：✅ 已解決
+- **備註**：N-1 系列 Task 7/7；全部 18 測試通過
+
 ## 2026-06-01 08:47:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
 - **變更摘要**：loadAchievementDisplay() 中整合 evaluateScreenTimeAchievements() 呼叫

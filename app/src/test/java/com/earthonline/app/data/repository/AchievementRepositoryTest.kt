@@ -1,6 +1,7 @@
 package com.earthonline.app.data.repository
 
 import com.earthonline.app.data.activity.ActivityRecognitionManager
+import com.earthonline.app.data.screentime.ScreenTimeManager
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
 import com.earthonline.app.data.local.dao.CheckInRecordDao
@@ -32,8 +33,9 @@ class AchievementRepositoryTest {
         val evidenceDao = mockk<AchievementEvidenceDao>(relaxed = true)
         val petDao = mockk<PetDao>(relaxed = true)
         val activityManager = mockk<ActivityRecognitionManager>(relaxed = true)
+        val screenTimeManager = mockk<ScreenTimeManager>(relaxed = true)
         repository = AchievementRepository(
-            definitionDao, progressDao, checkInRecordDao, evidenceDao, petDao, activityManager
+            definitionDao, progressDao, checkInRecordDao, evidenceDao, petDao, activityManager, screenTimeManager
         )
     }
 
