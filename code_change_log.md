@@ -1,5 +1,20 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 08:52:00 操作類型：修改
+- **文件路徑**：code_change_log.md
+- **變更摘要**：N-1 Screen Time 系列完成，所有測試通過
+- **遇到的問題**：
+  - 問題1：edit 工具前綴匹配 val definitions 導致 DashboardViewModel 損壞
+    - 解決方案：手動修復為 `val definitions = repository.getAllDefinitions()`
+    - 狀態：✅ 已解決
+  - 問題2：AchievementRepositoryTest 建構子新增 screenTimeManager 參數未同步
+    - 解決方案：補齊 mock + import
+    - 狀態：✅ 已解決
+  - 問題3：ScreenTimeAchievementTest rewardPoints Long/Int 型別不匹配
+    - 解決方案：參數型別從 Long 改為 Int
+    - 狀態：✅ 已解決
+- **備註**：N-1 完成；7 commits；6 檔案修改（1 新增 + 2 測試修正）；18 測試全通過
+
 ## 2026-06-01 08:50:00 操作類型：新增
 - **文件路徑**：app/src/test/java/com/earthonline/app/data/repository/ScreenTimeAchievementTest.kt
 - **變更摘要**：新增 6 個單元測試案例驗證 evaluateScreenTimeAchievements()
