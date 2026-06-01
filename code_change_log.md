@@ -1,5 +1,11 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 07:48:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AchievementSeedData.kt
+- **變更摘要**：將 daily_earlybird/daily_allnighter/daily_no_phone 的 triggerType 從 MANUAL_CONFIRM 改為 AUTO_TRACK
+- **遇到的問題**：無
+- **備註**：N-1 系列 Task 2/7
+
 ## 2026-06-01 07:45:00 操作類型：修改
 - **文件路徑**：app/src/main/AndroidManifest.xml
 - **變更摘要**：新增 PACKAGE_USAGE_STATS 權限供 N-1 Screen Time 功能使用
