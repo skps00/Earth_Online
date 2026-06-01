@@ -1,5 +1,11 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 08:42:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/screentime/ScreenTimeManager.kt
+- **變更摘要**：新增 ScreenTimeManager，封裝 UsageStatsManager.queryEvents() 來偵測早期鳥/通宵/數位排毒
+- **遇到的問題**：無
+- **備註**：N-1 系列 Task 3/7；使用 KEYGUARD_HIDDEN (API 28+) + MOVE_TO_FOREGROUND 降級方案
+
 ## 2026-06-01 07:48:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AchievementSeedData.kt
 - **變更摘要**：將 daily_earlybird/daily_allnighter/daily_no_phone 的 triggerType 從 MANUAL_CONFIRM 改為 AUTO_TRACK
