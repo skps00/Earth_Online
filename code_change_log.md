@@ -1,5 +1,11 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 07:45:00 操作類型：修改
+- **文件路徑**：app/src/main/AndroidManifest.xml
+- **變更摘要**：新增 PACKAGE_USAGE_STATS 權限供 N-1 Screen Time 功能使用
+- **遇到的問題**：無
+- **備註**：N-1 系列 Task 1/7
+
 ## 2026-05-31 19:15:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/components/ShimmerEffect.kt
 - **變更摘要**：將 DashboardShimmer 分解為 4 個小型 private composable（ShimmerHeader、ShimmerStatusCard、ShimmerPetCard、ShimmerButton），動畫 brush 保留於父層傳遞
@@ -460,3 +466,9 @@
 - **變更摘要**：performCheckIn() 傳入 location.altitude 到 ViewModel
 - **遇到的問題**：無
 - **狀態**：✅ 已解決
+## 2026-06-01 10:55:53 操作類型：修改
+- **文件路徑**：TODO.md
+- **變更摘要**：將 N-2 任務的「氣壓計」改為「高山海拔」、狀態從 ⬜ 改為 ✅
+- **遇到的問題**：無
+- **備註**：無
+
