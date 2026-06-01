@@ -5,6 +5,7 @@ package com.earthonline.app.data.repository
 import android.util.Log
 import com.earthonline.app.AppConstants
 import com.earthonline.app.data.activity.ActivityRecognitionManager
+import com.earthonline.app.data.screentime.ScreenTimeManager
 import com.earthonline.app.data.local.AchievementSeedData
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
@@ -41,7 +42,8 @@ class AchievementRepository @Inject constructor(
     private val checkInRecordDao: CheckInRecordDao,
     private val evidenceDao: AchievementEvidenceDao,
     private val petDao: PetDao,
-    private val activityRecognitionManager: ActivityRecognitionManager
+    private val activityRecognitionManager: ActivityRecognitionManager,
+    private val screenTimeManager: ScreenTimeManager
 ) {
     // 成就解鎖事件流 — 供 ViewModel 訂閱顯示解鎖動畫
     private val _unlockEvents = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
@@ -360,6 +362,20 @@ class AchievementRepository @Inject constructor(
         if (bikeKm >= 100) tryAutoUnlock(userId, "transport_bike_100", now)?.let { events.add(it) }
 
         return Triple(walkMin, bikeMin, bikeKm) to events
+    }
+
+    suspend fun evaluateScreenTimeAchievements(): List<UnlockedAchievementEvent> {
+        val achievementIds = screenTimeManager.evaluateAchievements()
+        if (achievementIds.isEmpty()) return emptyList()
+
+        val userId = AppConstants.LOCAL_USER_ID
+        val now = System.currentTimeMillis()
+        val events = mutableListOf<UnlockedAchievementEvent>()
+
+        for (id in achievementIds) {
+            tryAutoUnlock(userId, id, now)?.let { events.add(it) }
+        }
+        return events
     }
 
     // 嘗試自動解鎖單一成就 — 若未解鎖則設為滿進度並解鎖
