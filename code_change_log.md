@@ -437,3 +437,26 @@
 - **遇到的問題**：無
 - **備註**：這些成就已由 autoTrackSpecificCountry/Continent 方法自動偵測（透過 AchievementTriggers 映射表），改 triggerType 僅為語義一致性。explore_first_abroad/border/dateline 保持 MANUAL_CONFIRM（需額外偵測邏輯）
 - **狀態**：✅ 已解決
+
+## 2026-06-01 15:05:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/local/AchievementSeedData.kt
+- **變更摘要**：將 explore_mountain 成就的 TriggerType 從 MANUAL_CONFIRM 改為 AUTO_TRACK
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+## 2026-06-01 17:00:00 操作類型：新增 (N-2 高山成就自動化)
+- **文件路徑**：AchievementSeedData.kt / AchievementRepository.kt / CheckInCoordinator.kt / DashboardViewModel.kt / DashboardUiState.kt
+- **變更摘要**：explore_mountain 成就自動化 — 打卡時取 Location.altitude，海拔 ≥2500m 自動解鎖
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-01 17:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/repository/AchievementRepository.kt
+- **變更摘要**：recordCheckin() 新增 altitude: Double? = null 參數，海拔 ≥2500m 時自動解鎖 explore_mountain
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-01 17:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/domain/service/CheckInCoordinator.kt
+- **變更摘要**：performCheckIn() 傳入 location.altitude 到 ViewModel
+- **遇到的問題**：無
+- **狀態**：✅ 已解決

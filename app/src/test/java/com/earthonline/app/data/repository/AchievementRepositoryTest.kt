@@ -116,4 +116,47 @@ class AchievementRepositoryTest {
 
         coVerify(exactly = 1) { progressDao.unlockAchievement("local_user", "explore_japan", any()) }
     }
+
+    // 驗證：海拔 ≥2500m → 自動解鎖 explore_mountain
+    @Test
+    fun `recordCheckin with altitude 3000 should unlock explore_mountain`() = runTest {
+        val def = AchievementDefinitionEntity(
+            achievementId = "explore_mountain",
+            title = "登峰造極",
+            description = "攀登一座高山",
+            iconAsset = "",
+            triggerType = "AUTO_TRACK",
+            triggerGoal = 1L,
+            isHidden = false,
+            rewardPoints = 75,
+        )
+        val progress = UserAchievementProgressEntity(
+            userId = "local_user",
+            achievementId = "explore_mountain",
+            currentProgress = 0L,
+            isUnlocked = false,
+            unlockedDate = null,
+            triggerType = "AUTO_TRACK",
+        )
+
+        coEvery { definitionDao.getById("explore_mountain") } returns def
+        coEvery { progressDao.getByUserAndAchievement("local_user", "explore_mountain") } returns progress
+        coEvery { checkInRecordDao.countUniqueCountries("local_user") } returns 1
+        coEvery { checkInRecordDao.countUniqueContinents("local_user") } returns 1
+
+        repository.recordCheckin(23.5, 121.0, "Taiwan", altitude = 3000.0)
+
+        coVerify(exactly = 1) { progressDao.unlockAchievement("local_user", "explore_mountain", any()) }
+    }
+
+    // 驗證：海拔 500m → 不應該解鎖 explore_mountain
+    @Test
+    fun `recordCheckin with altitude 500 should NOT unlock mountain`() = runTest {
+        coEvery { checkInRecordDao.countUniqueCountries("local_user") } returns 1
+        coEvery { checkInRecordDao.countUniqueContinents("local_user") } returns 1
+
+        repository.recordCheckin(25.0, 121.5, "Taiwan", altitude = 500.0)
+
+        coVerify(exactly = 0) { progressDao.unlockAchievement("local_user", "explore_mountain", any()) }
+    }
 }

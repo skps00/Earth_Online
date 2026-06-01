@@ -40,6 +40,7 @@ data class DashboardUiState(
     val pendingAddress: String = "",                       // 待確認的簽到地址
     val pendingCountry: String = "",                       // 待確認的簽到國家
     val pendingContinent: String = "",                     // 待確認的簽到洲別
+    val pendingAltitude: Double? = null,                   // 待確認的簽到海拔
     val pendingEvidenceAchievementId: String? = null,      // 待確認證據的成就 ID
     val pendingEvidencePhotoPath: String? = null,          // 待確認證據的照片路徑
     val analyzedLabels: List<String> = emptyList(),        // 照片分析標籤

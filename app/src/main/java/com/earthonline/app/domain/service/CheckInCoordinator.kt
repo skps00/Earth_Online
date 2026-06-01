@@ -16,7 +16,7 @@ class CheckInCoordinator @Inject constructor(
     fun performCheckIn(viewModel: DashboardViewModel): Boolean {
         val location = locationHelper.getLastLocation() ?: return false
         val (address, country, continent) = locationHelper.reverseGeocode(location.latitude, location.longitude)
-        viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent)
+        viewModel.setPendingLocation(location.latitude, location.longitude, address, country, continent, location.altitude)
         return true
     }
 }

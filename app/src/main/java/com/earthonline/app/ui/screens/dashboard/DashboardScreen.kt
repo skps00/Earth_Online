@@ -427,6 +427,7 @@ fun DashboardScreen(
         if (uiState.showCheckinConfirmDialog) {
             CheckInConfirmDialog(
                 address = uiState.pendingAddress,
+                altitude = uiState.pendingAltitude,
                 onConfirm = { viewModel.onEvent(DashboardEvent.CheckInConfirmed) },
                 onDismiss = { viewModel.onEvent(DashboardEvent.CheckInRejected) }
             )

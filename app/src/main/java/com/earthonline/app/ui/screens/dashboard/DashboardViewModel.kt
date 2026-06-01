@@ -62,14 +62,15 @@ class DashboardViewModel @Inject constructor(
     }
 
     // 設定待確認的簽到位置資訊並顯示確認對話框
-    fun setPendingLocation(latitude: Double, longitude: Double, address: String, country: String, continent: String) {
+    fun setPendingLocation(latitude: Double, longitude: Double, address: String, country: String, continent: String, altitude: Double? = null) {
         _uiState.update {
             it.copy(
                 showCheckinConfirmDialog = true,
                 pendingLocation = Pair(latitude, longitude),
                 pendingAddress = address,
                 pendingCountry = country,
-                pendingContinent = continent
+                pendingContinent = continent,
+                pendingAltitude = altitude
             )
         }
     }
@@ -109,6 +110,7 @@ class DashboardViewModel @Inject constructor(
         val country = _uiState.value.pendingCountry
         val continent = _uiState.value.pendingContinent
         val address = _uiState.value.pendingAddress
+        val altitude = _uiState.value.pendingAltitude
         _uiState.update {
             it.copy(
                 showCheckinConfirmDialog = false,
@@ -117,7 +119,7 @@ class DashboardViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val events = repository.recordCheckin(location.first, location.second, country, continent, address)
+            val events = repository.recordCheckin(location.first, location.second, country, continent, address, altitude)
             handleUnlockEvents(events)
             repository.refreshAll()
             loadAchievementDisplay()
@@ -264,20 +266,13 @@ class DashboardViewModel @Inject constructor(
     fun onUnlockEventHandled() {
     }
 
-    // 關閉活動權限對話框並標記已請求
     fun dismissActivityPermissionDialog() {
         markActivityPermissionRequested()
         _uiState.update { it.copy(showActivityPermissionDialog = false) }
     }
 
-    // 授予活動權限並關閉對話框
     fun grantActivityPermission() {
         markActivityPermissionRequested()
-        _uiState.update { it.copy(showActivityPermissionDialog = false) }
-    }
-
-    // 請求活動辨識權限（觸發系統權限對話框）
-    fun requestActivityPermission() {
         _uiState.update { it.copy(showActivityPermissionDialog = false) }
     }
 
@@ -297,7 +292,6 @@ class DashboardViewModel @Inject constructor(
             .edit().putBoolean("activity_permission_requested", true).apply()
     }
 
-    // 重新載入儀表板資料（用於錯誤恢復）
     fun retryLoad() {
         viewModelScope.launch {
             loadAchievementDisplay()

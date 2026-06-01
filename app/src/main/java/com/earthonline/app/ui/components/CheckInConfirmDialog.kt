@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.EmeraldGreen
 
@@ -23,6 +24,7 @@ import com.earthonline.app.ui.theme.EmeraldGreen
 @Composable
 fun CheckInConfirmDialog(
     address: String,
+    altitude: Double? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -32,6 +34,10 @@ fun CheckInConfirmDialog(
         text = {
             Column {
                 Text(address, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (altitude != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("\u26F0 \u6D77\u62D4 ${"%.0f".format(altitude)}m", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("${stringResource(R.string.checkin_action)}?", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

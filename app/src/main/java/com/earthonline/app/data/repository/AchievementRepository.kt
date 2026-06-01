@@ -59,7 +59,7 @@ class AchievementRepository @Inject constructor(
     }
 
     // 記錄打卡並檢查成就解鎖 — 回傳本次打卡觸發的所有解鎖事件
-    suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = "", address: String = ""): List<UnlockedAchievementEvent> {
+    suspend fun recordCheckin(latitude: Double, longitude: Double, country: String, continent: String = "", address: String = "", altitude: Double? = null): List<UnlockedAchievementEvent> {
         val userId = AppConstants.LOCAL_USER_ID
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
@@ -76,6 +76,10 @@ class AchievementRepository @Inject constructor(
         // 先檢查打卡計數型成就，再檢查自動追蹤型成就
         events.addAll(checkAndUnlock(userId, triggerType))
         events.addAll(evaluateAutoTrackAchievements(country, continent))
+        // 檢查高山成就：海拔 ≥ 2500m → 解鎖 explore_mountain
+        if (altitude != null && altitude >= 2500.0) {
+            tryAutoUnlock(userId, "explore_mountain", System.currentTimeMillis())?.let { events.add(it) }
+        }
         return events
     }
 
