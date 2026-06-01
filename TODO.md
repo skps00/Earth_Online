@@ -1,6 +1,6 @@
 # 🌍 地球 Online — 開發任務
 
-> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 47/54 (87%)
+> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 48/54 (89%)
 
 ---
 
@@ -40,7 +40,7 @@
 | # | 方向 | API | 成就數 | 權限 | 狀態 |
 |---|------|-----|:--:|------|:--:|
 | N-1 | Screen Time | UsageStatsManager | 4-7 | PACKAGE_USAGE_STATS | ⬜ |
-| N-2 | 氣壓計 | TYPE_PRESSURE sensor | 2 | 無 | ⬜ |
+| N-2 | 高山海拔 | TYPE_PRESSURE sensor | 2 | 無 | ✅ |
 | N-3 | 天氣 / 地震 API | OpenWeatherMap + USGS | 3 | 網路 | ⬜ |
 
 ---
