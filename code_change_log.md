@@ -1,5 +1,11 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-01 08:45:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardUiState.kt
+- **變更摘要**：新增 screenTimeMinutes 欄位供 Dashboard 顯示今日螢幕使用時間
+- **遇到的問題**：無
+- **備註**：N-1 系列 Task 5/7
+
 ## 2026-06-01 08:44:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/data/repository/AchievementRepository.kt
 - **變更摘要**：建構子注入 ScreenTimeManager；新增 evaluateScreenTimeAchievements() 方法
