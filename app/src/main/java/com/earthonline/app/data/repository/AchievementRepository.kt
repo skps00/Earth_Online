@@ -79,7 +79,7 @@ class AchievementRepository @Inject constructor(
         events.addAll(checkAndUnlock(userId, triggerType))
         events.addAll(evaluateAutoTrackAchievements(country, continent))
         // 檢查高山成就：海拔 ≥ 2500m → 解鎖 explore_mountain
-        if (altitude != null && altitude in 2500.0..9000.0) {
+        if (altitude != null && altitude in AppConstants.MOUNTAIN_ALTITUDE_MIN..AppConstants.MOUNTAIN_ALTITUDE_MAX) {
             tryAutoUnlock(userId, "explore_mountain", System.currentTimeMillis())?.let { events.add(it) }
         }
         return events

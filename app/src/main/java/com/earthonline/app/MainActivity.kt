@@ -281,12 +281,12 @@ class MainActivity : ComponentActivity() {
 
     // 請求 Google Play 服務的活動識別權限
     private fun requestActivityPermission() {
-        activityPermissionLauncher.launch("com.google.android.gms.permission.ACTIVITY_RECOGNITION")
+        activityPermissionLauncher.launch(AppConstants.ACTIVITY_RECOGNITION_PERMISSION)
     }
 
     // 檢查活動識別權限，已授權則啟動追蹤
     private fun checkActivityPermission() {
-        hasActivityPermission = ContextCompat.checkSelfPermission(this, "com.google.android.gms.permission.ACTIVITY_RECOGNITION") == PackageManager.PERMISSION_GRANTED
+        hasActivityPermission = ContextCompat.checkSelfPermission(this, AppConstants.ACTIVITY_RECOGNITION_PERMISSION) == PackageManager.PERMISSION_GRANTED
         if (hasActivityPermission) {
             activityRecognitionManager.startTracking()
         }

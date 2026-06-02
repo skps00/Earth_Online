@@ -145,4 +145,9 @@
     <string name="location_rationale_message">位置權限用於打卡記錄地點，自動辨識國家與大洲，解鎖探索成就。你的位置資料只會儲存在本機。</string>
     <string name="camera_rationale_title">需要相機權限</string>
     <string name="camera_rationale_message">相機權限用於拍攝成就證據照，證明你確實完成了該成就。照片只會儲存在本機。</string>
+    <string name="scanning_env">SCANNING ENV</string>
+    <string name="camera_error">Camera Error</string>
+    <string name="tap_to_close">Tap to close</string>
+    <string name="share_points_format">+ %1$d 點數</string>
+    <string name="altitude_format">⛰ 海拔 %1$.0fm</string>
 </resources>

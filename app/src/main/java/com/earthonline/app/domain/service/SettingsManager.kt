@@ -33,10 +33,10 @@ class SettingsManager @Inject constructor(
     // 清除所有資料 — 設定、活動統計、資料庫、照片目錄
     fun clearAllData() {
         prefs.edit().clear().apply()
-        context.getSharedPreferences("activity_stats", Context.MODE_PRIVATE).edit().clear().apply()
+        context.getSharedPreferences(AppConstants.ACTIVITY_STATS_PREFS_NAME, Context.MODE_PRIVATE).edit().clear().apply()
         val dbDir = context.getDatabasePath(AppConstants.DATABASE_NAME).parentFile
         if (dbDir?.exists() == true) dbDir.deleteRecursively()
-        val photosDir = java.io.File(context.filesDir, "photos")
+        val photosDir = java.io.File(context.filesDir, AppConstants.PHOTOS_DIR)
         if (photosDir.exists()) photosDir.deleteRecursively()
     }
 }

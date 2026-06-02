@@ -42,6 +42,14 @@ object AppConstants {
     const val STAT_DIVISOR = 10f
     const val TOTAL_ACHIEVEMENT_COUNT = 125
     const val KEY_ACTIVITY_TRACKING_DISABLED = "activity_tracking_disabled"
+    const val ACTIVITY_STATS_PREFS_NAME = "activity_stats"
+    const val ACTIVITY_RECOGNITION_PERMISSION = "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
+    const val PRIVACY_POLICY_URL = "https://skps00.github.io/Earth_Online/privacy.html"
+    const val MOUNTAIN_ALTITUDE_MIN = 2500.0
+    const val MOUNTAIN_ALTITUDE_MAX = 9000.0
+    const val LEVEL_SCALE = 100.0
+    const val CAPTURE_FILE_PREFIX = "CAPTURE_"
+    const val SHARE_FILE_NAME = "share_achievement.png"
 
     // UI 動畫參數
     const val BOUNCE_DAMPING_RATIO = 0.4f

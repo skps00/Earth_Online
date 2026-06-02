@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.earthonline.app.R
+import com.earthonline.app.AppConstants
 import com.earthonline.app.data.backup.BackupManager
 import com.earthonline.app.data.backup.BackupResult
 import com.earthonline.app.data.local.entity.CheckInRecord
@@ -262,7 +263,7 @@ class DashboardViewModel @Inject constructor(
                 bikingKm = activity.third,
                 screenTimeMinutes = screenMinutes,
                 activityPermissionGranted = androidx.core.content.ContextCompat.checkSelfPermission(
-                    context, "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
+                    context, AppConstants.ACTIVITY_RECOGNITION_PERMISSION
                 ) == android.content.pm.PackageManager.PERMISSION_GRANTED,
                 showActivityPermissionDialog = !isActivityPermissionGranted(),
                 showScreenTimePermissionDialog = !usageStatsGranted
@@ -292,18 +293,18 @@ class DashboardViewModel @Inject constructor(
 
     private fun isActivityPermissionGranted(): Boolean {
         return androidx.core.content.ContextCompat.checkSelfPermission(
-            context, "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
+            context, AppConstants.ACTIVITY_RECOGNITION_PERMISSION
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 
     private fun isActivityPermissionRequested(): Boolean {
-        return context.getSharedPreferences("earth_online_settings", android.content.Context.MODE_PRIVATE)
-            .getBoolean("activity_permission_requested", false)
+        return context.getSharedPreferences(AppConstants.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+            .getBoolean(AppConstants.KEY_ACTIVITY_PERMISSION_REQUESTED, false)
     }
 
     private fun markActivityPermissionRequested() {
-        context.getSharedPreferences("earth_online_settings", android.content.Context.MODE_PRIVATE)
-            .edit().putBoolean("activity_permission_requested", true).apply()
+        context.getSharedPreferences(AppConstants.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+            .edit().putBoolean(AppConstants.KEY_ACTIVITY_PERMISSION_REQUESTED, true).apply()
     }
 
     fun retryLoad() {

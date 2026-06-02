@@ -47,18 +47,18 @@ private val AppTypography = Typography(
 
 // 淺色主題色系：深金為主色、淺灰藍為背景
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFFC49B00),
+    primary = GoldLight,
     secondary = EmeraldGreen,
     tertiary = AccentOrange,
-    background = Color(0xFFF0F4F8),
-    surface = Color(0xFFFFFFFF),
-    surfaceVariant = Color(0xFFE2E8F0),
-    onPrimary = Color(0xFF1A1A2E),
-    onSecondary = Color(0xFF1A1A2E),
-    onTertiary = Color(0xFF1A1A2E),
-    onBackground = Color(0xFF1E293B),
-    onSurface = Color(0xFF1E293B),
-    onSurfaceVariant = Color(0xFF64748B)
+    background = BackgroundLight,
+    surface = Color.White,
+    surfaceVariant = SurfaceVariantLight,
+    onPrimary = DeepBlue,
+    onSecondary = DeepBlue,
+    onTertiary = DeepBlue,
+    onBackground = OnBackgroundLight,
+    onSurface = OnBackgroundLight,
+    onSurfaceVariant = OnSurfaceVariantLight
 )
 
 // 應用主題包裝器：根據 darkTheme 參數選用深/淺色系，設定狀態欄顏色與 MaterialTheme

@@ -64,6 +64,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
+import com.earthonline.app.AppConstants
 import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.DestructiveRed
@@ -230,7 +231,7 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://skps00.github.io/Earth_Online/privacy.html"))
+                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(AppConstants.PRIVACY_POLICY_URL))
                         try { context.startActivity(intent) } catch (e: Exception) { Log.e(TAG, "Failed to open privacy policy URL", e) }
                     },
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),

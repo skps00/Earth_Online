@@ -36,7 +36,7 @@ fun CheckInConfirmDialog(
                 Text(address, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (altitude != null) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("\u26F0 \u6D77\u62D4 ${"%.0f".format(altitude)}m", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    Text(stringResource(R.string.altitude_format, altitude), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("${stringResource(R.string.checkin_action)}?", color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -72,8 +72,11 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.earthonline.app.R
+import com.earthonline.app.AppConstants
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.EmeraldGreen
@@ -104,7 +107,7 @@ fun CameraScreen(
     val flashEnabled = remember { mutableStateOf(false) }
     val showReticle = remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
-    val photosDir = remember { java.io.File(context.filesDir, "photos").also { if (!it.exists()) it.mkdirs() } }
+    val photosDir = remember { java.io.File(context.filesDir, AppConstants.PHOTOS_DIR).also { if (!it.exists()) it.mkdirs() } }
 
     val reticlePulse by rememberInfiniteTransition().animateFloat(
         initialValue = 0.5f,
@@ -215,7 +218,7 @@ fun CameraScreen(
                         .alpha(reticlePulse)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("SCANNING ENV", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                Text(stringResource(R.string.scanning_env), color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
             }
 
             Box(
@@ -333,7 +336,7 @@ fun CameraScreen(
                         if (!isCapturing.value) {
                             val capture = imageCapture ?: return@clickable
                             isCapturing.value = true
-                            val photoFile = java.io.File(photosDir, "CAPTURE_${System.currentTimeMillis()}.jpg")
+                            val photoFile = java.io.File(photosDir, "${AppConstants.CAPTURE_FILE_PREFIX}${System.currentTimeMillis()}.jpg")
                             val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
                             capture.takePicture(
@@ -402,11 +405,11 @@ fun CameraScreen(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Camera Error", color = AccentOrange, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(stringResource(R.string.camera_error), color = AccentOrange, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(cameraError ?: "", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Tap to close", color = Gold, fontSize = 14.sp)
+                Text(stringResource(R.string.tap_to_close), color = Gold, fontSize = 14.sp)
             }
         }
     }
