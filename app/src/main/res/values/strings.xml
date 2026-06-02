@@ -124,7 +124,7 @@
     <string name="country_count_format">%1$s (%2$d)</string>
     <string name="coord_fallback_format">%1$.4f, %2$.4f</string>
 
-    <string name="screen_time_permission_title">用量存取未開啟</string>
+    <string name="screen_time_permission_title">權限存取未開啟</string>
     <string name="screen_time_permission_desc">用於自動偵測早起、通宵、數位排毒等成就</string>
     <string name="screen_time_permission_open_settings">前往設定</string>
     <string name="screen_time_permission_dismiss">稍後</string>
@@ -150,4 +150,19 @@
     <string name="tap_to_close">Tap to close</string>
     <string name="share_points_format">+ %1$d 點數</string>
     <string name="altitude_format">⛰ 海拔 %1$.0fm</string>
+    <string name="unified_perm_title">讓成就自動化</string>
+    <string name="unified_perm_desc">為了自動偵測並解鎖相關成就，地球 Online 需要以下權限。你的所有資料只會儲存在本機，絕不上傳。</string>
+    <string name="unified_perm_location_label">位置</string>
+    <string name="unified_perm_location_desc">打卡記錄地點，自動辨識國家與大洲</string>
+    <string name="unified_perm_activity_label">身體活動</string>
+    <string name="unified_perm_activity_desc">自動解鎖「單車達人」「狂熱騎士」交通成就</string>
+    <string name="unified_perm_camera_label">相機</string>
+    <string name="unified_perm_camera_desc">拍攝成就證據照</string>
+    <string name="unified_perm_start">開始授權</string>
+    <string name="unified_perm_retry">重試未授權的</string>
+    <string name="unified_perm_done">完成</string>
+    <string name="unified_perm_later">稍後</string>
+    <string name="unified_perm_granted">已授權</string>
+    <string name="unified_perm_denied">已拒絕</string>
+    <string name="permission_reminders_label">權限提醒</string>
 </resources>

@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.DirectionsRun
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material3.AlertDialog
@@ -87,6 +88,7 @@ fun SettingsScreen(
     var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
     var showClearDialog by remember { mutableStateOf(false) }
     var activityTracking by remember { mutableStateOf(settingsManager.activityTrackingEnabled) }
+    var permissionReminders by remember { mutableStateOf(settingsManager.permissionRemindersEnabled) }
 
     BackHandler(enabled = true) { onBack() }
 
@@ -219,6 +221,33 @@ fun SettingsScreen(
                         onCheckedChange = {
                             activityTracking = it
                             settingsManager.activityTrackingEnabled = it
+                        },
+                        colors = SwitchDefaults.colors(checkedTrackColor = EmeraldGreen)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Filled.Notifications, null,
+                        tint = if (permissionReminders) EmeraldGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(stringResource(R.string.permission_reminders_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Switch(
+                        checked = permissionReminders,
+                        onCheckedChange = {
+                            permissionReminders = it
+                            settingsManager.permissionRemindersEnabled = it
                         },
                         colors = SwitchDefaults.colors(checkedTrackColor = EmeraldGreen)
                     )

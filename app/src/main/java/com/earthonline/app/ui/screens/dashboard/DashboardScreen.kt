@@ -3,7 +3,10 @@
 // 儀表板主畫面，顯示玩家等級、成就牆、寵物卡片與打卡按鈕
 
 import android.graphics.BitmapFactory
+import android.Manifest
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -64,6 +67,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
@@ -77,7 +81,6 @@ import com.earthonline.app.ui.components.AchievementUnlockDialog
 import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.DashboardShimmer
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
-import com.earthonline.app.ui.components.ActivityPermissionDialog
 import com.earthonline.app.ui.components.ErrorState
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementUnlocked
@@ -96,13 +99,34 @@ fun DashboardScreen(
     viewModel: DashboardViewModel,
     onCheckIn: () -> Unit,
     onTakeEvidencePhoto: (String) -> Unit,
-    showOnlyAchievementWall: Boolean = false,
-    onRequestActivityPermission: () -> Unit = {}
+    showOnlyAchievementWall: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var unlockEvent by remember { mutableStateOf<UnlockedAchievementEvent?>(null) }
     var unlockEventKey by remember { mutableStateOf(0L) }
+    var permissionStep by remember { mutableStateOf(0) }
+
+    val locationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        viewModel.setPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION, granted)
+        permissionStep++
+    }
+    val activityLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        viewModel.setPermissionGranted(AppConstants.ACTIVITY_RECOGNITION_PERMISSION, granted)
+        permissionStep++
+    }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        viewModel.setPermissionGranted(Manifest.permission.CAMERA, granted)
+        permissionStep++
+    }
+
+    LaunchedEffect(permissionStep) {
+        when (permissionStep) {
+            1 -> locationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            2 -> activityLauncher.launch(AppConstants.ACTIVITY_RECOGNITION_PERMISSION)
+            3 -> cameraLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.unlockEvent.collect { event ->
@@ -451,10 +475,14 @@ fun DashboardScreen(
                 onDismiss = { viewModel.onEvent(DashboardEvent.EvidenceRejected) }
             )
         }
-        if (uiState.showActivityPermissionDialog) {
-            ActivityPermissionDialog(
-                onGrant = { viewModel.grantActivityPermission(); onRequestActivityPermission() },
-                onDismiss = { viewModel.dismissActivityPermissionDialog() }
+        if (uiState.showUnifiedPermissionDialog) {
+            UnifiedPermissionDialog(
+                locationGranted = uiState.locationPermissionGranted,
+                activityGranted = uiState.activityPermissionGranted,
+                cameraGranted = uiState.cameraPermissionGranted,
+                onStartGranting = { permissionStep = 1 },
+                onRetry = { permissionStep = 1 },
+                onDismiss = { viewModel.dismissUnifiedPermissionDialog() }
             )
         }
         if (uiState.showScreenTimePermissionDialog) {
@@ -462,6 +490,119 @@ fun DashboardScreen(
                 onOpenSettings = { viewModel.openScreenTimeSettings() },
                 onDismiss = { viewModel.dismissScreenTimePermissionDialog() }
             )
+        }
+    }
+}
+
+@Composable
+private fun UnifiedPermissionDialog(
+    locationGranted: Boolean,
+    activityGranted: Boolean,
+    cameraGranted: Boolean,
+    onStartGranting: () -> Unit,
+    onRetry: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val allGranted = locationGranted && activityGranted && cameraGranted
+    val anyRequested = locationGranted || activityGranted || cameraGranted
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(R.string.unified_perm_title),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.unified_perm_desc),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                PermissionItem(
+                    emoji = "\uD83D\uDCCD",
+                    label = stringResource(R.string.unified_perm_location_label),
+                    description = stringResource(R.string.unified_perm_location_desc),
+                    granted = locationGranted
+                )
+                PermissionItem(
+                    emoji = "\uD83D\uDEB6",
+                    label = stringResource(R.string.unified_perm_activity_label),
+                    description = stringResource(R.string.unified_perm_activity_desc),
+                    granted = activityGranted
+                )
+                PermissionItem(
+                    emoji = "\uD83D\uDCF7",
+                    label = stringResource(R.string.unified_perm_camera_label),
+                    description = stringResource(R.string.unified_perm_camera_desc),
+                    granted = cameraGranted
+                )
+            }
+        },
+        confirmButton = {
+            if (allGranted) {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.unified_perm_done))
+                }
+            } else if (anyRequested) {
+                Button(
+                    onClick = onRetry,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.unified_perm_retry))
+                }
+            } else {
+                Button(
+                    onClick = onStartGranting,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.unified_perm_start))
+                }
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(stringResource(if (anyRequested && !allGranted) R.string.unified_perm_done else R.string.unified_perm_later))
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+@Composable
+private fun PermissionItem(emoji: String, label: String, description: String, granted: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(emoji, fontSize = 18.sp)
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(label, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    if (granted) stringResource(R.string.unified_perm_granted) else "",
+                    color = EmeraldGreen,
+                    fontSize = 11.sp
+                )
+            }
+            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
         }
     }
 }

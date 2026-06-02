@@ -30,6 +30,10 @@ class SettingsManager @Inject constructor(
         get() = !prefs.getBoolean(AppConstants.KEY_ACTIVITY_TRACKING_DISABLED, false)
         set(value) = prefs.edit().putBoolean(AppConstants.KEY_ACTIVITY_TRACKING_DISABLED, !value).apply()
 
+    var permissionRemindersEnabled: Boolean
+        get() = !prefs.getBoolean("permission_reminders_disabled", false)
+        set(value) = prefs.edit().putBoolean("permission_reminders_disabled", !value).apply()
+
     // 清除所有資料 — 設定、活動統計、資料庫、照片目錄
     fun clearAllData() {
         prefs.edit().clear().apply()

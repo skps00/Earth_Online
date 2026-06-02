@@ -2,6 +2,7 @@ package com.earthonline.app.ui.screens.dashboard
 
 // 儀表板 ViewModel，處理打卡、成就解鎖、寵物自訂與活動追蹤等核心邏輯
 
+import android.Manifest
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -28,7 +29,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// 儀表板核心 ViewModel，管理 UI 狀態、打卡流程與成就解鎖事件
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val repository: AchievementRepository,
@@ -65,7 +65,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 設定待確認的簽到位置資訊並顯示確認對話框
     fun setPendingLocation(latitude: Double, longitude: Double, address: String, country: String, continent: String, altitude: Double? = null) {
         _uiState.update {
             it.copy(
@@ -79,12 +78,10 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 設定照片分析標籤結果
     fun setAnalyzedLabels(labels: List<String>) {
         _uiState.update { it.copy(analyzedLabels = labels) }
     }
 
-    // 設定待確認的證據照片路徑
     fun setEvidencePhotoPath(achievementId: String, path: String) {
         _uiState.update {
             it.copy(
@@ -94,7 +91,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 分發處理所有儀表板事件：簽到、成就確認、證據、寵物操作
     fun onEvent(event: DashboardEvent) {
         when (event) {
             DashboardEvent.CheckInConfirmed -> handleCheckInConfirmed()
@@ -108,7 +104,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理打卡確認：記錄打卡、觸發成就解鎖、重新載入儀表板
     private fun handleCheckInConfirmed() {
         val location = _uiState.value.pendingLocation ?: return
         val country = _uiState.value.pendingCountry
@@ -130,7 +125,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理打卡拒絕：關閉確認對話框、清除暫存位置與地址
     private fun handleCheckInRejected() {
         _uiState.update {
             it.copy(
@@ -141,7 +135,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理手動確認成就：呼叫 Repository 確認、觸發解鎖事件、重新載入
     private fun handleManualConfirm(event: DashboardEvent.ManualConfirm) {
         viewModelScope.launch {
             val result = repository.confirmManualAchievement(
@@ -155,14 +148,12 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理證據照片拍攝完成：記錄待確認的成就 ID 至 UI 狀態
     private fun handleEvidencePhotoTaken(event: DashboardEvent.EvidencePhotoTaken) {
         _uiState.update {
             it.copy(pendingEvidenceAchievementId = event.achievementId)
         }
     }
 
-    // 處理證據確認：使用照片與標籤確認成就、觸發解鎖、重新載入
     private fun handleEvidenceConfirmed() {
         val achievementId = _uiState.value.pendingEvidenceAchievementId ?: return
         val photoPath = _uiState.value.pendingEvidencePhotoPath ?: return
@@ -188,7 +179,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理證據拒絕：清除暫存狀態、刪除已拍攝的照片檔案
     private fun handleEvidenceRejected() {
         val photoPath = _uiState.value.pendingEvidencePhotoPath
         _uiState.update {
@@ -203,7 +193,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理寵物重新命名：呼叫 Repository 更新名稱並重新載入顯示
     private fun handleRenamePet(event: DashboardEvent.RenamePet) {
         viewModelScope.launch {
             repository.renamePet(event.newName)
@@ -211,7 +200,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 處理寵物 Emoji 變更：呼叫 Repository 更新圖標並重新載入顯示
     private fun handleChangePetEmoji(event: DashboardEvent.ChangePetEmoji) {
         viewModelScope.launch {
             repository.changePetEmoji(event.emoji)
@@ -219,12 +207,10 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // 將解鎖事件逐一發射到 SharedFlow 供 UI 顯示動畫
     private suspend fun handleUnlockEvents(events: List<UnlockedAchievementEvent>) {
         for (e in events) _unlockEvent.emit(e)
     }
 
-    // 重新載入所有成就資料、計算玩家等級與寵物狀態並更新 UI
     private suspend fun loadAchievementDisplay() {
         repository.syncAutoTrackFromHistory()
         repository.refreshAll()
@@ -247,6 +233,19 @@ class DashboardViewModel @Inject constructor(
         val screenMinutes = screenTimeManager.getTodayTotalScreenTimeMinutes()
         val usageStatsGranted = screenTimeManager.isUsageStatsPermissionGranted()
 
+        val locationGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val activityGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+            context, AppConstants.ACTIVITY_RECOGNITION_PERMISSION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val cameraGranted = androidx.core.content.ContextCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        val anyInAppMissing = !locationGranted || !activityGranted || !cameraGranted
+        val remindersEnabled = settingsManager.permissionRemindersEnabled
+
         _uiState.update {
             it.copy(
                 totalCheckins = totalCheckins,
@@ -262,25 +261,31 @@ class DashboardViewModel @Inject constructor(
                 bikingMinutes = activity.second,
                 bikingKm = activity.third,
                 screenTimeMinutes = screenMinutes,
-                activityPermissionGranted = androidx.core.content.ContextCompat.checkSelfPermission(
-                    context, AppConstants.ACTIVITY_RECOGNITION_PERMISSION
-                ) == android.content.pm.PackageManager.PERMISSION_GRANTED,
-                showActivityPermissionDialog = !isActivityPermissionGranted(),
-                showScreenTimePermissionDialog = !usageStatsGranted
+                locationPermissionGranted = locationGranted,
+                activityPermissionGranted = activityGranted,
+                cameraPermissionGranted = cameraGranted,
+                showUnifiedPermissionDialog = anyInAppMissing && remindersEnabled,
+                showScreenTimePermissionDialog = !usageStatsGranted && remindersEnabled
             )
         }
     }
 
-    // 解鎖動畫處理完畢的回呼（目前為空實作，預留擴充）
     fun onUnlockEventHandled() {
     }
 
-    fun dismissActivityPermissionDialog() {
-        _uiState.update { it.copy(showActivityPermissionDialog = false) }
+    fun dismissUnifiedPermissionDialog() {
+        _uiState.update { it.copy(showUnifiedPermissionDialog = false) }
     }
 
-    fun grantActivityPermission() {
-        _uiState.update { it.copy(showActivityPermissionDialog = false) }
+    fun setPermissionGranted(permission: String, granted: Boolean) {
+        _uiState.update {
+            when (permission) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> it.copy(locationPermissionGranted = granted)
+                AppConstants.ACTIVITY_RECOGNITION_PERMISSION -> it.copy(activityPermissionGranted = granted)
+                Manifest.permission.CAMERA -> it.copy(cameraPermissionGranted = granted)
+                else -> it
+            }
+        }
     }
 
     fun openScreenTimeSettings() {
@@ -291,44 +296,24 @@ class DashboardViewModel @Inject constructor(
         _uiState.update { it.copy(showScreenTimePermissionDialog = false) }
     }
 
-    private fun isActivityPermissionGranted(): Boolean {
-        return androidx.core.content.ContextCompat.checkSelfPermission(
-            context, AppConstants.ACTIVITY_RECOGNITION_PERMISSION
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun isActivityPermissionRequested(): Boolean {
-        return context.getSharedPreferences(AppConstants.PREFS_NAME, android.content.Context.MODE_PRIVATE)
-            .getBoolean(AppConstants.KEY_ACTIVITY_PERMISSION_REQUESTED, false)
-    }
-
-    private fun markActivityPermissionRequested() {
-        context.getSharedPreferences(AppConstants.PREFS_NAME, android.content.Context.MODE_PRIVATE)
-            .edit().putBoolean(AppConstants.KEY_ACTIVITY_PERMISSION_REQUESTED, true).apply()
-    }
-
     fun retryLoad() {
         viewModelScope.launch {
             loadAchievementDisplay()
         }
     }
 
-    // 取得指定成就的證據照片路徑
     suspend fun getEvidencePhoto(achievementId: String): String? {
         return repository.getEvidence(achievementId)?.photoPath
     }
 
-    // 取得指定成就的所有證據照片路徑
     suspend fun getAllEvidencePhotos(achievementId: String): List<String> {
         return repository.getAllEvidenceForAchievement(achievementId).map { it.photoPath }
     }
 
-    // 取得所有簽到記錄
     suspend fun getAllCheckinRecords(): List<CheckInRecord> {
         return repository.getAllCheckinRecords()
     }
 
-    // 匯出資料備份至指定 URI
     suspend fun exportBackup(uri: Uri): BackupResult {
         return backupManager.exportToUri(uri)
     }

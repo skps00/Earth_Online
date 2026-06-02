@@ -1,5 +1,21 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-02 14:00:00 操作類型：修改
+- **文件路徑**：綜合 9 檔案（統一權限對話框）
+- **變更摘要**：整合 4 個獨立的權限對話框為 2 個（統一 App 權限 + 系統設定權限），新增設定頁「權限提醒」開關
+- **詳細變更**：
+  - DashboardUiState.kt：showActivityPermissionDialog + activityPermissionGranted → showUnifiedPermissionDialog + locationPermissionGranted/activityPermissionGranted/cameraPermissionGranted
+  - DashboardViewModel.kt：整合三個權限檢查為單一 loadAchievementDisplay() 流程；移除 5 個舊 dialog 方法；+ dismissUnifiedPermissionDialog(), setPermissionGranted()
+  - DashboardScreen.kt：+ UnifiedPermissionDialog + PermissionItem 元件 + 3 個 rememberLauncherForActivityResult；移除 ActivityPermissionDialog 區塊
+  - MainActivity.kt：移除 showLocationRationale/showCameraRationale；移除 PermissionRationaleDialog；簡化 launchers；移除 onRequestActivityPermission 傳遞
+  - AppNavigation.kt：移除 onRequestActivityPermission 參數
+  - SettingsManager.kt：+ permissionRemindersEnabled
+  - SettingsScreen.kt：+ 「權限提醒」開關（Notifications icon）
+  - strings.xml：+ 14 個統一對話框字串 + permission_reminders_label
+  - ActivityPermissionDialog.kt：刪除（被 UnifiedPermissionDialog 取代）
+- **遇到的問題**：無
+- **備註**：18 測試全通過；統合後使用者流程：Dashboard 載入 → 任一權限未授權且提醒未關閉 → 彈出統一對話框 → [開始授權] 依序請求三個權限 → 結果畫面 → [重試]/[完成]
+
 ## 2026-06-02 11:30:00 操作類型：修改
 - **文件路徑**：綜合多檔案（完整專案審計修正）
 - **變更摘要**：修復 20+ 個審計發現的 Bug

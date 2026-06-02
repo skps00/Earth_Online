@@ -69,8 +69,7 @@ fun AppNavigation(
     onTakeEvidencePhoto: (String) -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onToggleDarkMode: (Boolean) -> Unit,
-    onRequestActivityPermission: () -> Unit
+    onToggleDarkMode: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     var showOnboarding by remember {
@@ -121,8 +120,7 @@ fun AppNavigation(
                 DashboardScreen(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
-                    onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    onRequestActivityPermission = onRequestActivityPermission
+                    onTakeEvidencePhoto = onTakeEvidencePhoto
                 )
             }
 
@@ -131,8 +129,7 @@ fun AppNavigation(
                     viewModel = viewModel,
                     onCheckIn = onCheckIn,
                     onTakeEvidencePhoto = onTakeEvidencePhoto,
-                    showOnlyAchievementWall = true,
-                    onRequestActivityPermission = onRequestActivityPermission
+                    showOnlyAchievementWall = true
                 )
             }
 

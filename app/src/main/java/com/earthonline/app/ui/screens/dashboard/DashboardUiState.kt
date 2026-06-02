@@ -48,10 +48,12 @@ data class DashboardUiState(
     val walkingMinutes: Int = 0,                           // 步行分鐘數
     val bikingMinutes: Int = 0,                            // 騎行分鐘數
     val bikingKm: Int = 0,                                 // 騎行公里數
-    val showActivityPermissionDialog: Boolean = false,     // 是否顯示活動權限對話框
-    val activityPermissionGranted: Boolean = false,        // 活動辨識權限是否已授予
     val screenTimeMinutes: Int = 0,                        // 今日螢幕使用時間（分鐘）
-    val showScreenTimePermissionDialog: Boolean = false     // 是否顯示用量存取權限對話框
+    val showUnifiedPermissionDialog: Boolean = false,      // 是否顯示統一權限對話框
+    val locationPermissionGranted: Boolean = false,        // 位置權限是否已授予
+    val activityPermissionGranted: Boolean = false,        // 活動辨識權限是否已授予
+    val cameraPermissionGranted: Boolean = false,          // 相機權限是否已授予
+    val showScreenTimePermissionDialog: Boolean = false    // 是否顯示用量存取權限對話框
 )
 
 // 儀表板事件密封類別，定義所有使用者操作動作

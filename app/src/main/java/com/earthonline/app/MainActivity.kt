@@ -77,10 +77,6 @@ class MainActivity : ComponentActivity() {
     private var pendingEvidenceAchievementId: String? = null
     private var hasLocationPermission = false
     private var hasActivityPermission = false
-    private var showLocationRationale by mutableStateOf(false)
-    private var showCameraRationale by mutableStateOf(false)
-    private var locationRationaleShown = false
-    private var cameraRationaleShown = false
 
     // 活動識別權限請求，授權後啟動活動追蹤
     private val activityPermissionLauncher = registerForActivityResult(
@@ -96,9 +92,6 @@ class MainActivity : ComponentActivity() {
     ) { granted ->
         if (granted) {
             pendingEvidenceAchievementId?.let { launchEvidenceCapture(it) }
-        } else if (!cameraRationaleShown) {
-            showCameraRationale = true
-            cameraRationaleShown = true
         }
     }
 
@@ -109,9 +102,6 @@ class MainActivity : ComponentActivity() {
         if (granted) {
             hasLocationPermission = true
             handleCheckIn()
-        } else if (!locationRationaleShown) {
-            showLocationRationale = true
-            locationRationaleShown = true
         }
     }
 
@@ -198,35 +188,8 @@ class MainActivity : ComponentActivity() {
                             onToggleDarkMode = { enabled ->
                                 settingsManager.darkModeEnabled = enabled
                                 darkMode = enabled
-                            },
-                            onRequestActivityPermission = { requestActivityPermission() }
+                            }
                         )
-                    if (showLocationRationale) {
-                        PermissionRationaleDialog(
-                            title = getString(R.string.location_rationale_title),
-                            message = getString(R.string.location_rationale_message),
-                            tryAgainText = getString(R.string.error_retry),
-                            dismissText = getString(R.string.cancel_label),
-                            onTryAgain = {
-                                showLocationRationale = false
-                                requestLocationPermission()
-                            },
-                            onDismiss = { showLocationRationale = false }
-                        )
-                    }
-                    if (showCameraRationale) {
-                        PermissionRationaleDialog(
-                            title = getString(R.string.camera_rationale_title),
-                            message = getString(R.string.camera_rationale_message),
-                            tryAgainText = getString(R.string.error_retry),
-                            dismissText = getString(R.string.cancel_label),
-                            onTryAgain = {
-                                showCameraRationale = false
-                                pendingEvidenceAchievementId?.let { handleEvidencePhoto(it) }
-                            },
-                            onDismiss = { showCameraRationale = false }
-                        )
-                    }
                 }
             }
         }
@@ -291,44 +254,4 @@ class MainActivity : ComponentActivity() {
             activityRecognitionManager.startTracking()
         }
     }
-}
-
-@Composable
-private fun PermissionRationaleDialog(
-    title: String,
-    message: String,
-    tryAgainText: String,
-    dismissText: String,
-    onTryAgain: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-        },
-        text = {
-            Text(text = message, color = MaterialTheme.colorScheme.onSurface)
-        },
-        confirmButton = {
-            Button(
-                onClick = onTryAgain,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(tryAgainText)
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(dismissText)
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(16.dp)
-    )
 }
