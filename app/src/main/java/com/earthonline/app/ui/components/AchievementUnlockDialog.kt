@@ -3,13 +3,17 @@ package com.earthonline.app.ui.components
 // 成就解鎖彈窗：頂部彈出式卡片，含螢火蟲粒子環繞星星特效、滑動關閉，自動定時消失
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -74,6 +78,11 @@ fun AchievementUnlockDialog(
     var dragOffset by remember { mutableFloatStateOf(0f) }
     val context = LocalContext.current
     val density = LocalDensity.current
+    val infiniteTransition = rememberInfiniteTransition()
+    val fireflyRotation by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = 360f,
+        animationSpec = infiniteRepeatable(tween(800), RepeatMode.Restart)
+    )
 
     LaunchedEffect(Unit) {
         SoundPlayer.play(context, "achievement_unlock")
@@ -144,8 +153,8 @@ fun AchievementUnlockDialog(
                                     -5f to 28f, -22f to 18f, -28f to -6f, -18f to -20f
                                 )
                                 fireflies.forEachIndexed { i, (x, y) ->
-                                    val angle = (System.currentTimeMillis() / 800.0 + i * 45.0) % 360.0
-                                    val rad = Math.toRadians(angle)
+                                    val angle = (fireflyRotation + i * 45f) % 360f
+                                    val rad = Math.toRadians(angle.toDouble())
                                     val cx = (x + kotlin.math.cos(rad).toFloat() * 6f + center.x)
                                     val cy = (y + kotlin.math.sin(rad).toFloat() * 6f + center.y)
                                     val alpha = ((kotlin.math.sin(angle * 3).toFloat() + 1f) / 2f) * fireflyAlpha

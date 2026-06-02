@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.earthonline.app.AppConstants
 import com.earthonline.app.R
+import com.earthonline.app.data.backup.BackupResult
 import com.earthonline.app.data.ml.ImageAnalyzer
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.data.activity.ActivityRecognitionManager
@@ -148,8 +149,12 @@ class MainActivity : ComponentActivity() {
     ) { uri ->
         if (uri != null) {
             lifecycleScope.launch {
-                viewModel.exportBackup(uri)
-                Toast.makeText(this@MainActivity, getString(R.string.backup_exported), Toast.LENGTH_SHORT).show()
+                val result = viewModel.exportBackup(uri)
+                val msg = when (result) {
+                    is BackupResult.Success -> getString(R.string.backup_exported)
+                    is BackupResult.Error -> result.message
+                }
+                Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -160,8 +165,12 @@ class MainActivity : ComponentActivity() {
     ) { uri ->
         if (uri != null) {
             lifecycleScope.launch {
-                viewModel.importBackup(uri)
-                Toast.makeText(this@MainActivity, getString(R.string.backup_imported), Toast.LENGTH_SHORT).show()
+                val result = viewModel.importBackup(uri)
+                val msg = when (result) {
+                    is BackupResult.Success -> getString(R.string.backup_imported)
+                    is BackupResult.Error -> result.message
+                }
+                Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -143,7 +143,7 @@ fun DashboardScreen(
 
     val sections = AchievementCategories.getAll(uiState.achievements)
 
-    val pagerState = rememberPagerState(pageCount = { sections.size })
+    val pagerState = key(sections.size) { rememberPagerState(pageCount = { sections.size }) }
     val selectedTabIndex by remember { derivedStateOf { pagerState.currentPage } }
     val coroutineScope = rememberCoroutineScope()
 

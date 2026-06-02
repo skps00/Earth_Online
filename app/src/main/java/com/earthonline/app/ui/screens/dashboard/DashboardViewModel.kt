@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.earthonline.app.R
 import com.earthonline.app.data.backup.BackupManager
+import com.earthonline.app.data.backup.BackupResult
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.photo.PhotoManager
 import com.earthonline.app.data.screentime.ScreenTimeManager
@@ -327,15 +328,17 @@ class DashboardViewModel @Inject constructor(
     }
 
     // 匯出資料備份至指定 URI
-    suspend fun exportBackup(uri: Uri) {
-        backupManager.exportToUri(uri)
+    suspend fun exportBackup(uri: Uri): BackupResult {
+        return backupManager.exportToUri(uri)
     }
 
-    // 從指定 URI 匯入資料備份並重新載入
-    suspend fun importBackup(uri: Uri) {
-        backupManager.importFromUri(uri)
-        repository.syncAutoTrackFromHistory()
-        repository.refreshAll()
-        loadAchievementDisplay()
+    suspend fun importBackup(uri: Uri): BackupResult {
+        val result = backupManager.importFromUri(uri)
+        if (result is BackupResult.Success) {
+            repository.syncAutoTrackFromHistory()
+            repository.refreshAll()
+            loadAchievementDisplay()
+        }
+        return result
     }
 }

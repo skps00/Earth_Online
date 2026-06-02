@@ -1,9 +1,8 @@
 package com.earthonline.app.data.backup
 
-// 備份管理器 — 將成就進度、打卡記錄、證據和寵物資料匯出／匯入為 JSON
-
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.earthonline.app.AppConstants
 import com.earthonline.app.data.local.dao.AchievementDefinitionDao
 import com.earthonline.app.data.local.dao.AchievementEvidenceDao
@@ -19,7 +18,13 @@ import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// 備份管理器 — 注入 Context 與所有 DAO 進行完整資料匯出匯入
+private const val TAG = "BackupManager"
+
+sealed class BackupResult {
+    data object Success : BackupResult()
+    data class Error(val message: String) : BackupResult()
+}
+
 @Singleton
 class BackupManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -31,134 +36,147 @@ class BackupManager @Inject constructor(
 ) {
     private val userId = AppConstants.LOCAL_USER_ID
 
-    // 匯出所有資料為 JSON 到指定 URI — 含成就進度、打卡記錄、證據、寵物
-    suspend fun exportToUri(uri: Uri) {
-        val json = JSONObject().apply {
-            put("version", 1)
-            put("exportDate", System.currentTimeMillis())
+    suspend fun exportToUri(uri: Uri): BackupResult {
+        return try {
+            val json = JSONObject().apply {
+                put("version", 1)
+                put("exportDate", System.currentTimeMillis())
 
-            val progressArray = JSONArray()
-            val allProgress = progressDao.getAllByUser(userId)
-            allProgress.forEach { p ->
-                progressArray.put(JSONObject().apply {
-                    put("achievementId", p.achievementId)
-                    put("currentProgress", p.currentProgress)
-                    put("isUnlocked", p.isUnlocked)
-                    put("unlockedDate", p.unlockedDate?.toString() ?: "")
-                    put("triggerType", p.triggerType)
-                })
+                val progressArray = JSONArray()
+                val allProgress = progressDao.getAllByUser(userId)
+                allProgress.forEach { p ->
+                    progressArray.put(JSONObject().apply {
+                        put("achievementId", p.achievementId)
+                        put("currentProgress", p.currentProgress)
+                        put("isUnlocked", p.isUnlocked)
+                        put("unlockedDate", p.unlockedDate?.toString() ?: "")
+                        put("triggerType", p.triggerType)
+                    })
+                }
+                put("achievementProgress", progressArray)
+
+                val checkinArray = JSONArray()
+                val allCheckins = checkInRecordDao.getAllByUser(userId)
+                allCheckins.forEach { c ->
+                    checkinArray.put(JSONObject().apply {
+                        put("latitude", c.latitude)
+                        put("longitude", c.longitude)
+                        put("country", c.country)
+                        put("continent", c.continent)
+                        put("address", c.address)
+                        put("timestamp", c.timestamp)
+                    })
+                }
+                put("checkinRecords", checkinArray)
+
+                val evidenceArray = JSONArray()
+                val allEvidence = evidenceDao.getAllByUser(userId)
+                allEvidence.forEach { e ->
+                    evidenceArray.put(JSONObject().apply {
+                        put("achievementId", e.achievementId)
+                        put("photoPath", e.photoPath)
+                        put("detectedLabels", e.detectedLabels)
+                        put("timestamp", e.timestamp)
+                    })
+                }
+                put("evidence", evidenceArray)
+
+                val pet = petDao.get()
+                if (pet != null) {
+                    put("pet", JSONObject().apply {
+                        put("name", pet.name)
+                        put("emoji", pet.emoji)
+                        put("level", pet.level)
+                        put("xp", pet.xp)
+                        put("strength", pet.strength)
+                        put("agility", pet.agility)
+                        put("intelligence", pet.intelligence)
+                        put("charisma", pet.charisma)
+                        put("vitality", pet.vitality)
+                    })
+                }
             }
-            put("achievementProgress", progressArray)
 
-            val checkinArray = JSONArray()
-            val allCheckins = checkInRecordDao.getAllByUser(userId)
-            allCheckins.forEach { c ->
-                checkinArray.put(JSONObject().apply {
-                    put("latitude", c.latitude)
-                    put("longitude", c.longitude)
-                    put("country", c.country)
-                    put("continent", c.continent)
-                    put("address", c.address)
-                    put("timestamp", c.timestamp)
-                })
-            }
-            put("checkinRecords", checkinArray)
+            context.contentResolver.openOutputStream(uri)?.use { out ->
+                out.write(json.toString(2).toByteArray())
+            } ?: return BackupResult.Error("Cannot open output stream")
 
-            val evidenceArray = JSONArray()
-            val allEvidence = evidenceDao.getAllByUser(userId)
-            allEvidence.forEach { e ->
-                evidenceArray.put(JSONObject().apply {
-                    put("achievementId", e.achievementId)
-                    put("photoPath", e.photoPath)
-                    put("detectedLabels", e.detectedLabels)
-                    put("timestamp", e.timestamp)
-                })
-            }
-            put("evidence", evidenceArray)
-
-            val pet = petDao.get()
-            if (pet != null) {
-                put("pet", JSONObject().apply {
-                    put("name", pet.name)
-                    put("emoji", pet.emoji)
-                    put("level", pet.level)
-                    put("xp", pet.xp)
-                    put("strength", pet.strength)
-                    put("agility", pet.agility)
-                    put("intelligence", pet.intelligence)
-                    put("charisma", pet.charisma)
-                    put("vitality", pet.vitality)
-                })
-            }
-        }
-
-        context.contentResolver.openOutputStream(uri)?.use { out ->
-            out.write(json.toString(2).toByteArray())
+            BackupResult.Success
+        } catch (e: Exception) {
+            Log.e(TAG, "Export failed", e)
+            BackupResult.Error(e.message ?: "Export failed")
         }
     }
 
-    // 從 URI 匯入 JSON 資料 — 使用 insertReplace 避免主鍵衝突
-    suspend fun importFromUri(uri: Uri) {
-        val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText() ?: return
-        val json = JSONObject(jsonString)
+    suspend fun importFromUri(uri: Uri): BackupResult {
+        return try {
+            val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                ?: return BackupResult.Error("Cannot read backup file")
+            val json = JSONObject(jsonString)
 
-        val progressArray = json.getJSONArray("achievementProgress")
-        for (i in 0 until progressArray.length()) {
-            val obj = progressArray.getJSONObject(i)
-            val progress = UserAchievementProgressEntity(
-                userId = userId,
-                achievementId = obj.getString("achievementId"),
-                currentProgress = obj.getLong("currentProgress"),
-                isUnlocked = obj.getBoolean("isUnlocked"),
-                unlockedDate = obj.optString("unlockedDate").toLongOrNull(),
-                triggerType = obj.getString("triggerType")
-            )
-            progressDao.insertReplace(progress)
-        }
-
-        val checkinArray = json.optJSONArray("checkinRecords")
-        if (checkinArray != null) {
-            for (i in 0 until checkinArray.length()) {
-                val obj = checkinArray.getJSONObject(i)
-                checkInRecordDao.insertReplace(CheckInRecord(
+            val progressArray = json.getJSONArray("achievementProgress")
+            for (i in 0 until progressArray.length()) {
+                val obj = progressArray.getJSONObject(i)
+                val progress = UserAchievementProgressEntity(
                     userId = userId,
-                    latitude = obj.getDouble("latitude"),
-                    longitude = obj.getDouble("longitude"),
-                    country = obj.optString("country", ""),
-                    continent = obj.optString("continent", ""),
-                    address = obj.optString("address", ""),
-                    timestamp = obj.getLong("timestamp")
-                ))
-            }
-        }
-
-        val evidenceArray = json.optJSONArray("evidence")
-        if (evidenceArray != null) {
-            for (i in 0 until evidenceArray.length()) {
-                val obj = evidenceArray.getJSONObject(i)
-                evidenceDao.insert(AchievementEvidence(
                     achievementId = obj.getString("achievementId"),
-                    userId = userId,
-                    photoPath = obj.getString("photoPath"),
-                    detectedLabels = obj.getString("detectedLabels"),
-                    timestamp = obj.getLong("timestamp")
+                    currentProgress = obj.getLong("currentProgress"),
+                    isUnlocked = obj.getBoolean("isUnlocked"),
+                    unlockedDate = obj.optString("unlockedDate").toLongOrNull(),
+                    triggerType = obj.getString("triggerType")
+                )
+                progressDao.insertReplace(progress)
+            }
+
+            val checkinArray = json.optJSONArray("checkinRecords")
+            if (checkinArray != null) {
+                for (i in 0 until checkinArray.length()) {
+                    val obj = checkinArray.getJSONObject(i)
+                    checkInRecordDao.insertReplace(CheckInRecord(
+                        userId = userId,
+                        latitude = obj.getDouble("latitude"),
+                        longitude = obj.getDouble("longitude"),
+                        country = obj.optString("country", ""),
+                        continent = obj.optString("continent", ""),
+                        address = obj.optString("address", ""),
+                        timestamp = obj.getLong("timestamp")
+                    ))
+                }
+            }
+
+            val evidenceArray = json.optJSONArray("evidence")
+            if (evidenceArray != null) {
+                for (i in 0 until evidenceArray.length()) {
+                    val obj = evidenceArray.getJSONObject(i)
+                    evidenceDao.insert(AchievementEvidence(
+                        achievementId = obj.getString("achievementId"),
+                        userId = userId,
+                        photoPath = obj.getString("photoPath"),
+                        detectedLabels = obj.getString("detectedLabels"),
+                        timestamp = obj.getLong("timestamp")
+                    ))
+                }
+            }
+
+            val petObj = json.optJSONObject("pet")
+            if (petObj != null) {
+                petDao.save(com.earthonline.app.data.local.entity.PetEntity(
+                    name = petObj.optString("name", AppConstants.DEFAULT_PET_NAME),
+                    emoji = petObj.optString("emoji", AppConstants.DEFAULT_PET_EMOJI),
+                    level = petObj.optInt("level", AppConstants.DEFAULT_PET_LEVEL),
+                    xp = petObj.optLong("xp", AppConstants.DEFAULT_PET_XP),
+                    strength = petObj.optInt("strength", 0),
+                    agility = petObj.optInt("agility", 0),
+                    intelligence = petObj.optInt("intelligence", 0),
+                    charisma = petObj.optInt("charisma", 0),
+                    vitality = petObj.optInt("vitality", 0)
                 ))
             }
-        }
 
-        val petObj = json.optJSONObject("pet")
-        if (petObj != null) {
-            petDao.save(com.earthonline.app.data.local.entity.PetEntity(
-                name = petObj.optString("name", AppConstants.DEFAULT_PET_NAME),
-                emoji = petObj.optString("emoji", AppConstants.DEFAULT_PET_EMOJI),
-                level = petObj.optInt("level", AppConstants.DEFAULT_PET_LEVEL),
-                xp = petObj.optLong("xp", AppConstants.DEFAULT_PET_XP),
-                strength = petObj.optInt("strength", 0),
-                agility = petObj.optInt("agility", 0),
-                intelligence = petObj.optInt("intelligence", 0),
-                charisma = petObj.optInt("charisma", 0),
-                vitality = petObj.optInt("vitality", 0)
-            ))
+            BackupResult.Success
+        } catch (e: Exception) {
+            Log.e(TAG, "Import failed", e)
+            BackupResult.Error(e.message ?: "Import failed")
         }
     }
 }
