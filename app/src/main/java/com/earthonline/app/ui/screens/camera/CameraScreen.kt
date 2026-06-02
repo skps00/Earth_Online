@@ -104,6 +104,7 @@ fun CameraScreen(
     val flashEnabled = remember { mutableStateOf(false) }
     val showReticle = remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
+    val photosDir = remember { java.io.File(context.filesDir, "photos").also { if (!it.exists()) it.mkdirs() } }
 
     val reticlePulse by rememberInfiniteTransition().animateFloat(
         initialValue = 0.5f,
@@ -332,9 +333,7 @@ fun CameraScreen(
                         if (!isCapturing.value) {
                             val capture = imageCapture ?: return@clickable
                             isCapturing.value = true
-                            val dir = java.io.File(context.filesDir, "photos")
-                            if (!dir.exists()) dir.mkdirs()
-                            val photoFile = java.io.File(dir, "CAPTURE_${System.currentTimeMillis()}.jpg")
+                            val photoFile = java.io.File(photosDir, "CAPTURE_${System.currentTimeMillis()}.jpg")
                             val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
                             capture.takePicture(

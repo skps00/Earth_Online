@@ -223,7 +223,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // 執行打卡：檢查位置權限後委託 CheckInCoordinator 處理
+    override fun onDestroy() {
+        super.onDestroy()
+        imageAnalyzer.close()
+    }
+
     private fun handleCheckIn() {
         if (!hasLocationPermission) { requestLocationPermission(); return }
         lifecycleScope.launch(Dispatchers.IO) {

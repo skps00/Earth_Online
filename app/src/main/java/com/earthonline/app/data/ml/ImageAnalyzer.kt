@@ -35,6 +35,8 @@ class ImageAnalyzer @Inject constructor(@ApplicationContext private val context:
             emptyList()
         }
     }
+
+    fun close() { labeler.close() }
 }
 
 private const val ML_CONFIDENCE = 0.6f

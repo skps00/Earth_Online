@@ -27,6 +27,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,14 +79,20 @@ fun AchievementDetailDialog(
     val evidenceCount = allEvidencePaths.size
 
     @Composable
-    fun loadBitmap(path: String) = remember(path) {
-        try {
-            val uri = android.net.Uri.parse(path)
-            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load bitmap from path: $path", e)
-            null
+    fun loadBitmap(path: String): android.graphics.Bitmap? {
+        val bitmap = remember(path) {
+            try {
+                val uri = android.net.Uri.parse(path)
+                context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load bitmap from path: $path", e)
+                null
+            }
         }
+        DisposableEffect(path) {
+            onDispose { bitmap?.recycle() }
+        }
+        return bitmap
     }
 
     AlertDialog(

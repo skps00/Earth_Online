@@ -186,7 +186,9 @@ class ScreenTimeManager @Inject constructor(
             var hasActivity = false
             while (events.hasNextEvent()) {
                 events.getNextEvent(event)
-                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND
+                    || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                        && event.eventType == UsageEvents.Event.KEYGUARD_HIDDEN)) {
                     hasActivity = true
                     break
                 }

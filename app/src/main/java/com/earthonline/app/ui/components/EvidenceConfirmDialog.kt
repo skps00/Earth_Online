@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +67,9 @@ fun EvidenceConfirmDialog(
                     }
                     if (bitmap != null) {
                         Image(bitmap = bitmap.asImageBitmap(), contentDescription = null, modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)))
+                    }
+                    DisposableEffect(Unit) {
+                        onDispose { bitmap?.recycle() }
                     }
                 }
                 if (analyzedLabels.isNotEmpty()) {

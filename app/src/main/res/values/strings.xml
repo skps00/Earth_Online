@@ -140,6 +140,7 @@
     <string name="biking_label">騎行</string>
     <string name="distance_label">距離</string>
 
+    <string name="activity_tracking_label">活動追蹤</string>
     <string name="location_rationale_title">需要位置權限</string>
     <string name="location_rationale_message">位置權限用於打卡記錄地點，自動辨識國家與大洲，解鎖探索成就。你的位置資料只會儲存在本機。</string>
     <string name="camera_rationale_title">需要相機權限</string>

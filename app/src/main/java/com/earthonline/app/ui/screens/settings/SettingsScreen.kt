@@ -212,7 +212,7 @@ fun SettingsScreen(
                         Icons.Filled.DirectionsRun, null,
                         tint = if (activityTracking) EmeraldGreen else MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Text("Activity Tracking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                    Text(stringResource(R.string.activity_tracking_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.weight(1f).padding(start = 12.dp))
                     Switch(
                         checked = activityTracking,
                         onCheckedChange = {

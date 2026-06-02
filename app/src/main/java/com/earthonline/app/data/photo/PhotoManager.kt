@@ -72,8 +72,10 @@ class PhotoManager @Inject constructor(
             ratio
         } else 1
 
+        val safeSampleSize = maxOf(sampleSize, 2)
+
         val decodeOpts = BitmapFactory.Options().apply {
-            inSampleSize = sampleSize
+            inSampleSize = safeSampleSize
             inMutable = true
         }
         val bitmap = BitmapFactory.decodeFile(originalFile.absolutePath, decodeOpts)

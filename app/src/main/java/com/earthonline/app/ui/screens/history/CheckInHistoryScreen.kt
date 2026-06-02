@@ -91,7 +91,7 @@ fun CheckInHistoryScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 grouped.forEach { (country, list) ->
-                    item {
+                    item(key = country) {
                         Text(
                             text = stringResource(R.string.country_count_format, country, list.size),
                             style = MaterialTheme.typography.titleLarge,
@@ -100,7 +100,7 @@ fun CheckInHistoryScreen(
                             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                         )
                     }
-                    items(list.sortedByDescending { it.timestamp }) { record ->
+                    items(list.sortedByDescending { it.timestamp }, key = { it.id }) { record ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
