@@ -128,3 +128,8 @@
 | # | 事項 | 說明 |
 |---|------|------|
 | F-6 | MainActivity 權限永久拒絕引導 | 使用者拒絕權限後顯示自訂 rationale dialog 解釋用途，提供「重試」按鈕，只顯示一次 | ✅ |
+| F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源 | ⬜ |
+| F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用格式字串 | ⬜ |
+| F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 和 💡 前綴硬編碼 → stringResource | ⬜ |
+| F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ⬜ |
+| F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ⬜ |
