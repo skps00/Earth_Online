@@ -129,6 +129,16 @@
     <string name="screen_time_permission_open_settings">前往設定</string>
     <string name="screen_time_permission_dismiss">稍後</string>
     <string name="location_gps_unavailable">無法取得位置，請確認 GPS 已開啟</string>
+    <string name="activity_permission_title">活動識別</string>
+    <string name="activity_permission_desc">自動偵測你的活動以解鎖交通成就：</string>
+    <string name="activity_permission_item_bike">騎行 → 單車達人</string>
+    <string name="activity_permission_item_bike_100">100km → 狂熱騎士</string>
+    <string name="activity_permission_footer">資料僅儲存於本機，不會上傳。</string>
+    <string name="activity_permission_grant">授予</string>
+    <string name="activity_permission_later">稍後</string>
+    <string name="walking_label">步行</string>
+    <string name="biking_label">騎行</string>
+    <string name="distance_label">距離</string>
 
     <string name="location_rationale_title">需要位置權限</string>
     <string name="location_rationale_message">位置權限用於打卡記錄地點，自動辨識國家與大洲，解鎖探索成就。你的位置資料只會儲存在本機。</string>

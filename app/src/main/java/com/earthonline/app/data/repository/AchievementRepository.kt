@@ -79,7 +79,7 @@ class AchievementRepository @Inject constructor(
         events.addAll(checkAndUnlock(userId, triggerType))
         events.addAll(evaluateAutoTrackAchievements(country, continent))
         // 檢查高山成就：海拔 ≥ 2500m → 解鎖 explore_mountain
-        if (altitude != null && altitude >= 2500.0) {
+        if (altitude != null && altitude in 2500.0..9000.0) {
             tryAutoUnlock(userId, "explore_mountain", System.currentTimeMillis())?.let { events.add(it) }
         }
         return events
@@ -227,8 +227,9 @@ class AchievementRepository @Inject constructor(
     // 計算所有已解鎖成就的總獎勵分數
     suspend fun getTotalPoints(): Long {
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
+        val definitions = definitionDao.getAll().associateBy { it.achievementId }
         return allProgress.filter { it.isUnlocked }.sumOf { progress ->
-            definitionDao.getById(progress.achievementId)?.rewardPoints?.toLong() ?: 0L
+            definitions[progress.achievementId]?.rewardPoints?.toLong() ?: 0L
         }
     }
 
@@ -257,10 +258,10 @@ class AchievementRepository @Inject constructor(
         userId: String,
         triggerType: String
     ): List<UnlockedAchievementEvent> {
-        val unlockedProgress = progressDao.getUnlockedByUserAndType(userId, triggerType)
+        val lockedProgress = progressDao.getLockedByUserAndType(userId, triggerType)
         val events = mutableListOf<UnlockedAchievementEvent>()
 
-        for (progress in unlockedProgress) {
+        for (progress in lockedProgress) {
             val definition = definitionDao.getById(progress.achievementId) ?: continue
             if (progress.currentProgress >= definition.triggerGoal) {
                 val now = System.currentTimeMillis()
@@ -294,7 +295,7 @@ class AchievementRepository @Inject constructor(
 
     // 根據總分計算玩家等級 — 使用平方根公式 sqrt(points / 100) + 1
     fun computePlayerLevel(totalPoints: Long): Int {
-        return (kotlin.math.sqrt(totalPoints.toDouble() / LEVEL_SCALE) + 1).toInt()
+        return (kotlin.math.sqrt(totalPoints.toDouble() / LEVEL_SCALE) + 1).roundToInt()
     }
 
     // 計算升到下一級所需經驗值
@@ -413,6 +414,7 @@ class AchievementRepository @Inject constructor(
         val pet = getPet()
         val allProgress = progressDao.getAllByUser(AppConstants.LOCAL_USER_ID)
             .filter { it.isUnlocked }
+        val definitions = definitionDao.getAll().associateBy { it.achievementId }
 
         var strengthRaw = 0f
         var agilityRaw = 0f
@@ -421,7 +423,7 @@ class AchievementRepository @Inject constructor(
         var vitalityRaw = 0f
 
         for (prog in allProgress) {
-            val def = definitionDao.getById(prog.achievementId) ?: continue
+            val def = definitions[prog.achievementId] ?: continue
             val points = def.rewardPoints.toFloat()
             // 若成就定義有自訂屬性權重則優先使用，否則使用分類預設權重
             val hasCustomWeights = def.strengthWeight + def.agilityWeight + def.intelligenceWeight + def.charismaWeight + def.vitalityWeight > 0f

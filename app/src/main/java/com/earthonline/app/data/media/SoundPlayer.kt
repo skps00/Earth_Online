@@ -13,6 +13,7 @@ object SoundPlayer {
     private var currentPlayer: MediaPlayer? = null
 
     // 播放指定資源名稱的音效 — 靜音時跳過，播放完自動釋放
+    @Synchronized
     fun play(context: Context, resourceName: String) {
         val muted = context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(AppConstants.KEY_SOUND_MUTED, false)
@@ -24,9 +25,11 @@ object SoundPlayer {
                 val player = MediaPlayer.create(context, resId)
                 currentPlayer = player
                 player?.start()
-                player?.setOnCompletionListener {
-                    it.release()
-                    currentPlayer = null
+                player?.setOnCompletionListener { mp ->
+                    if (mp == currentPlayer) {
+                        mp.release()
+                        currentPlayer = null
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -34,10 +37,14 @@ object SoundPlayer {
         }
     }
 
-    // 停止並釋放當前播放器
+    @Synchronized
     fun stop() {
-        currentPlayer?.stop()
-        currentPlayer?.release()
-        currentPlayer = null
+        val player = currentPlayer
+        if (player != null) {
+            player.setOnCompletionListener(null)
+            player.stop()
+            player.release()
+            currentPlayer = null
+        }
     }
 }

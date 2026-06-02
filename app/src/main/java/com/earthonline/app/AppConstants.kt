@@ -40,7 +40,8 @@ object AppConstants {
 
     // 寵物屬性計算除數與成就總數
     const val STAT_DIVISOR = 10f
-    const val TOTAL_ACHIEVEMENT_COUNT = 129
+    const val TOTAL_ACHIEVEMENT_COUNT = 125
+    const val KEY_ACTIVITY_TRACKING_DISABLED = "activity_tracking_disabled"
 
     // UI 動畫參數
     const val BOUNCE_DAMPING_RATIO = 0.4f

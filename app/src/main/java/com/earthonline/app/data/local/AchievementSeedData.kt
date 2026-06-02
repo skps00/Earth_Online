@@ -4,7 +4,7 @@ import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
 
-// 成就種子資料：定義 129 個預設成就及其初始進度，用於資料庫首次初始化
+// 成就種子資料：定義 125 個預設成就及其初始進度，用於資料庫首次初始化
 object AchievementSeedData {
 
     // 建立所有預設成就定義，涵蓋打卡、探索、海洋、職涯、日常、史詩、健康、交通等分類

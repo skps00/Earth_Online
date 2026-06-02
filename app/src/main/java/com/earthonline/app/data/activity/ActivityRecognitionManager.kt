@@ -118,7 +118,7 @@ class ActivityRecognitionManager @Inject constructor(
     private fun handleTransition(event: ActivityTransitionEvent) {
         val now = System.currentTimeMillis()
         val durationMinutes = if (lastActivityTime > 0 && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
-            ((now - lastActivityTime) / 60000).toInt().coerceAtMost(60)
+            ((now - lastActivityTime) / 60000).toInt().coerceIn(0, 60)
         } else {
             1
         }

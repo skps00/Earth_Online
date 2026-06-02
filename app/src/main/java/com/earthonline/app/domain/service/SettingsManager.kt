@@ -27,8 +27,8 @@ class SettingsManager @Inject constructor(
 
     // 活動追蹤開關 — 內部儲存為停用狀態（取反）
     var activityTrackingEnabled: Boolean
-        get() = !prefs.getBoolean("activity_tracking_disabled", false)
-        set(value) = prefs.edit().putBoolean("activity_tracking_disabled", !value).apply()
+        get() = !prefs.getBoolean(AppConstants.KEY_ACTIVITY_TRACKING_DISABLED, false)
+        set(value) = prefs.edit().putBoolean(AppConstants.KEY_ACTIVITY_TRACKING_DISABLED, !value).apply()
 
     // 清除所有資料 — 設定、活動統計、資料庫、照片目錄
     fun clearAllData() {

@@ -35,7 +35,7 @@ interface UserAchievementProgressDao {
         AND is_unlocked = 0
         """
     ) // 查詢使用者某類型中尚未解鎖的成就進度
-    suspend fun getUnlockedByUserAndType(
+    suspend fun getLockedByUserAndType(
         userId: String,
         triggerType: String
     ): List<UserAchievementProgressEntity>

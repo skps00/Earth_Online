@@ -48,9 +48,9 @@ import kotlinx.coroutines.launch
 fun OnboardingScreen(onDone: () -> Unit) {
     val pages = remember {
         listOf(
-            listOf("🌍", R.string.onboarding_title_1, R.string.onboarding_desc_1),
-            listOf("📍", R.string.onboarding_title_2, R.string.onboarding_desc_2),
-            listOf("🏆", R.string.onboarding_title_3, R.string.onboarding_desc_3)
+            OnboardingPage("🌍", R.string.onboarding_title_1, R.string.onboarding_desc_1),
+            OnboardingPage("📍", R.string.onboarding_title_2, R.string.onboarding_desc_2),
+            OnboardingPage("🏆", R.string.onboarding_title_3, R.string.onboarding_desc_3)
         )
     }
 
@@ -73,9 +73,9 @@ fun OnboardingScreen(onDone: () -> Unit) {
 
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().weight(1f)) { page ->
             OnboardingPageContent(
-                emoji = pages[page][0] as String,
-                title = stringResource(pages[page][1] as Int),
-                description = stringResource(pages[page][2] as Int)
+                emoji = pages[page].emoji,
+                title = stringResource(pages[page].titleRes),
+                description = stringResource(pages[page].descRes)
             )
         }
 
@@ -169,3 +169,5 @@ private fun OnboardingBottomButtons(
         }
     }
 }
+
+private data class OnboardingPage(val emoji: String, @androidx.annotation.StringRes val titleRes: Int, @androidx.annotation.StringRes val descRes: Int)

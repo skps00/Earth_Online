@@ -149,17 +149,22 @@ class ScreenTimeManager @Inject constructor(
                     }
                     if (event.eventType == UsageEvents.Event.MOVE_TO_BACKGROUND) {
                         if (lastForegroundTime != null) {
-                            val duration = event.timeStamp - lastForegroundTime
-                            if (lastForegroundTime >= nightStart) {
-                                totalMillis += duration
+                            val effectiveStart = maxOf(lastForegroundTime, nightStart)
+                            val effectiveEnd = minOf(event.timeStamp, threshold)
+                            if (effectiveStart < effectiveEnd) {
+                                totalMillis += effectiveEnd - effectiveStart
                             }
                             lastForegroundTime = null
                         }
                     }
                 }
 
-                if (lastForegroundTime != null && lastForegroundTime >= nightStart) {
-                    totalMillis += now - lastForegroundTime
+                if (lastForegroundTime != null) {
+                    val effectiveStart = maxOf(lastForegroundTime, nightStart)
+                    val effectiveEnd = minOf(now, threshold)
+                    if (effectiveStart < effectiveEnd) {
+                        totalMillis += effectiveEnd - effectiveStart
+                    }
                 }
 
                 (totalMillis / 60_000) >= MINUTES_NIGHT_OWL

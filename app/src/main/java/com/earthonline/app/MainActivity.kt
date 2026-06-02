@@ -46,6 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 // 應用程式主入口 Activity，管理權限請求、拍照證據、備份匯入匯出等啟動器
@@ -123,7 +124,7 @@ class MainActivity : ComponentActivity() {
         pendingEvidenceAchievementId = null
 
         if (success && uri != null && achievementId != null) {
-            CoroutineScope(Dispatchers.IO).launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val compressedUri = photoManager.compressPhoto(uri)
                 viewModel.setEvidencePhotoPath(achievementId, compressedUri.toString())
                 viewModel.onEvent(DashboardEvent.EvidencePhotoTaken(achievementId, true))
@@ -225,8 +226,12 @@ class MainActivity : ComponentActivity() {
     // 執行打卡：檢查位置權限後委託 CheckInCoordinator 處理
     private fun handleCheckIn() {
         if (!hasLocationPermission) { requestLocationPermission(); return }
-        if (!checkInCoordinator.performCheckIn(viewModel)) {
-            Toast.makeText(this, getString(R.string.location_gps_unavailable), Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (!checkInCoordinator.performCheckIn(viewModel)) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, getString(R.string.location_gps_unavailable), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

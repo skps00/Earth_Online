@@ -1,6 +1,35 @@
 ﻿# 代碼變更與問題日誌
 
-## 2026-06-02 10:30:00 操作類型：修改
+## 2026-06-02 11:30:00 操作類型：修改
+- **文件路徑**：綜合多檔案（完整專案審計修正）
+- **變更摘要**：修復 20+ 個審計發現的 Bug
+- **修正清單**：
+  - ScreenTimeManager.kt：isNightOwl 上限邊界（2-5AM 精確）、hasNoPhoneToday 加入 KEYGUARD_HIDDEN
+  - DashboardScreen.kt：errorState 渲染、walking/biking/distance 硬編碼標籤→stringResource
+  - AchievementJsonLoader.kt：資源不存在時防禦性檢查
+  - CheckInCoordinator.kt：performCheckIn→suspend + withContext(IO) 防止 ANR
+  - MainActivity.kt：lifecycleScope 替換孤立 CoroutineScope、handleCheckIn 呼叫 suspend
+  - AchievementRepository.kt：N+1 查詢修正（getTotalPoints + computeAndSavePetStats）、computePlayerLevel rounding、GPS 海拔上限、lockedProgress 改名
+  - DashboardUiState.kt：無變更（之前已修正）
+  - CameraScreen.kt：rememberCoroutineScope 替換孤立 scope、isCapturing 卡住修正、EvidenceThumbnail bitmap recycle
+  - Theme.kt：unsafe Activity cast→as? Activity + null guard
+  - SoundPlayer.kt：double release 修正 + @Synchronized
+  - ActivityPermissionDialog.kt：全部字串改用 stringResource
+  - CheckinCounterCard.kt：CardDark/TextSecondaryDark→MaterialTheme.colorScheme
+  - AppConstants.kt：TOTAL_ACHIEVEMENT_COUNT 129→125、新增 KEY_ACTIVITY_TRACKING_DISABLED
+  - AchievementSeedData.kt：註解129→125
+  - SettingsManager.kt：硬編碼 key→AppConstants
+  - ActivityRecognitionManager.kt：coerceAtMost→coerceIn(0,60)
+  - LocationHelper.kt：Nominatim 資源洩漏修正（use{}）
+  - UserAchievementProgressDao.kt：getUnlocked→getLocked（語義修正）
+  - AchievementRepositoryTest.kt：空測試→coVerify
+  - OnboardingScreen.kt：List<Any>→OnboardingPage data class
+  - strings.xml：activity_permission_* 等 12 個新字串
+- **遇到的問題**：
+  - 問題1：SoundPlayer.kt edit 留下重複代碼導致 KSP 編譯失敗
+    - 解決方案：手動清除殘留的舊 catch block 和舊 stop() 方法
+    - 狀態：✅ 已解決
+- **備註**：18 個測試全通過；BackupManager try-catch、AchievementUnlockDialog 螢火蟲凍結、EvidenceConfirmDialog bitmap recycle、CheckInHistoryScreen keys 等列為後續改善項目
 - **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
 - **變更摘要**：Location/Camera 權限拒絕後顯示自訂 rationale dialog（只顯示一次），含「重試」與「取消」按鈕
 - **遇到的問題**：

@@ -42,7 +42,8 @@ class AchievementRepositoryTest {
     @Test
     fun `initialize should insert definitions and progress`() = runTest {
         repository.initializeAchievements()
-        assertTrue(true)
+        coVerify(exactly = 1) { definitionDao.insertAll(any()) }
+        coVerify(exactly = 1) { progressDao.insertAll(any()) }
     }
 
     @Test

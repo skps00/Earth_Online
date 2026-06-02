@@ -78,6 +78,7 @@ import com.earthonline.app.ui.components.CheckInConfirmDialog
 import com.earthonline.app.ui.components.DashboardShimmer
 import com.earthonline.app.ui.components.EvidenceConfirmDialog
 import com.earthonline.app.ui.components.ActivityPermissionDialog
+import com.earthonline.app.ui.components.ErrorState
 import com.earthonline.app.ui.share.ShareCardGenerator
 import com.earthonline.app.ui.theme.AchievementUnlocked
 import com.earthonline.app.ui.theme.AccentOrange
@@ -113,6 +114,15 @@ fun DashboardScreen(
 
     if (uiState.isLoading) {
         DashboardShimmer(modifier = Modifier.fillMaxSize())
+        return
+    }
+
+    if (uiState.errorMessage != null) {
+        ErrorState(
+            description = uiState.errorMessage!!,
+            onRetry = { viewModel.retryLoad() },
+            modifier = Modifier.fillMaxSize()
+        )
         return
     }
 
@@ -208,17 +218,17 @@ fun DashboardScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("\uD83D\uDEB6", fontSize = 18.sp)
                                 Text("${uiState.walkingMinutes}min", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("Walking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                                Text(stringResource(R.string.walking_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("\uD83D\uDEB4", fontSize = 18.sp)
                                 Text("${uiState.bikingMinutes}min", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("Biking", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                                Text(stringResource(R.string.biking_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("\uD83D\uDEDE", fontSize = 18.sp)
                                 Text("${uiState.bikingKm}km", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                                Text("Distance", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+                                Text(stringResource(R.string.distance_label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
                             }
                         }
                     }

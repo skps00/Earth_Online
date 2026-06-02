@@ -7,9 +7,9 @@ import org.json.JSONArray
 object AchievementJsonLoader {
 
     fun load(context: Context): List<AchievementDefinitionEntity> {
-        val json = context.resources.openRawResource(
-            context.resources.getIdentifier("achievements", "raw", context.packageName)
-        ).bufferedReader().use { it.readText() }
+        val resId = context.resources.getIdentifier("achievements", "raw", context.packageName)
+        if (resId == 0) return emptyList()
+        val json = context.resources.openRawResource(resId).bufferedReader().use { it.readText() }
 
         val array = JSONArray(json)
         val list = mutableListOf<AchievementDefinitionEntity>()

@@ -29,7 +29,7 @@ import com.earthonline.app.ui.theme.TextSecondaryDark
 fun CheckinCounterCard(totalCheckins: Long) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
@@ -39,7 +39,7 @@ fun CheckinCounterCard(totalCheckins: Long) {
             Icon(Icons.Filled.LocationOn, null, tint = EmeraldGreen, modifier = Modifier.size(28.dp))
             Spacer(modifier = Modifier.height(6.dp))
             Text("$totalCheckins", style = MaterialTheme.typography.headlineMedium, color = EmeraldGreen, fontWeight = FontWeight.Bold)
-            Text(stringResource(R.string.checkin_label), style = MaterialTheme.typography.bodySmall, color = TextSecondaryDark)
+            Text(stringResource(R.string.checkin_label), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

@@ -50,9 +50,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,6 +103,7 @@ fun CameraScreen(
     val isCapturing = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
     val showReticle = remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
 
     val reticlePulse by rememberInfiniteTransition().animateFloat(
         initialValue = 0.5f,
@@ -112,7 +115,7 @@ fun CameraScreen(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
-            kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            scope.launch(Dispatchers.IO) {
                 val compressedUri = photoManager.compressPhoto(uri)
                 withContext(Dispatchers.Main) {
                     onPhotoTaken(achievementId, compressedUri.toString())
@@ -327,8 +330,8 @@ fun CameraScreen(
                     .size(76.dp)
                     .clickable {
                         if (!isCapturing.value) {
-                            isCapturing.value = true
                             val capture = imageCapture ?: return@clickable
+                            isCapturing.value = true
                             val dir = java.io.File(context.filesDir, "photos")
                             if (!dir.exists()) dir.mkdirs()
                             val photoFile = java.io.File(dir, "CAPTURE_${System.currentTimeMillis()}.jpg")
@@ -340,7 +343,7 @@ fun CameraScreen(
                                 object : ImageCapture.OnImageSavedCallback {
                                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                                         isCapturing.value = false
-                                        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+                                        scope.launch(Dispatchers.IO) {
                                             val compressedUri = photoManager.compressPhoto(
                                                 android.net.Uri.fromFile(photoFile)
                                             )
@@ -421,12 +424,18 @@ private fun EvidenceThumbnail(photoPath: String) {
             try {
                 val uri = Uri.parse(photoPath)
                 context.contentResolver.openInputStream(uri)?.use { stream ->
+                    val oldBitmap = bitmap
                     bitmap = BitmapFactory.decodeStream(stream)
+                    oldBitmap?.recycle()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to load evidence thumbnail", e)
             }
         }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { bitmap?.recycle() }
     }
 
     if (bitmap != null) {

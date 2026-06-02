@@ -105,7 +105,7 @@ class LocationHelper @Inject constructor(
             conn.connectTimeout = AppConstants.NOMINATIM_CONNECT_TIMEOUT_MS
             conn.readTimeout = AppConstants.NOMINATIM_READ_TIMEOUT_MS
 
-            val text = conn.inputStream.bufferedReader().readText()
+            val text = conn.inputStream.bufferedReader().use { it.readText() }
             conn.disconnect()
 
             val json = org.json.JSONObject(text)
