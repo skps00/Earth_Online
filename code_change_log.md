@@ -1,37 +1,25 @@
 ﻿# 代碼變更與問題日誌
 
-## 2026-06-02 10:00:00 操作類型：修改
+## 2026-06-02 10:15:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardUiState.kt
-- **變更摘要**：新增 showScreenTimePermissionBanner 欄位
+- **變更摘要**：showScreenTimePermissionBanner → showScreenTimePermissionDialog
 - **遇到的問題**：無
-- **備註**：N-1 權限審計修正 Fix 1/4
+- **備註**：橫幅改為對話框
 
-## 2026-06-02 10:01:00 操作類型：修改
-- **文件路徑**：app/src/main/java/com/earthonline/app/data/screentime/ScreenTimeManager.kt
-- **變更摘要**：新增 getTodayTotalScreenTimeMinutes() 方法供 Dashboard 顯示
-- **遇到的問題**：無
-- **備註**：N-1 權限審計修正 Fix 4/4；計算今日前景 App 總時長
-
-## 2026-06-02 10:02:00 操作類型：修改
+## 2026-06-02 10:16:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
-- **變更摘要**：注入 ScreenTimeManager；loadAchievementDisplay() 新增用量權限檢查、screenTimeMinutes 寫入、活動權限對話框改為可重現；新增 openScreenTimeSettings() 方法
+- **變更摘要**：dismissScreenTimePermissionBanner → dismissScreenTimePermissionDialog；UiState 旗標更名
 - **遇到的問題**：無
-- **備註**：N-1 權限審計修正 Fix 1+2+4/4
+- **備註**：橫幅改為對話框
 
-## 2026-06-02 10:03:00 操作類型：修改
+## 2026-06-02 10:17:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardScreen.kt
-- **變更摘要**：新增 ScreenTimePermissionBanner 元件，權限未授予時顯示「用量存取未開啟」橫幅與「前往設定」按鈕
+- **變更摘要**：ScreenTimePermissionBanner（card） → ScreenTimePermissionDialog（AlertDialog），移至 Box 層級與 ActivityPermissionDialog 並排
 - **遇到的問題**：
-  - 問題：onDismiss 參數未使用導致編譯警告
-  - 解決方案：移除 onDismiss 參數，橫幅僅在權限未授予時顯示，授權後自動消失
+  - 問題：dialog 放置在 LazyColumn 內但非 item {} 區塊，導致 @Composable invocation 編譯錯誤
+  - 解決方案：移至 LazyColumn 外的 Box 層級，與其他 dialog 並排
   - 狀態：✅ 已解決
-- **備註**：N-1 權限審計修正 Fix 1/4
-
-## 2026-06-02 10:04:00 操作類型：修改
-- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
-- **變更摘要**：handleCheckIn() 中 toast 從通用 location_unavailable 改為 location_gps_unavailable，明確提示 GPS 問題
-- **遇到的問題**：無
-- **備註**：N-1 權限審計修正 Fix 3/4
+- **備註**：對話框含「前往設定」(confirm) 與「稍後」(dismiss) 雙按鈕
 
 ## 2026-06-02 10:05:00 操作類型：修改
 - **文件路徑**：app/src/main/res/values/strings.xml

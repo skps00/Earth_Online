@@ -51,7 +51,7 @@ data class DashboardUiState(
     val showActivityPermissionDialog: Boolean = false,     // 是否顯示活動權限對話框
     val activityPermissionGranted: Boolean = false,        // 活動辨識權限是否已授予
     val screenTimeMinutes: Int = 0,                        // 今日螢幕使用時間（分鐘）
-    val showScreenTimePermissionBanner: Boolean = false     // 是否顯示用量存取權限提示橫幅
+    val showScreenTimePermissionDialog: Boolean = false     // 是否顯示用量存取權限對話框
 )
 
 // 儀表板事件密封類別，定義所有使用者操作動作

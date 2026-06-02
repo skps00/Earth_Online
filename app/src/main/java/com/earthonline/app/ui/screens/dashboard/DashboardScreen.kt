@@ -286,14 +286,6 @@ fun DashboardScreen(
             }
             }
 
-            if (uiState.showScreenTimePermissionBanner) {
-                item {
-                    ScreenTimePermissionBanner(
-                        onOpenSettings = { viewModel.openScreenTimeSettings() }
-                    )
-                }
-            }
-
             if (showOnlyAchievementWall) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -455,45 +447,54 @@ fun DashboardScreen(
                 onDismiss = { viewModel.dismissActivityPermissionDialog() }
             )
         }
+        if (uiState.showScreenTimePermissionDialog) {
+            ScreenTimePermissionDialog(
+                onOpenSettings = { viewModel.openScreenTimeSettings() },
+                onDismiss = { viewModel.dismissScreenTimePermissionDialog() }
+            )
+        }
     }
 }
 
 @Composable
-private fun ScreenTimePermissionBanner(
-    onOpenSettings: () -> Unit
+private fun ScreenTimePermissionDialog(
+    onOpenSettings: () -> Unit,
+    onDismiss: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
             Text(
                 text = stringResource(R.string.screen_time_permission_title),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(4.dp))
+        },
+        text = {
             Text(
                 text = stringResource(R.string.screen_time_permission_desc),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+        },
+        confirmButton = {
+            Button(
+                onClick = onOpenSettings,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Button(
-                    onClick = onOpenSettings,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text(stringResource(R.string.screen_time_permission_open_settings))
-                }
+                Text(stringResource(R.string.screen_time_permission_open_settings))
             }
-        }
-    }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(stringResource(R.string.screen_time_permission_dismiss))
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp)
+    )
 }

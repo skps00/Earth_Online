@@ -264,7 +264,7 @@ class DashboardViewModel @Inject constructor(
                     context, "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
                 ) == android.content.pm.PackageManager.PERMISSION_GRANTED,
                 showActivityPermissionDialog = !isActivityPermissionGranted(),
-                showScreenTimePermissionBanner = !usageStatsGranted
+                showScreenTimePermissionDialog = !usageStatsGranted
             )
         }
     }
@@ -285,8 +285,8 @@ class DashboardViewModel @Inject constructor(
         screenTimeManager.openUsageAccessSettings()
     }
 
-    fun dismissScreenTimePermissionBanner() {
-        _uiState.update { it.copy(showScreenTimePermissionBanner = false) }
+    fun dismissScreenTimePermissionDialog() {
+        _uiState.update { it.copy(showScreenTimePermissionDialog = false) }
     }
 
     private fun isActivityPermissionGranted(): Boolean {
