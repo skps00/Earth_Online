@@ -42,7 +42,10 @@ class ScreenTimeManager @Inject constructor(
 
     fun openUsageAccessSettings() {
         try {
-            context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
         } catch (e: Exception) {
             Log.e(TAG, "openUsageAccessSettings failed", e)
         }
