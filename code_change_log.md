@@ -1,5 +1,50 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-02 10:00:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardUiState.kt
+- **變更摘要**：新增 showScreenTimePermissionBanner 欄位
+- **遇到的問題**：無
+- **備註**：N-1 權限審計修正 Fix 1/4
+
+## 2026-06-02 10:01:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/data/screentime/ScreenTimeManager.kt
+- **變更摘要**：新增 getTodayTotalScreenTimeMinutes() 方法供 Dashboard 顯示
+- **遇到的問題**：無
+- **備註**：N-1 權限審計修正 Fix 4/4；計算今日前景 App 總時長
+
+## 2026-06-02 10:02:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt
+- **變更摘要**：注入 ScreenTimeManager；loadAchievementDisplay() 新增用量權限檢查、screenTimeMinutes 寫入、活動權限對話框改為可重現；新增 openScreenTimeSettings() 方法
+- **遇到的問題**：無
+- **備註**：N-1 權限審計修正 Fix 1+2+4/4
+
+## 2026-06-02 10:03:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardScreen.kt
+- **變更摘要**：新增 ScreenTimePermissionBanner 元件，權限未授予時顯示「用量存取未開啟」橫幅與「前往設定」按鈕
+- **遇到的問題**：
+  - 問題：onDismiss 參數未使用導致編譯警告
+  - 解決方案：移除 onDismiss 參數，橫幅僅在權限未授予時顯示，授權後自動消失
+  - 狀態：✅ 已解決
+- **備註**：N-1 權限審計修正 Fix 1/4
+
+## 2026-06-02 10:04:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
+- **變更摘要**：handleCheckIn() 中 toast 從通用 location_unavailable 改為 location_gps_unavailable，明確提示 GPS 問題
+- **遇到的問題**：無
+- **備註**：N-1 權限審計修正 Fix 3/4
+
+## 2026-06-02 10:05:00 操作類型：修改
+- **文件路徑**：app/src/main/res/values/strings.xml
+- **變更摘要**：新增 screen_time_permission_title/desc/open_settings + location_gps_unavailable 字串
+- **遇到的問題**：無
+- **備註**：N-1 權限審計修正 Fix 1+3/4
+
+## 2026-06-02 10:06:00 操作類型：修改
+- **文件路徑**：TODO.md
+- **變更摘要**：N-1 標記完成；新增 F-6 待辦：MainActivity 權限永久拒絕後引導至系統設定
+- **遇到的問題**：無
+- **備註**：N-1 權限審計 Issue 6 記錄為待辦
+
 ## 2026-06-01 08:52:00 操作類型：修改
 - **文件路徑**：code_change_log.md
 - **變更摘要**：N-1 Screen Time 系列完成，所有測試通過

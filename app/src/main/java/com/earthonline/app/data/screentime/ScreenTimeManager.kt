@@ -192,4 +192,40 @@ class ScreenTimeManager @Inject constructor(
             false
         }
     }
+
+    suspend fun getTodayTotalScreenTimeMinutes(): Int {
+        if (!isUsageStatsPermissionGranted()) return 0
+        return withContext(Dispatchers.IO) {
+            try {
+                val todayStart = getStartOfToday()
+                val now = System.currentTimeMillis()
+                val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+                val events = usageStatsManager.queryEvents(todayStart, now) ?: return@withContext 0
+                val event = UsageEvents.Event()
+
+                var totalMillis = 0L
+                var lastForegroundTime: Long? = null
+
+                while (events.hasNextEvent()) {
+                    events.getNextEvent(event)
+                    if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        lastForegroundTime = event.timeStamp
+                    }
+                    if (event.eventType == UsageEvents.Event.MOVE_TO_BACKGROUND) {
+                        if (lastForegroundTime != null) {
+                            totalMillis += event.timeStamp - lastForegroundTime
+                            lastForegroundTime = null
+                        }
+                    }
+                }
+                if (lastForegroundTime != null) {
+                    totalMillis += now - lastForegroundTime
+                }
+                (totalMillis / 60_000).toInt()
+            } catch (e: Exception) {
+                Log.e(TAG, "getTodayTotalScreenTimeMinutes failed", e)
+                0
+            }
+        }
+    }
 }

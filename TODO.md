@@ -39,7 +39,7 @@
 
 | # | 方向 | API | 成就數 | 權限 | 狀態 |
 |---|------|-----|:--:|------|:--:|
-| N-1 | Screen Time | UsageStatsManager | 4-7 | PACKAGE_USAGE_STATS | ⬜ |
+| N-1 | Screen Time | UsageStatsManager | 3 | PACKAGE_USAGE_STATS | ✅ |
 | N-2 | 高山海拔 | TYPE_PRESSURE sensor | 2 | 無 | ✅ |
 | N-3 | 天氣 / 地震 API | OpenWeatherMap + USGS | 3 | 網路 | ⬜ |
 
@@ -122,3 +122,9 @@
 | RPG 風格自訂相機 (CameraX + Reticle) |
 | Activity Recognition (Walking / Biking / Driving) |
 | 9 成就 AUTO_TRACK + 中英文地名支援 |
+
+## ⏳ 待辦事項
+
+| # | 事項 | 說明 |
+|---|------|------|
+| F-6 | MainActivity 權限永久拒絕引導 | 使用者拒絕位置權限兩次後，App 應引導至系統設定而非靜默失敗 |

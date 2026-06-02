@@ -286,6 +286,14 @@ fun DashboardScreen(
             }
             }
 
+            if (uiState.showScreenTimePermissionBanner) {
+                item {
+                    ScreenTimePermissionBanner(
+                        onOpenSettings = { viewModel.openScreenTimeSettings() }
+                    )
+                }
+            }
+
             if (showOnlyAchievementWall) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -446,6 +454,46 @@ fun DashboardScreen(
                 onGrant = { viewModel.grantActivityPermission(); onRequestActivityPermission() },
                 onDismiss = { viewModel.dismissActivityPermissionDialog() }
             )
+        }
+    }
+}
+
+@Composable
+private fun ScreenTimePermissionBanner(
+    onOpenSettings: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.screen_time_permission_title),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.screen_time_permission_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = onOpenSettings,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(stringResource(R.string.screen_time_permission_open_settings))
+                }
+            }
         }
     }
 }

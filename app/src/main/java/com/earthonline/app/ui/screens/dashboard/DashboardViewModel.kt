@@ -10,6 +10,7 @@ import com.earthonline.app.R
 import com.earthonline.app.data.backup.BackupManager
 import com.earthonline.app.data.local.entity.CheckInRecord
 import com.earthonline.app.data.photo.PhotoManager
+import com.earthonline.app.data.screentime.ScreenTimeManager
 import com.earthonline.app.data.repository.UnlockedAchievementEvent
 import com.earthonline.app.data.repository.AchievementRepository
 import com.earthonline.app.domain.service.SettingsManager
@@ -32,6 +33,7 @@ class DashboardViewModel @Inject constructor(
     private val backupManager: BackupManager,
     private val photoManager: PhotoManager,
     private val settingsManager: SettingsManager,
+    private val screenTimeManager: ScreenTimeManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -240,6 +242,8 @@ class DashboardViewModel @Inject constructor(
         repository.computeAndSavePetStats()
         val petEntity = repository.getPet()
         val pet = repository.petToUiState(petEntity)
+        val screenMinutes = screenTimeManager.getTodayTotalScreenTimeMinutes()
+        val usageStatsGranted = screenTimeManager.isUsageStatsPermissionGranted()
 
         _uiState.update {
             it.copy(
@@ -255,11 +259,12 @@ class DashboardViewModel @Inject constructor(
                 walkingMinutes = activity.first,
                 bikingMinutes = activity.second,
                 bikingKm = activity.third,
+                screenTimeMinutes = screenMinutes,
                 activityPermissionGranted = androidx.core.content.ContextCompat.checkSelfPermission(
                     context, "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
                 ) == android.content.pm.PackageManager.PERMISSION_GRANTED,
-                showActivityPermissionDialog = !settingsManager.activityTrackingEnabled
-                    || (!isActivityPermissionGranted() && !isActivityPermissionRequested())
+                showActivityPermissionDialog = !isActivityPermissionGranted(),
+                showScreenTimePermissionBanner = !usageStatsGranted
             )
         }
     }
@@ -269,13 +274,19 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun dismissActivityPermissionDialog() {
-        markActivityPermissionRequested()
         _uiState.update { it.copy(showActivityPermissionDialog = false) }
     }
 
     fun grantActivityPermission() {
-        markActivityPermissionRequested()
         _uiState.update { it.copy(showActivityPermissionDialog = false) }
+    }
+
+    fun openScreenTimeSettings() {
+        screenTimeManager.openUsageAccessSettings()
+    }
+
+    fun dismissScreenTimePermissionBanner() {
+        _uiState.update { it.copy(showScreenTimePermissionBanner = false) }
     }
 
     private fun isActivityPermissionGranted(): Boolean {

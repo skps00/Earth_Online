@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
     private fun handleCheckIn() {
         if (!hasLocationPermission) { requestLocationPermission(); return }
         if (!checkInCoordinator.performCheckIn(viewModel)) {
-            Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.location_gps_unavailable), Toast.LENGTH_SHORT).show()
         }
     }
 

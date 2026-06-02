@@ -123,4 +123,10 @@
     <string name="evidence_count_label">%1$d 張證據</string>
     <string name="country_count_format">%1$s (%2$d)</string>
     <string name="coord_fallback_format">%1$.4f, %2$.4f</string>
+
+    <string name="screen_time_permission_title">用量存取未開啟</string>
+    <string name="screen_time_permission_desc">用於自動偵測早起、通宵、數位排毒等成就</string>
+    <string name="screen_time_permission_open_settings">前往設定</string>
+    <string name="screen_time_permission_dismiss">稍後</string>
+    <string name="location_gps_unavailable">無法取得位置，請確認 GPS 已開啟</string>
 </resources>
