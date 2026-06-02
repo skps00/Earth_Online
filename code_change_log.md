@@ -1,10 +1,16 @@
 ﻿# 代碼變更與問題日誌
 
-## 2026-06-02 10:15:00 操作類型：修改
-- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardUiState.kt
-- **變更摘要**：showScreenTimePermissionBanner → showScreenTimePermissionDialog
-- **遇到的問題**：無
-- **備註**：橫幅改為對話框
+## 2026-06-02 10:30:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
+- **變更摘要**：Location/Camera 權限拒絕後顯示自訂 rationale dialog（只顯示一次），含「重試」與「取消」按鈕
+- **遇到的問題**：
+  - 問題1：PermissionRationaleDialog 缺失 @Composable import
+    - 解決方案：新增 import androidx.compose.runtime.Composable
+    - 狀態：✅ 已解決
+  - 問題2：top-level 函數內呼叫 getString() 缺少 Context
+    - 解決方案：新增 tryAgainText/dismissText 參數，由 call site 傳入已解析字串
+    - 狀態：✅ 已解決
+- **備註**：rationaleShown 旗標確保只顯示一次；F-6 完成
 
 ## 2026-06-02 10:16:00 操作類型：修改
 - **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/dashboard/DashboardViewModel.kt

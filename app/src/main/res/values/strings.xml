@@ -129,4 +129,9 @@
     <string name="screen_time_permission_open_settings">前往設定</string>
     <string name="screen_time_permission_dismiss">稍後</string>
     <string name="location_gps_unavailable">無法取得位置，請確認 GPS 已開啟</string>
+
+    <string name="location_rationale_title">需要位置權限</string>
+    <string name="location_rationale_message">位置權限用於打卡記錄地點，自動辨識國家與大洲，解鎖探索成就。你的位置資料只會儲存在本機。</string>
+    <string name="camera_rationale_title">需要相機權限</string>
+    <string name="camera_rationale_message">相機權限用於拍攝成就證據照，證明你確實完成了該成就。照片只會儲存在本機。</string>
 </resources>
