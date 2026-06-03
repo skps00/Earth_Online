@@ -1,6 +1,6 @@
 # 🌍 地球 Online — 開發任務
 
-> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 48/54 (89%)
+> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 已審計 30+ bugs 修正
 
 ---
 
@@ -51,7 +51,7 @@
 |---|------|------|:--:|
 | P3-1 | IAP 裝飾商店 | Google Play Billing | ⬜ |
 | P3-2 | 本地自訂成就 | 新 DAO + UI | ⬜ |
-| P3-3 | 成就擴充路線 | 0 → 300 → 1000+ | ⬜ |
+| P3-3 | 成就擴充路線 | 0 → 125 → 300 → 1000+ | ⬜ |
 | P3-4 | 足跡地圖 | 互動式打卡地圖 | ⬜ |
 | P3-5 | Google Drive 備份 | AppData 雲端儲存 | ⬜ |
 | P3-6 | 語言切換 | 英文版 / 多語言 | ⬜ |
@@ -60,7 +60,7 @@
 ### 雲端方案（待決定）
 
 | 方案 | 說明 | 工時 |
-|---|---|:--:|
+|---|---|---|:--:|
 | A | Firestore 完全替代 Room | 3-5 天 |
 | B | Room 主 + Firestore 同步 | 2-3 天 |
 | C | 只遷照片 (Firebase Storage) | 0.5-1 天 |
@@ -68,6 +68,15 @@
 ---
 
 ## ✅ 已完成
+
+### Phase 2.x — 權限與審計修正
+
+| # | 項目 | 說明 |
+|---|------|------|
+| N-1 | Screen Time | UsageStatsManager.queryEvents() 自動偵測早起/通宵/數位排毒 |
+| N-1a | 權限審計修正 | 4 對話框→2；30+ bugs 修正；統一權限對話框；權限提醒開關 |
+| N-1b | 硬編碼清理 | 59 個硬編碼值消除（字串/顏色/URLs/keys/魔術數字） |
+| N-1c | 未修正剩餘 | `fallbackToDestructiveMigration`、`runInTransaction`（API 限制） |
 
 ### Phase 1.8 — Google Play 合規
 
@@ -109,27 +118,32 @@
 | 項目 |
 |---|
 | 打卡系統 (GPS + Geocoder + Nominatim) |
-| 129 成就 (86 + 43 社群) |
-| Room 資料庫 (7 entities / 5 DAOs) |
+| 125 成就 (8 大分類) |
+| Room 資料庫 (7 entities / 5 DAOs, exportSchema) |
 | 5 維寵物系統 + 玩家等級 |
 | 照片管理 (1080p WebP ≤200KB + EXIF) |
-| 螢火蟲粒子解鎖動畫 |
+| 螢火蟲粒子解鎖動畫（InfiniteTransition 驅動） |
 | 隱藏成就 + 4 級稀有度 glow |
-| JSON 備份匯出 / 匯入 |
+| JSON 備份匯出 / 匯入（error handling + backup result） |
 | Onboarding 首次引導 (3 頁) |
 | 隱私權政策 + 商店文案 |
 | Hilt DI + MVVM |
 | RPG 風格自訂相機 (CameraX + Reticle) |
 | Activity Recognition (Walking / Biking / Driving) |
-| 9 成就 AUTO_TRACK + 中英文地名支援 |
+| Screen Time 偵測 (UsageStatsManager) |
+| 12 成就 AUTO_TRACK + 中英文地名支援 |
+| 統一權限系統（單一對話框 + 序列表 + 權限提醒開關） |
+| 30+ bugs 審計修正（N+1/記憶體洩漏/競態/cast崩潰/資源洩漏等） |
+| 59 處硬編碼消除 |
 
 ## ⏳ 待辦事項
 
-| # | 事項 | 說明 |
-|---|------|------|
-| F-6 | MainActivity 權限永久拒絕引導 | 使用者拒絕權限後顯示自訂 rationale dialog 解釋用途，提供「重試」按鈕，只顯示一次 | ✅ |
+| # | 事項 | 說明 | 狀態 |
+|---|------|------|------|
 | F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源 | ⬜ |
 | F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用格式字串 | ⬜ |
 | F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 和 💡 前綴硬編碼 → stringResource | ⬜ |
 | F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ⬜ |
 | F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ⬜ |
+| F-12 | `fallbackToDestructiveMigration` | 資料庫 schema 變更時清空全部使用者資料 — 需完整 Migration 架構 | ⬜ |
+| F-13 | `recordCheckin()` 無 Transaction | 打卡多步寫入無原子性保證 — 需 Room API 支援 | ⬜ |

@@ -5,7 +5,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0-7F52FF?logo=kotlin)](https://kotlinlang.org/)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202024-4285F4?logo=android)](https://developer.android.com/compose)
 [![Min SDK](https://img.shields.io/badge/minSdk-26-34A853?logo=android)](https://developer.android.com)
-[![Test](https://img.shields.io/badge/tests-21%20passed-brightgreen)](#)
+[![Test](https://img.shields.io/badge/tests-18%20passed-brightgreen)](#)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](LICENSE)
 
 ---
@@ -23,29 +23,39 @@
 - 自動辨識國家/大洲（支援中英文名稱），簡化地址顯示
 - 打卡歷史按國家分組瀏覽
 
-### 🏆 129 個成就（8 大分類）
+### 🏆 125 個成就（8 大分類）
 
 | 分類 | 數量 | 觸發 |
 |---|---|---|
 | 📍 打卡 | 6 | 不重複地點數 |
 | 🗺️ 探索 | 31 | AUTO_TRACK + 手動 |
 | 🎓 職涯 | 10 | 手動確認 |
-| 🎭 日常 | 11 | 手動確認 |
+| 🎭 日常 | 11 | 手動確認（早起/通宵/數位排毒自動化） |
 | 🏆 史詩 | 15 | 手動確認 |
 | 🩺 健康 | 6 | 手動確認 |
 | 🚗 交通 | 5 | 部分自動（活動識別） |
 | 🌊 大海 | 5 | 隱藏成就 |
 
-- 9 個國家/洲成就自動解鎖（打卡日本 → `explore_japan`）
+- 12 個成就完全自動化解鎖（國家/洲別/高山海拔/螢幕時間/交通）
 - 多步進度 + 隱藏成就 + 4 級稀有度邊框（含 glow 特效）
-- 9 頁籤成就牆 (LazyRow + HorizontalPager)
 - 螢火蟲粒子解鎖動畫 + 音效
 - 成就分享卡 PNG (1080×1080)
+
+### ⏱ 螢幕時間偵測 (Screen Time)
+- `UsageStatsManager.queryEvents()` 讀取每日手機使用記錄
+- 自動解鎖 `daily_earlybird`（早起，5AM 前解鎖）、`daily_allnighter`（通宵，2-5AM >30min）、`daily_no_phone`（數位排毒，24h 無使用）
+- 每次 Dashboard 載入時自動評估
 
 ### 🚶 活動識別 (Activity Recognition)
 - 自動偵測走路 / 騎行 / 駕駛（Google Play Services Activity Recognition API）
 - Dashboard 顯示活動統計（步行分鐘 / 騎行分鐘 / 騎行距離）
 - 自動解鎖 `transport_bike`、`transport_bike_100` 成就
+
+### 📱 統一權限系統
+- 單一對話框整合位置、身體活動、相機權限，避免多重彈窗
+- 權限序列表依序請求授權，完成後顯示結果（✅/❌）
+- 設定頁「權限提醒」開關可關閉所有權限對話框
+- Screen Time 權限獨立為系統設定對話框
 
 ### 📸 自訂相機 (RPG 風格)
 - CameraX 內建相機 + RPG 風格外框
@@ -68,6 +78,7 @@
 ### 🔄 備份系統
 - JSON 匯出/匯入 (含寵物資料 + 全部證據)
 - SAF 檔案選擇器
+- 錯誤處理 + 使用者提示
 
 ---
 
@@ -79,14 +90,15 @@
 | UI | Jetpack Compose + Material 3 |
 | 架構 | MVVM (ViewModel + StateFlow) |
 | 導航 | Navigation Compose |
-| 資料庫 | Room (v12, 7 entities, 5 DAOs) |
+| 資料庫 | Room (v12, 7 entities, 5 DAOs, exportSchema) |
 | DI | Hilt |
 | 建置 | AGP 8.9.1, Gradle 8.11.1, compileSdk 36 |
 | 相機 | CameraX |
 | 定位 | LocationManager + Geocoder + Nominatim |
 | 活動識別 | Google Play Services Activity Recognition |
-| 測試 | JUnit 4 + MockK (21 tests) |
-| 分析 | CodeGraph MCP (72 files, 1,192 nodes) |
+| 螢幕時間 | UsageStatsManager (queryEvents) |
+| 測試 | JUnit 4 + MockK (18 tests) |
+| 分析 | CodeGraph MCP (77 files indexed) |
 | 最低 SDK | 26 (Android 8.0) |
 
 ---
@@ -106,17 +118,18 @@ app/src/main/java/com/earthonline/app/
 │   ├── media/           # SoundPlayer
 │   ├── ml/              # ImageAnalyzer
 │   ├── photo/           # PhotoManager (壓縮 + EXIF)
+│   ├── screentime/      # ScreenTimeManager (UsageStats)
 │   └── repository/      # AchievementRepository
 ├── di/                  # Hilt Module
 ├── domain/
 │   ├── model/           # TriggerType, Rarity, AchievementTriggers
 │   └── service/         # CheckInCoordinator, SettingsManager
 └── ui/
-    ├── components/      # 14 共享元件
-    ├── navigation/      # Screen + AppNavigation + BottomBar
+    ├── components/      # 13 共享元件
+    ├── navigation/      # Screen + AppNavigation + BoottomBar
     ├── screens/
     │   ├── camera/      # CameraScreen
-    │   ├── dashboard/   # DashboardScreen + PetCard + ViewModel
+    │   ├── dashboard/   # DashboardScreen + PetCard + ViewModel + UnifiedPermissionDialog
     │   ├── history/     # CheckInHistoryScreen
     │   ├── settings/    # SettingsScreen
     │   └── onboarding/  # OnboardingScreen (3 頁)
@@ -124,8 +137,8 @@ app/src/main/java/com/earthonline/app/
     └── theme/           # Color.kt + Theme.kt (雙主題)
 
 app/src/test/java/com/earthonline/app/
-├── domain/model/        # RarityTest, TriggerTypeTest
-└── data/repository/     # AchievementRepositoryTest
+├── data/repository/     # AchievementRepositoryTest, ScreenTimeAchievementTest
+└── domain/model/        # RarityTest, TriggerTypeTest
 ```
 
 ---
@@ -138,6 +151,7 @@ app/src/test/java/com/earthonline/app/
 | `ACCESS_COARSE_LOCATION` | 網路定位 fallback |
 | `CAMERA` | 拍照存證 |
 | `ACTIVITY_RECOGNITION` | 自動偵測走路/騎行/駕駛 |
+| `PACKAGE_USAGE_STATS` | 讀取每日螢幕使用時間（早起/通宵/數位排毒） |
 
 ---
 
@@ -146,13 +160,14 @@ app/src/test/java/com/earthonline/app/
 - 所有資料僅存於裝置本地 Room 資料庫
 - 無帳號系統、無雲端上傳、無自動備份
 - 照片儲存於 App 私密目錄
+- 權限對話框明確說明每項資料用途
 - 隱私權政策：https://skps00.github.io/Earth_Online/privacy.html
 
 ---
 
 ## 待辦
 
-見 [TODO.md](TODO.md) — 進度 48/54 (89%)
+見 [TODO.md](TODO.md) — 進度持續更新
 
 ---
 
