@@ -69,7 +69,7 @@ fun AppNavigation(
     onTakeEvidencePhoto: (String) -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onToggleDarkMode: (Boolean) -> Unit
+    onSelectTheme: (String) -> Unit
 ) {
     val context = LocalContext.current
     var showOnboarding by remember {
@@ -150,7 +150,7 @@ fun AppNavigation(
                     onBack = { navController.navigateUp() },
                     onExportBackup = onExportBackup,
                     onImportBackup = onImportBackup,
-                    onToggleDarkMode = onToggleDarkMode
+                    onSelectTheme = onSelectTheme
                 )
             }
         }

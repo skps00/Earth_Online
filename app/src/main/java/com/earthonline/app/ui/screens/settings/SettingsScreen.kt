@@ -1,7 +1,5 @@
 package com.earthonline.app.ui.screens.settings
 
-// 設定畫面，包含音效、主題、活動追蹤、備份與資料清除功能
-
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -70,10 +68,10 @@ import com.earthonline.app.domain.service.SettingsManager
 import com.earthonline.app.ui.theme.AccentOrange
 import com.earthonline.app.ui.theme.DestructiveRed
 import com.earthonline.app.ui.theme.EmeraldGreen
+import com.earthonline.app.ui.theme.ThemeConfig
 
 private const val TAG = "SettingsScreen"
 
-// 渲染設定畫面，提供音效開關、主題切換、活動追蹤、隱私政策、備份還原與清除資料
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -81,14 +79,16 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onToggleDarkMode: (Boolean) -> Unit
+    onSelectTheme: (String) -> Unit
 ) {
     val context = LocalContext.current
     var soundOn by remember { mutableStateOf(settingsManager.soundEnabled) }
-    var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
+    var selectedThemeId by remember { mutableStateOf(settingsManager.currentThemeId) }
     var showClearDialog by remember { mutableStateOf(false) }
     var activityTracking by remember { mutableStateOf(settingsManager.activityTrackingEnabled) }
     var permissionReminders by remember { mutableStateOf(settingsManager.permissionRemindersEnabled) }
+
+    val currentTheme = ThemeConfig.findById(selectedThemeId)
 
     BackHandler(enabled = true) { onBack() }
 
@@ -154,9 +154,13 @@ fun SettingsScreen(
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(if (darkMode) Icons.Filled.DarkMode else Icons.Filled.LightMode, null, tint = MaterialTheme.colorScheme.primary)
+                        Icon(
+                            if (currentTheme.isDark) Icons.Filled.DarkMode else Icons.Filled.LightMode,
+                            null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                         Text(
-                            if (darkMode) stringResource(R.string.theme_dark_mode) else stringResource(R.string.theme_light_mode),
+                            currentTheme.name,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             modifier = Modifier.weight(1f).padding(start = 12.dp)
@@ -166,36 +170,28 @@ fun SettingsScreen(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Filled.DarkMode, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(stringResource(R.string.theme_dark_mode), color = MaterialTheme.colorScheme.onSurface)
+                        ThemeConfig.allThemes.forEach { theme ->
+                            DropdownMenuItem(
+                                text = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            if (theme.isDark) Icons.Filled.DarkMode else Icons.Filled.LightMode,
+                                            null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(theme.name, color = MaterialTheme.colorScheme.onSurface)
+                                    }
+                                },
+                                onClick = {
+                                    selectedThemeId = theme.id
+                                    settingsManager.currentThemeId = theme.id
+                                    onSelectTheme(theme.id)
+                                    expanded = false
                                 }
-                            },
-                            onClick = {
-                                darkMode = true
-                                settingsManager.darkModeEnabled = true
-                                onToggleDarkMode(true)
-                                expanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Filled.LightMode, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(stringResource(R.string.theme_light_mode), color = MaterialTheme.colorScheme.onSurface)
-                                }
-                            },
-                            onClick = {
-                                darkMode = false
-                                settingsManager.darkModeEnabled = false
-                                onToggleDarkMode(false)
-                                expanded = false
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }

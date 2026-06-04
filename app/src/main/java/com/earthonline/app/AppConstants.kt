@@ -11,6 +11,7 @@ object AppConstants {
     const val KEY_ONBOARDING_SHOWN = "onboarding_shown"
     const val KEY_SOUND_MUTED = "sound_muted"
     const val KEY_DARK_MODE = "dark_mode"
+    const val KEY_THEME_ID = "theme_id"
     const val KEY_ACTIVITY_PERMISSION_REQUESTED = "activity_permission_requested"
 
     // 寵物預設值
@@ -43,6 +44,12 @@ object AppConstants {
     const val TOTAL_ACHIEVEMENT_COUNT = 125
     const val KEY_ACTIVITY_TRACKING_DISABLED = "activity_tracking_disabled"
     const val ACTIVITY_STATS_PREFS_NAME = "activity_stats"
+    const val KEY_WALK_MIN = "total_walk_minutes"
+    const val KEY_RUN_MIN = "total_run_minutes"
+    const val KEY_BIKE_MIN = "total_bike_minutes"
+    const val KEY_DRIVE_MIN = "total_drive_minutes"
+    const val KEY_BIKE_KM = "total_bike_km"
+    const val KEY_DRIVE_KM = "total_drive_km"
     const val ACTIVITY_RECOGNITION_PERMISSION = "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
     const val PRIVACY_POLICY_URL = "https://skps00.github.io/Earth_Online/privacy.html"
     const val MOUNTAIN_ALTITUDE_MIN = 2500.0

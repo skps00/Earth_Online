@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import com.earthonline.app.AppConstants
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionEvent
@@ -25,18 +26,11 @@ class ActivityRecognitionManager @Inject constructor(
 ) {
     // 活動統計儲存鍵值定義
     companion object {
-        private const val PREFS = "activity_stats"
-        private const val KEY_WALK_MIN = "total_walk_minutes"
-        private const val KEY_RUN_MIN = "total_run_minutes"
-        private const val KEY_BIKE_MIN = "total_bike_minutes"
-        private const val KEY_DRIVE_MIN = "total_drive_minutes"
-        private const val KEY_BIKE_KM = "total_bike_km"
-        private const val KEY_DRIVE_KM = "total_drive_km"
         private const val REQUEST_CODE = 1001
         private const val TAG = "ActivityRecognitionManager"
     }
 
-    private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(AppConstants.ACTIVITY_STATS_PREFS_NAME, Context.MODE_PRIVATE)
     private var lastActivityTime = 0L
     private var currentActivity: Int = DetectedActivity.UNKNOWN
 
@@ -137,15 +131,15 @@ class ActivityRecognitionManager @Inject constructor(
             val distanceKm = if (speedKmh > 0) (speedKmh * durationMinutes / 60.0) else 0.0
 
             when (event.activityType) {
-                DetectedActivity.WALKING -> incrementStat(KEY_WALK_MIN, durationMinutes)
-                DetectedActivity.RUNNING -> incrementStat(KEY_RUN_MIN, durationMinutes)
+                DetectedActivity.WALKING -> incrementStat(AppConstants.KEY_WALK_MIN, durationMinutes)
+                DetectedActivity.RUNNING -> incrementStat(AppConstants.KEY_RUN_MIN, durationMinutes)
                 DetectedActivity.ON_BICYCLE -> {
-                    incrementStat(KEY_BIKE_MIN, durationMinutes)
-                    incrementStat(KEY_BIKE_KM, distanceKm.toInt())
+                    incrementStat(AppConstants.KEY_BIKE_MIN, durationMinutes)
+                    incrementStat(AppConstants.KEY_BIKE_KM, distanceKm.toInt())
                 }
                 DetectedActivity.IN_VEHICLE -> {
-                    incrementStat(KEY_DRIVE_MIN, durationMinutes)
-                    incrementStat(KEY_DRIVE_KM, distanceKm.toInt())
+                    incrementStat(AppConstants.KEY_DRIVE_MIN, durationMinutes)
+                    incrementStat(AppConstants.KEY_DRIVE_KM, distanceKm.toInt())
                 }
             }
         }
@@ -157,10 +151,10 @@ class ActivityRecognitionManager @Inject constructor(
     }
 
     // 以下為各活動統計的 getter — 從 SharedPreferences 讀取累計數值
-    fun getWalkingMinutes(): Int = prefs.getLong(KEY_WALK_MIN, 0).toInt()
-    fun getRunningMinutes(): Int = prefs.getLong(KEY_RUN_MIN, 0).toInt()
-    fun getBikingMinutes(): Int = prefs.getLong(KEY_BIKE_MIN, 0).toInt()
-    fun getDrivingMinutes(): Int = prefs.getLong(KEY_DRIVE_MIN, 0).toInt()
-    fun getBikingKm(): Int = prefs.getLong(KEY_BIKE_KM, 0).toInt()
-    fun getDrivingKm(): Int = prefs.getLong(KEY_DRIVE_KM, 0).toInt()
+    fun getWalkingMinutes(): Int = prefs.getLong(AppConstants.KEY_WALK_MIN, 0).toInt()
+    fun getRunningMinutes(): Int = prefs.getLong(AppConstants.KEY_RUN_MIN, 0).toInt()
+    fun getBikingMinutes(): Int = prefs.getLong(AppConstants.KEY_BIKE_MIN, 0).toInt()
+    fun getDrivingMinutes(): Int = prefs.getLong(AppConstants.KEY_DRIVE_MIN, 0).toInt()
+    fun getBikingKm(): Int = prefs.getLong(AppConstants.KEY_BIKE_KM, 0).toInt()
+    fun getDrivingKm(): Int = prefs.getLong(AppConstants.KEY_DRIVE_KM, 0).toInt()
 }

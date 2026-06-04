@@ -140,10 +140,10 @@
 
 | # | 事項 | 說明 | 狀態 |
 |---|------|------|------|
-| F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源 | ⬜ |
-| F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用格式字串 | ⬜ |
-| F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 和 💡 前綴硬編碼 → stringResource | ⬜ |
-| F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ⬜ |
-| F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ⬜ |
+| F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源 | ⏸️ |
+| F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用格式常數 CHECKMARK_FORMAT | ✅ |
+| F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 硬編碼 → private const HIDDEN_PLACEHOLDER | ✅ |
+| F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ✅ |
+| F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ✅ |
 | F-12 | `fallbackToDestructiveMigration` | 資料庫 schema 變更時清空全部使用者資料 — 需完整 Migration 架構 | ⬜ |
 | F-13 | `recordCheckin()` 無 Transaction | 打卡多步寫入無原子性保證 — 需 Room API 支援 | ⬜ |

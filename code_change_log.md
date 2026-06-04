@@ -1,5 +1,112 @@
 ﻿# 代碼變更與問題日誌
 
+## 2026-06-04 04:15:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/theme/ColorTokens.kt
+- **變更摘要**：建立 ColorTokens data class，將 25 個語意色 token 從獨立常數抽象為結構化物件
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:15:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/theme/TypographyTokens.kt
+- **變更摘要**：建立 TypographyTokens data class，將字型層級參數從 Theme.kt 內嵌提取為可設定 token
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:15:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/theme/ShapeTokens.kt
+- **變更摘要**：建立 ShapeTokens data class，定義卡片/按鈕/對話框/晶片圓角 token
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:16:00 操作類型：新增
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/theme/ThemeConfig.kt
+- **變更摘要**：建立 ThemeConfig data class + 2 個預設主題實例（rpgDark / rpgLight）+ 查詢/預設工廠方法
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:16:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/theme/Theme.kt
+- **變更摘要**：EarthOnlineTheme 改吃 ThemeConfig 參數取代 Boolean；ColorScheme 改為動態映射；Typography 從 tokens 動態建立
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：移除硬編碼的 DarkColorScheme/LightColorScheme，改由 ThemeConfig.colorTokens 驅動
+
+## 2026-06-04 04:16:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/domain/service/SettingsManager.kt
+- **變更摘要**：新增 currentThemeId (String) 屬性取代 darkModeEnabled (Boolean)；保留 @Deprecated 相容的 darkModeEnabled
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:16:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/screens/settings/SettingsScreen.kt
+- **變更摘要**：主題下拉選單改為從 ThemeConfig.allThemes 動態渲染；回呼改為 onSelectTheme(id)
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:17:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/ui/navigation/AppNavigation.kt
+- **變更摘要**：onToggleDarkMode(Boolean) 改為 onSelectTheme(String)
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:17:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/MainActivity.kt
+- **變更摘要**：darkMode 狀態改為 themeConfig: ThemeConfig；回呼邏輯配合 themeId 查詢
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-04 04:17:00 操作類型：修改
+- **文件路徑**：app/src/main/java/com/earthonline/app/AppConstants.kt
+- **變更摘要**：新增 KEY_THEME_ID 常數
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-03 12:35:00 操作類型：新增
+- **文件路徑**：~/.config/opencode/tools/browser.ts
+- **變更摘要**：建立瀏覽器 singleton + 生命週期模組（getPage/closeBrowser/checkBlocked/resetIdleTimer）
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：為 Task 3-5 的 9 個工具（navigate/extract/click/type/scroll/screenshot/wait/exec/tabs）提供基礎設施；使用動態 import("rebrowser-playwright") 避免 Bun 模組載入時解析失敗
+
+## 2026-06-03 12:33:00 操作類型：新增
+- **文件路徑**：~/.config/opencode/tools/ (目錄)
+- **變更摘要**：建立 tools 目錄，供全域瀏覽器自動化自訂工具存放
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+
+## 2026-06-03 12:33:00 操作類型：修改
+- **文件路徑**：~/.config/opencode/package.json
+- **變更摘要**：新增 rebrowser-playwright ^1.52.0 + playwright ^1.52.0 依賴，供瀏覽器自動化工具使用
+- **遇到的問題**：
+  - 問題1：原始設計指定 ^1.53.0 版本不存在於 npm registry
+    - 解決方案：使用最新可用版本 ^1.52.0
+    - 狀態：✅ 已解決
+  - 問題2：rebrowser-playwright CLI 執行時找不到 playwright/lib/transform/esmLoader（require.resolve("playwright") 需要官方 playwright 包）
+    - 解決方案：同時安裝官方 playwright ^1.52.0 作為依賴；rebrowser-playwright 透過 npm alias 將其 playwright-core 替換為 rebrowser-playwright-core
+    - 狀態：✅ 已解決
+  - 問題3：bun 未安裝，無法使用 bun install
+    - 解決方案：改用 npm install（npm 11.13.0 可用）
+    - 狀態：✅ 已解決
+  - 問題4：npm.ps1 執行受 PowerShell ExecutionPolicy 限制
+    - 解決方案：改用 cmd /c "npm ..." 繞過
+    - 狀態：✅ 已解決
+- **備註**：Chromium 136.0.7103.25 已安裝於 C:\Users\skps9\AppData\Local\ms-playwright\chromium-1169
+
+## 2026-06-03 12:30:00 操作類型：修改
+- **文件路徑**：docs/superpowers/specs/2026-06-03-browser-automation-tool-design.md
+- **變更摘要**：更新瀏覽器自動化設計規格 — 專案級→全域級部署、修正依賴管理機制（package.json）、瀏覽器生命週期 CDP 架構、Windows 相容性
+- **遇到的問題**：
+  - 問題1：原始設計假設 module-level singleton 跨工具調用，但 opencode Bun 工具執行模型未明確保證模組快取
+    - 解決方案：加入 CDP 備援方案 + PID 檢測，若模組被重載則自動重啟瀏覽器；成本約 2 秒冷啟動
+    - 狀態：⚠️ 設計中（待實作驗證）
+  - 問題2：全域部署的 npm 依賴如何處理
+    - 解決方案：使用 `~/.config/opencode/package.json` + opencode 啟動時自動 `bun install`（文檔已確認支援）
+    - 狀態：✅ 已確認
+  - 問題3：Windows 路徑與行程管理差異
+    - 解決方案：使用 `path.join()`、`$env:TMP`、`taskkill` fallback
+    - 狀態：✅ 已確認
+- **備註**：基於 opencode 文檔（Custom Tools、Plugins、Config、Permissions）驗證後修正；待用戶審查後進入實作階段
+
 ## 2026-06-02 14:00:00 操作類型：修改
 - **文件路徑**：綜合 9 檔案（統一權限對話框）
 - **變更摘要**：整合 4 個獨立的權限對話框為 2 個（統一 App 權限 + 系統設定權限），新增設定頁「權限提醒」開關
@@ -615,4 +722,43 @@
 - **變更摘要**：將 N-2 任務的「氣壓計」改為「高山海拔」、狀態從 ⬜ 改為 ✅
 - **遇到的問題**：無
 - **備註**：無
+
+## 2026-06-03 12:40:00 操作類型：修改
+- **文件路徑**：~/.config/opencode/tools/browser.ts
+- **變更摘要**：新增 browser_navigate 與 browser_extract 兩個工具匯出（Task 3/7）
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：navigate 支援 load/domcontentloaded/networkidle 等待策略 + Cloudflare 阻擋檢測；extract 支援 text/html/links 三種格式 + CSS selector 過濾
+
+## 2026-06-03 12:45:00 操作類型：修改
+- **文件路徑**：~/.config/opencode/tools/browser.ts
+- **變更摘要**：新增 browser_click、browser_type、browser_scroll 三個工具匯出（Task 4/7）
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：click 支援 CSS selector 與文字內容匹配；type 支援 \n \t 特殊鍵 + 選擇性 clear；scroll 支援方向與自訂像素量
+
+## 2026-06-03 12:50:00 操作類型：修改
+- **文件路徑**：~/.config/opencode/tools/browser.ts
+- **變更摘要**：新增 browser_screenshot、browser_wait、browser_exec、browser_tabs 四個工具匯出（Task 5/7）
+- **遇到的問題**：無
+- **狀態**：✅ 已解決
+- **備註**：screenshot 支援全頁/元素截圖；wait 支援時間等待/CSS selector 等待；exec 支援頁面內 JS 執行；tabs 支援 list/new/switch/close 四個操作，switch 會更新模組級 page 變數
+
+
+
+
+## [2026-06-03 20:40:00] 操作類型：修改
+- **文件路徑**：~/.config/opencode/tools/browser.ts
+- **變更摘要**：新增 getAllFramesText() 函數，遞迴讀取所有 iframe 內容；修改 navigate 和 extract 使用此函數
+- **遇到的問題**：
+  - 問題1：browser_navigate 和 browser_extract 無法讀取跨域 iframe 中的 SPA 內容（如 Stitch 文件頁）
+    - 解決方案：透過 page.frames() + frame.evaluate() 遍歷所有 frame 讀取 body.innerText
+    - 狀態：✅ 已解決
+  - 問題2：動態 import("rebrowser-playwright") 在 opencode TS 編譯後返回 undefined
+    - 解決方案：改用 createRequire + require() 取代動態 import
+    - 狀態：✅ 已解決
+  - 問題3：Cloudflare 防護站點（curseforge.com）瀏覽器被阻擋
+    - 解決方案：rebrowser-playwright 不足以繞過，改用 webfetch 作為替代
+    - 狀態：❌ 未解決（rebrowser-playwright 的限制，非程式碼問題）
+- **備註**：timeout 從 30s 提升到 60s，添加 --disable-blink-features=AutomationControlled 反偵測旗標
 

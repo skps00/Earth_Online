@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.EmeraldGreen
 
+private const val CHECKMARK_FORMAT = "\uD83C\uDFF7\uFE0F %s"
 private const val TAG = "EvidenceConfirmDialog"
 
 // 顯示證據照片確認對話框：預覽照片與 AI 分析標籤，供確認上傳或重拍
@@ -76,7 +77,7 @@ fun EvidenceConfirmDialog(
                     Spacer(modifier = Modifier.height(8.dp))
                     FlowRow {
                         analyzedLabels.forEach { label ->
-                            Text("\uD83C\uDFF7\uFE0F $label", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(end = 8.dp, bottom = 4.dp))
+                            Text(CHECKMARK_FORMAT.format(label), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(end = 8.dp, bottom = 4.dp))
                         }
                     }
                 }

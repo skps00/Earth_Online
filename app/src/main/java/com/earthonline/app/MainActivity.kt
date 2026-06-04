@@ -43,6 +43,7 @@ import com.earthonline.app.ui.screens.dashboard.DashboardEvent
 import com.earthonline.app.ui.screens.dashboard.DashboardViewModel
 import com.earthonline.app.ui.navigation.AppNavigation
 import com.earthonline.app.ui.theme.EarthOnlineTheme
+import com.earthonline.app.ui.theme.ThemeConfig
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -172,8 +173,8 @@ class MainActivity : ComponentActivity() {
         checkActivityPermission()
 
         setContent {
-            var darkMode by remember { mutableStateOf(settingsManager.darkModeEnabled) }
-            EarthOnlineTheme(darkTheme = darkMode) {
+            var themeConfig by remember { mutableStateOf(ThemeConfig.findById(settingsManager.currentThemeId)) }
+            EarthOnlineTheme(themeConfig = themeConfig) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val vm: DashboardViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     viewModel = vm
@@ -185,9 +186,9 @@ class MainActivity : ComponentActivity() {
                             onTakeEvidencePhoto = { id -> handleEvidencePhoto(id) },
                             onExportBackup = { exportLauncher.launch(AppConstants.DEFAULT_BACKUP_FILENAME) },
                             onImportBackup = { importLauncher.launch(arrayOf(AppConstants.MIME_JSON)) },
-                            onToggleDarkMode = { enabled ->
-                                settingsManager.darkModeEnabled = enabled
-                                darkMode = enabled
+                            onSelectTheme = { id ->
+                                settingsManager.currentThemeId = id
+                                themeConfig = ThemeConfig.findById(id)
                             }
                         )
                 }
