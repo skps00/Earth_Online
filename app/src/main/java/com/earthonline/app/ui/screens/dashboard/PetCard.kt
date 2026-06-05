@@ -106,25 +106,33 @@ fun PetCard(
     )
 
     var currentBubble by remember { mutableStateOf<String?>(null) }
+    var displayedBubble by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pet.dialogueTrigger) {
         val trigger = pet.dialogueTrigger ?: return@LaunchedEffect
         val lines = scriptedDialogueLines(trigger)
         for (line in lines) {
             currentBubble = line
+            displayedBubble = line
             delay(2000)
         }
         currentBubble = null
+        delay(200)
+        displayedBubble = null
     }
 
-    // Random dialogue loop — skips when dialoguetrigger is active
+    // Random dialogue loop
     LaunchedEffect(Unit) {
         while (true) {
             delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
             if (pet.dialogueTrigger != null) continue
-            currentBubble = speechBubbles[Random.nextInt(speechBubbles.size)]
+            val text = speechBubbles[Random.nextInt(speechBubbles.size)]
+            currentBubble = text
+            displayedBubble = text
             delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
             currentBubble = null
+            delay(200)
+            displayedBubble = null
         }
     }
 
@@ -164,20 +172,20 @@ fun PetCard(
                         Text(clickToChange, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
                     }
                     androidx.compose.animation.AnimatedVisibility(
-                        visible = currentBubble != null,
+                        visible = displayedBubble != null,
                         enter = fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 },
                         exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { it / 2 },
                         modifier = Modifier.align(Alignment.TopCenter).offset(y = (-28).dp).zIndex(1f)
                     ) {
                         Text(
-                            currentBubble!!,
-                            color = DeepBlue,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
-                                .padding(horizontal = 6.dp, vertical = 3.dp)
-                        )
+                            displayedBubble!!,
+                                color = DeepBlue,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
+                                    .padding(horizontal = 6.dp, vertical = 3.dp)
+                            )
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
