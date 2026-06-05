@@ -177,8 +177,9 @@ fun PetCard(
                         exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { it / 2 },
                         modifier = Modifier.align(Alignment.TopCenter).offset(y = (-28).dp).zIndex(1f)
                     ) {
-                        Text(
-                            displayedBubble!!,
+                        displayedBubble?.let { bubble ->
+                            Text(
+                                bubble,
                                 color = DeepBlue,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
@@ -186,6 +187,7 @@ fun PetCard(
                                     .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
                                     .padding(horizontal = 6.dp, vertical = 3.dp)
                             )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
