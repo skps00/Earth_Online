@@ -4,7 +4,7 @@ import com.earthonline.app.data.local.entity.AchievementDefinitionEntity
 import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
 import com.earthonline.app.domain.model.TriggerType
 
-// 成就種子資料：定義 125 個預設成就及其初始進度，用於資料庫首次初始化
+// 成就種子資料：定義 129 個預設成就及其初始進度，用於資料庫首次初始化
 object AchievementSeedData {
 
     // 建立所有預設成就定義，涵蓋打卡、探索、海洋、職涯、日常、史詩、健康、交通等分類
@@ -92,7 +92,11 @@ object AchievementSeedData {
         AchievementDefinitionEntity("epic_newborn", "新生命", "迎接新生兒", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, true, 500, "一個小小的生命來到這個世界", strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0f, charismaWeight = 0.7f, vitalityWeight = 0.3f),
         AchievementDefinitionEntity("epic_northernlights", "極光奇景", "親眼目睹極光", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, true, 500, "高緯度地區的夢幻光幕", strengthWeight = 0f, agilityWeight = 0.4f, intelligenceWeight = 0f, charismaWeight = 0.6f, vitalityWeight = 0f),
         AchievementDefinitionEntity("epic_milkyway", "銀河之旅", "親眼看見銀河", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, true, 300, "遠離光害的星空奇景", strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0.5f, charismaWeight = 0.5f, vitalityWeight = 0f),
-        AchievementDefinitionEntity("epic_earthquake", "地牛翻身", "經歷一次地震", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100, strengthWeight = 0.5f, agilityWeight = 0f, intelligenceWeight = 0f, charismaWeight = 0f, vitalityWeight = 0.5f),
+        AchievementDefinitionEntity("epic_earthquake", "地牛翻身", "經歷一次地震", "ic_achievement_photo_2", TriggerType.AUTO_TRACK.value, 1L, false, 100, strengthWeight = 0.5f, agilityWeight = 0f, intelligenceWeight = 0f, charismaWeight = 0f, vitalityWeight = 0.5f),
+        AchievementDefinitionEntity("weather_storm", "暴風來襲", "所在地區有暴風或颱風警報", "ic_achievement_photo_3", TriggerType.AUTO_TRACK.value, 1L, false, 100, strengthWeight = 0f, agilityWeight = 0.3f, intelligenceWeight = 0.3f, charismaWeight = 0f, vitalityWeight = 0.4f),
+        AchievementDefinitionEntity("weather_rain", "雨中漫步", "今天下雨了", "ic_achievement_photo_1", TriggerType.AUTO_TRACK.value, 1L, false, 30, strengthWeight = 0f, agilityWeight = 0.2f, intelligenceWeight = 0f, charismaWeight = 0.5f, vitalityWeight = 0.3f),
+        AchievementDefinitionEntity("weather_extreme_heat", "熱浪考驗", "今天最高溫超過 35 度", "ic_achievement_photo_2", TriggerType.AUTO_TRACK.value, 1L, false, 50, strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0f, charismaWeight = 0f, vitalityWeight = 1.0f),
+        AchievementDefinitionEntity("weather_lightning", "雷神降臨", "所在地區有閃電活動", "ic_achievement_photo_3", TriggerType.AUTO_TRACK.value, 1L, false, 75, strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0.5f, charismaWeight = 0f, vitalityWeight = 0.5f),
         AchievementDefinitionEntity("epic_double_rainbow", "雙彩虹", "親眼目睹雙彩虹", "ic_achievement_photo_3", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200, strengthWeight = 0f, agilityWeight = 0.3f, intelligenceWeight = 0f, charismaWeight = 0.7f, vitalityWeight = 0f),
         AchievementDefinitionEntity("epic_meteor", "流星雨", "親眼目睹流星雨", "ic_achievement_photo_1", TriggerType.MANUAL_CONFIRM.value, 1L, false, 200, strengthWeight = 0f, agilityWeight = 0f, intelligenceWeight = 0.5f, charismaWeight = 0.5f, vitalityWeight = 0f),
         AchievementDefinitionEntity("epic_first_date", "初戀滋味", "完成第一次約會", "ic_achievement_photo_2", TriggerType.MANUAL_CONFIRM.value, 1L, false, 100, strengthWeight = 0f, agilityWeight = 0.3f, intelligenceWeight = 0f, charismaWeight = 0.7f, vitalityWeight = 0f),

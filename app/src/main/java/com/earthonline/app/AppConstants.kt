@@ -41,7 +41,7 @@ object AppConstants {
 
     // 寵物屬性計算除數與成就總數
     const val STAT_DIVISOR = 10f
-    const val TOTAL_ACHIEVEMENT_COUNT = 125
+    const val TOTAL_ACHIEVEMENT_COUNT = 129
     const val KEY_ACTIVITY_TRACKING_DISABLED = "activity_tracking_disabled"
     const val ACTIVITY_STATS_PREFS_NAME = "activity_stats"
     const val KEY_WALK_MIN = "total_walk_minutes"

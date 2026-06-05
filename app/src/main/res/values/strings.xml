@@ -179,4 +179,5 @@
     </string-array>
     <string name="analyzed_label_format">%1$s</string>
     <string name="hidden_placeholder">隱藏中</string>
+    <string name="weather_attribution">天氣資料由 OpenWeather 提供</string>
 </resources>

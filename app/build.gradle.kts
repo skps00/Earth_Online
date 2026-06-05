@@ -5,6 +5,8 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.earthonline.app"
     compileSdk = 34
@@ -15,6 +17,13 @@ android {
         targetSdk = 34
         versionCode = 6
         versionName = "1.4.0"
+
+        val properties = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            properties.load(localFile.inputStream())
+        }
+        buildConfigField("String", "OPENWEATHERMAP_API_KEY", "\"${properties.getProperty("OPENWEATHERMAP_API_KEY", "")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -43,6 +52,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -112,6 +122,11 @@ dependencies {
 
     // Activity Recognition
     implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:1.1.0")
+    ksp("androidx.hilt:hilt-compiler:1.1.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")

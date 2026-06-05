@@ -391,6 +391,14 @@ class AchievementRepository @Inject constructor(
         return null
     }
 
+    suspend fun unlockByIds(achievementIds: List<String>) {
+        val userId = AppConstants.LOCAL_USER_ID
+        val now = System.currentTimeMillis()
+        for (id in achievementIds) {
+            tryAutoUnlock(userId, id, now)
+        }
+    }
+
     // 取得寵物實體 — 尚無則新建預設寵物
     suspend fun getPet(): PetEntity {
         val existing = petDao.get()

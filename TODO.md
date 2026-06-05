@@ -41,7 +41,7 @@
 |---|------|-----|:--:|------|:--:|
 | N-1 | Screen Time | UsageStatsManager | 3 | PACKAGE_USAGE_STATS | ✅ |
 | N-2 | 高山海拔 | TYPE_PRESSURE sensor | 2 | 無 | ✅ |
-| N-3 | 天氣 / 地震 API | OpenWeatherMap + USGS | 3 | 網路 | ⬜ |
+| N-3 | 天氣 / 地震 API | OpenWeatherMap + USGS WeatherWorker | 5 | 網路 | ✅ |
 
 ---
 
