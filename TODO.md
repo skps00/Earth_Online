@@ -140,9 +140,9 @@
 
 | # | 事項 | 說明 | 狀態 |
 |---|------|------|------|
-| F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源 | ⏸️ |
-| F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用格式常數 CHECKMARK_FORMAT | ✅ |
-| F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 硬編碼 → private const HIDDEN_PLACEHOLDER | ✅ |
+| F-7 | PetCard speech bubbles → string-array | 10 句寵物對話氣泡硬編碼中文，改用 strings.xml 的 string-array 資源（R.array.speech_bubbles） | ✅ |
+| F-8 | EvidenceConfirmDialog emoji 前綴 | `"\uD83C\uDFF7\uFE0F $label"` 硬編碼 → 改用 stringResource(R.string.analyzed_label_format, label) | ✅ |
+| F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 硬編碼 → 改用 stringResource(R.string.hidden_placeholder) | ✅ |
 | F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ✅ |
 | F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ✅ |
 | F-12 | `fallbackToDestructiveMigration` | 資料庫 schema 變更時清空全部使用者資料 — 需完整 Migration 架構 | ⬜ |

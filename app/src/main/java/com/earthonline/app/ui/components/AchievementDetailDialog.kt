@@ -53,7 +53,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private const val HIDDEN_PLACEHOLDER = "???"
 private const val TAG = "AchievementDetailDialog"
 
 // 顯示成就詳情對話框：含描述、進度條、解鎖時間、獎勵點數、證據照片瀏覽與分享按鈕
@@ -100,7 +99,7 @@ fun AchievementDetailDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isHidden && !revealed) HIDDEN_PLACEHOLDER else item.definition.title,
+                text = if (isHidden && !revealed) stringResource(R.string.hidden_placeholder) else item.definition.title,
                 fontWeight = FontWeight.Bold,
                 color = if (isUnlocked) MaterialTheme.colorScheme.primary else if (isHidden && !revealed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
             )

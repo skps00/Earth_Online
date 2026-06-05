@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -68,19 +69,6 @@ private val ALL_PET_EMOJIS = listOf(
     "🦅" to R.string.stat_agility
 )
 
-private val SPEECH_BUBBLES = listOf(
-    "今天去哪冒險？",
-    "力量充沛！",
-    "一起探索吧～",
-    "新成就快到手了！",
-    "打卡了沒呀？",
-    "加油加油！",
-    "世界很大，去看看吧",
-    "乾巴爹！",
-    "休息是為了走更遠的路",
-    "我在這裡陪著你 ✨"
-)
-
 private val STAT_KEYS = listOf(
     Triple(R.string.stat_strength, R.string.stat_strength_desc, EmeraldGreen),
     Triple(R.string.stat_agility, R.string.stat_agility_desc, AccentOrange),
@@ -101,6 +89,8 @@ fun PetCard(
     var renameText by remember { mutableStateOf(pet.name) }
     var selectedEmoji by remember { mutableStateOf(pet.emoji) }
     var bounceTrigger by remember { mutableStateOf(0) }
+    val context = LocalContext.current
+    val speechBubbles = remember { context.resources.getStringArray(R.array.speech_bubbles).toList() }
     val bounceScale by animateFloatAsState(
         targetValue = if (bounceTrigger > 0) 1.3f else 1f,
         animationSpec = spring(dampingRatio = AppConstants.BOUNCE_DAMPING_RATIO, stiffness = AppConstants.BOUNCE_STIFFNESS),
@@ -111,7 +101,7 @@ fun PetCard(
     LaunchedEffect(Unit) {
         while (true) {
             delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
-            bubbleIndex = Random.nextInt(SPEECH_BUBBLES.size)
+            bubbleIndex = Random.nextInt(speechBubbles.size)
             delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
             bubbleIndex = -1
         }
@@ -140,7 +130,7 @@ fun PetCard(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                SPEECH_BUBBLES[bubbleIndex],
+                                speechBubbles[bubbleIndex],
                                 color = DeepBlue,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,

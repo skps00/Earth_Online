@@ -165,4 +165,18 @@
     <string name="unified_perm_granted">已授權</string>
     <string name="unified_perm_denied">已拒絕</string>
     <string name="permission_reminders_label">權限提醒</string>
+    <string-array name="speech_bubbles">
+        <item>今天去哪冒險？</item>
+        <item>力量充沛！</item>
+        <item>一起探索吧～</item>
+        <item>新成就快到手了！</item>
+        <item>打卡了沒呀？</item>
+        <item>加油加油！</item>
+        <item>世界很大，去看看吧</item>
+        <item>乾巴爹！</item>
+        <item>休息是為了走更遠的路</item>
+        <item>我在這裡陪著你</item>
+    </string-array>
+    <string name="analyzed_label_format">%1$s</string>
+    <string name="hidden_placeholder">隱藏中</string>
 </resources>
