@@ -28,7 +28,7 @@
 | P2-3 | 藍牙社交偵測 | 藍牙裝置數無法可靠推斷社交場合 | ❌ |
 | P2-4 | 日曆事件 | 僅 1 成就可靠 + READ_CALENDAR 為高風險權限 | ❌ |
 | P2-5 | 故事化等級面板 | 地球地圖解鎖區域 + ContinentMapper | ⬜ |
-| P2-6 | 寵物 v2 互動 | 隨機對話深化 + 點擊反饋 | ⬜ |
+| P2-6 | 寵物 v2 互動 | 隨機對話深化 + 點擊反饋（觸發式對話 + 多輪對話） | ✅ |
 | P2-7 | 寵物 v2 商店 | 裝飾商店 + 貨幣系統 | ⬜ |
 
 > ⏸️ P2-1：Samsung S23U 上 `getOrCreate()` 拋 `IllegalStateException`，需 compileSdk 36+AGP 8.9。見 `code_change_log.md`  
