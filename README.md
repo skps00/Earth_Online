@@ -23,7 +23,7 @@
 - 自動辨識國家/大洲（支援中英文名稱），簡化地址顯示
 - 打卡歷史按國家分組瀏覽
 
-### 🏆 125 個成就（8 大分類）
+### 🏆 129 個成就（8 大分類）
 
 | 分類 | 數量 | 觸發 |
 |---|---|---|
@@ -31,7 +31,7 @@
 | 🗺️ 探索 | 31 | AUTO_TRACK + 手動 |
 | 🎓 職涯 | 10 | 手動確認 |
 | 🎭 日常 | 11 | 手動確認（早起/通宵/數位排毒自動化） |
-| 🏆 史詩 | 15 | 手動確認 |
+| 🏆 史詩 | 15 | AUTO_TRACK + 手動（地震/天氣自動化） |
 | 🩺 健康 | 6 | 手動確認 |
 | 🚗 交通 | 5 | 部分自動（活動識別） |
 | 🌊 大海 | 5 | 隱藏成就 |
@@ -40,6 +40,14 @@
 - 多步進度 + 隱藏成就 + 4 級稀有度邊框（含 glow 特效）
 - 螢火蟲粒子解鎖動畫 + 音效
 - 成就分享卡 PNG (1080×1080)
+
+### 🌤 天氣與地震偵測 (Weather & Earthquake)
+- `WorkManager` 每 15 分鐘後台週期檢查
+- OpenWeatherMap API：自動偵測降雨、暴風、閃電、極端高溫（>35°C）
+- USGS Earthquake API：自動偵測 200km 內 M4+ 地震
+- 5 個天氣/地震成就全部 AUTO_TRACK
+- OWM API key 透過 `local.properties` + `BuildConfig` 安全注入
+- Dashboard 載入時自動評估
 
 ### ⏱ 螢幕時間偵測 (Screen Time)
 - `UsageStatsManager.queryEvents()` 讀取每日手機使用記錄
@@ -97,6 +105,7 @@
 | 定位 | LocationManager + Geocoder + Nominatim |
 | 活動識別 | Google Play Services Activity Recognition |
 | 螢幕時間 | UsageStatsManager (queryEvents) |
+| 天氣/地震 | OpenWeatherMap + USGS + WorkManager |
 | 測試 | JUnit 4 + MockK (18 tests) |
 | 分析 | CodeGraph MCP (77 files indexed) |
 | 最低 SDK | 26 (Android 8.0) |
@@ -119,7 +128,8 @@ app/src/main/java/com/earthonline/app/
 │   ├── ml/              # ImageAnalyzer
 │   ├── photo/           # PhotoManager (壓縮 + EXIF)
 │   ├── screentime/      # ScreenTimeManager (UsageStats)
-│   └── repository/      # AchievementRepository
+│   ├── weather/          # WeatherManager + EarthquakeManager + WeatherWorker
+│   └── repository/       # AchievementRepository
 ├── di/                  # Hilt Module
 ├── domain/
 │   ├── model/           # TriggerType, Rarity, AchievementTriggers

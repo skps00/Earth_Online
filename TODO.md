@@ -51,7 +51,7 @@
 |---|------|------|:--:|
 | P3-1 | IAP 裝飾商店 | Google Play Billing | ⬜ |
 | P3-2 | 本地自訂成就 | 新 DAO + UI | ⬜ |
-| P3-3 | 成就擴充路線 | 0 → 125 → 300 → 1000+ | ⬜ |
+| P3-3 | 成就擴充路線 | 0 → 129 → 300 → 1000+ | ⬜ |
 | P3-4 | 足跡地圖 | 互動式打卡地圖 | ⬜ |
 | P3-5 | Google Drive 備份 | AppData 雲端儲存 | ⬜ |
 | P3-6 | 語言切換 | 英文版 / 多語言 | ⬜ |
@@ -77,6 +77,7 @@
 | N-1a | 權限審計修正 | 4 對話框→2；30+ bugs 修正；統一權限對話框；權限提醒開關 |
 | N-1b | 硬編碼清理 | 59 個硬編碼值消除（字串/顏色/URLs/keys/魔術數字） |
 | N-1c | 未修正剩餘 | `fallbackToDestructiveMigration`、`runInTransaction`（API 限制） |
+| N-3 | 天氣/地震 API | OpenWeatherMap + USGS + WorkManager；5 成就 AUTO_TRACK；每 15 分鐘後台檢查 |
 
 ### Phase 1.8 — Google Play 合規
 
@@ -118,7 +119,7 @@
 | 項目 |
 |---|
 | 打卡系統 (GPS + Geocoder + Nominatim) |
-| 125 成就 (8 大分類) |
+| 129 成就 (8 大分類) |
 | Room 資料庫 (7 entities / 5 DAOs, exportSchema) |
 | 5 維寵物系統 + 玩家等級 |
 | 照片管理 (1080p WebP ≤200KB + EXIF) |
@@ -131,6 +132,7 @@
 | RPG 風格自訂相機 (CameraX + Reticle) |
 | Activity Recognition (Walking / Biking / Driving) |
 | Screen Time 偵測 (UsageStatsManager) |
+| 天氣/地震偵測 (OWM + USGS + WorkManager) |
 | 12 成就 AUTO_TRACK + 中英文地名支援 |
 | 統一權限系統（單一對話框 + 序列表 + 權限提醒開關） |
 | 30+ bugs 審計修正（N+1/記憶體洩漏/競態/cast崩潰/資源洩漏等） |
