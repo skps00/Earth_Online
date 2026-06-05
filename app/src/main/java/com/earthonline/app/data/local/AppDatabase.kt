@@ -22,7 +22,7 @@ import com.earthonline.app.data.local.entity.UserAchievementProgressEntity
         AchievementEvidence::class, // 成就證據表
         PetEntity::class // 寵物表
     ],
-    version = 12,
+    version = 13,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

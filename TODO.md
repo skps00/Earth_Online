@@ -147,5 +147,5 @@
 | F-9 | AchievementDetailDialog "???" 佔位符 | 隱藏成就的 "???" 硬編碼 → 改用 stringResource(R.string.hidden_placeholder) | ✅ |
 | F-10 | BackupManager JSON keys 集中化 | 25 個 JSON key 字串在匯出/匯入中重複 → companion object 集中 | ✅ |
 | F-11 | ActivityRecognitionManager prefs keys → AppConstants | 7 個 SharedPreferences key 在 companion object → 移至 AppConstants 統一管理 | ✅ |
-| F-12 | `fallbackToDestructiveMigration` | 資料庫 schema 變更時清空全部使用者資料 — 需完整 Migration 架構 | ⬜ |
-| F-13 | `recordCheckin()` 無 Transaction | 打卡多步寫入無原子性保證 — 需 Room API 支援 | ⬜ |
+| F-12 | `fallbackToDestructiveMigration` | 資料庫 schema 變更時清空全部使用者資料 — 已加 Migration(12,13) + version bump + 保留 fallback 安全網 | ✅ |
+| F-13 | `recordCheckin()` 無 Transaction | 打卡多步寫入無原子性保證 — 已改用 DAO 層 @Transaction 複合方法 insertCheckinAndCount() | ✅ |

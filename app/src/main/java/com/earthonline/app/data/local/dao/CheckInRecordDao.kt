@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.earthonline.app.data.local.entity.CheckInRecord
 
 // 打卡記錄 DAO：提供打卡資料的插入、去重統計（位置/國家/洲）與歷史查詢
@@ -12,6 +13,12 @@ interface CheckInRecordDao {
 
     @Insert // 插入一筆打卡記錄
     suspend fun insert(record: CheckInRecord)
+
+    @Transaction
+    suspend fun insertCheckinAndCount(record: CheckInRecord, userId: String): Long {
+        insert(record)
+        return countUniqueLocations(userId).toLong()
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) // 插入（衝突時覆蓋）
     suspend fun insertReplace(record: CheckInRecord)

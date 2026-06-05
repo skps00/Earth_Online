@@ -65,12 +65,11 @@ class AchievementRepository @Inject constructor(
         val userId = AppConstants.LOCAL_USER_ID
         val triggerType = TriggerType.LOCATION_CHECKIN_COUNT.value
 
-        checkInRecordDao.insert(
-            CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, address = address, timestamp = System.currentTimeMillis())
+        val uniqueCount = checkInRecordDao.insertCheckinAndCount(
+            CheckInRecord(userId = userId, latitude = latitude, longitude = longitude, country = country, continent = continent, address = address, timestamp = System.currentTimeMillis()),
+            userId
         )
 
-        // 更新 LOCATION_CHECKIN_COUNT 類型的所有成就進度
-        val uniqueCount = checkInRecordDao.countUniqueLocations(userId).toLong()
         progressDao.setProgressByType(userId, triggerType, uniqueCount)
         _totalCheckins.emit(uniqueCount)
 
