@@ -1,6 +1,6 @@
 # 🌍 地球 Online — 開發任務
 
-> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 已審計 30+ bugs 修正
+> **總進度**：▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ N-1~N-3 ✅ / F-1~F-13 ✅ / P2-2+P2-6 ✅
 
 ---
 
@@ -76,8 +76,11 @@
 | N-1 | Screen Time | UsageStatsManager.queryEvents() 自動偵測早起/通宵/數位排毒 |
 | N-1a | 權限審計修正 | 4 對話框→2；30+ bugs 修正；統一權限對話框；權限提醒開關 |
 | N-1b | 硬編碼清理 | 59 個硬編碼值消除（字串/顏色/URLs/keys/魔術數字） |
-| N-1c | 未修正剩餘 | `fallbackToDestructiveMigration`、`runInTransaction`（API 限制） |
+| N-1c | 未修正剩餘 | `runInTransaction` 無法實作（Room 2.6.1 suspend lambda API 不相容） |
 | N-3 | 天氣/地震 API | OpenWeatherMap + USGS + WorkManager；5 成就 AUTO_TRACK；每 15 分鐘後台檢查 |
+| P2-6 | 寵物 v2 互動 | 觸發式對話（11 種事件）+ 多輪對話（2-3 句連續）+ 氣泡動畫修正 |
+| F-12 | `fallbackToDestructiveMigration` | Migration(12,13) + version bump + 保留 fallback 安全網 |
+| F-13 | `recordCheckin()` Transaction | DAO 層 @Transaction 複合方法 insertCheckinAndCount() |
 
 ### Phase 1.8 — Google Play 合規
 
