@@ -230,13 +230,18 @@ class DashboardViewModel @Inject constructor(
         val progress = repository.computeLevelProgress(totalPoints)
         val xpNext = repository.computeXpToNext(totalPoints)
 
-        if (level > previousLevel) {
-            setPetDialogue("level_up")
+        val petDialogue: String? = if (level > previousLevel) {
             previousLevel = level
-        }
+            "level_up"
+        } else null
+
         repository.computeAndSavePetStats()
         val petEntity = repository.getPet()
-        val pet = repository.petToUiState(petEntity)
+        val pet = if (petDialogue != null) {
+            repository.petToUiState(petEntity).copy(dialogueTrigger = petDialogue)
+        } else {
+            repository.petToUiState(petEntity)
+        }
         val screenMinutes = screenTimeManager.getTodayTotalScreenTimeMinutes()
         val usageStatsGranted = screenTimeManager.isUsageStatsPermissionGranted()
 

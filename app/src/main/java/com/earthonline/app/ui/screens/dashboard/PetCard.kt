@@ -107,7 +107,6 @@ fun PetCard(
 
     var bubbleIndex by remember { mutableStateOf(-1) }
     var scriptedBubble by remember { mutableStateOf<String?>(null) }
-    val isScripted = scriptedBubble != null
 
     LaunchedEffect(pet.dialogueTrigger) {
         val trigger = pet.dialogueTrigger ?: return@LaunchedEffect
@@ -119,11 +118,11 @@ fun PetCard(
         scriptedBubble = null
     }
 
-    // Random dialogue loop — paused when scripted dialogue is active
+    // Random dialogue loop — skips when scripted dialogue is playing
     LaunchedEffect(Unit) {
         while (true) {
             delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
-            if (isScripted) continue  // wait again if scripted is playing
+            if (scriptedBubble != null) continue
             bubbleIndex = Random.nextInt(speechBubbles.size)
             delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
             bubbleIndex = -1
