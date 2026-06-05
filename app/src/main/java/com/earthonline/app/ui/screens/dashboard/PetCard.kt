@@ -105,27 +105,26 @@ fun PetCard(
         finishedListener = { if (bounceTrigger > 0) bounceTrigger = 0 }
     )
 
-    var bubbleIndex by remember { mutableStateOf(-1) }
-    var scriptedBubble by remember { mutableStateOf<String?>(null) }
+    var currentBubble by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pet.dialogueTrigger) {
         val trigger = pet.dialogueTrigger ?: return@LaunchedEffect
         val lines = scriptedDialogueLines(trigger)
         for (line in lines) {
-            scriptedBubble = line
+            currentBubble = line
             delay(2000)
         }
-        scriptedBubble = null
+        currentBubble = null
     }
 
-    // Random dialogue loop — skips when scripted dialogue is playing
+    // Random dialogue loop — skips when dialoguetrigger is active
     LaunchedEffect(Unit) {
         while (true) {
             delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
-            if (scriptedBubble != null) continue
-            bubbleIndex = Random.nextInt(speechBubbles.size)
+            if (pet.dialogueTrigger != null) continue
+            currentBubble = speechBubbles[Random.nextInt(speechBubbles.size)]
             delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
-            bubbleIndex = -1
+            currentBubble = null
         }
     }
 
@@ -165,14 +164,13 @@ fun PetCard(
                         Text(clickToChange, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
                     }
                     androidx.compose.animation.AnimatedVisibility(
-                        visible = bubbleIndex >= 0 || scriptedBubble != null,
+                        visible = currentBubble != null,
                         enter = fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 },
                         exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { it / 2 },
                         modifier = Modifier.align(Alignment.TopCenter).offset(y = (-28).dp).zIndex(1f)
                     ) {
-                        val text = scriptedBubble ?: speechBubbles[bubbleIndex]
                         Text(
-                            text,
+                            currentBubble!!,
                             color = DeepBlue,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
