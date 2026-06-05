@@ -2,8 +2,14 @@ package com.earthonline.app.ui.screens.dashboard
 
 // 寵物卡片元件，顯示寵物表情、名稱、等級與屬性，支援更名與換裝
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,10 +47,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.earthonline.app.AppConstants
 import com.earthonline.app.R
 import com.earthonline.app.ui.theme.AccentOrange
@@ -124,22 +132,6 @@ fun PetCard(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.width(56.dp).height(80.dp)
                 ) {
-                    if (bubbleIndex >= 0) {
-                        Box(
-                            modifier = Modifier.align(Alignment.TopCenter).offset(y = (-2).dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                speechBubbles[bubbleIndex],
-                                color = DeepBlue,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
-                                    .padding(horizontal = 6.dp, vertical = 3.dp)
-                            )
-                        }
-                    }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.align(Alignment.Center)
@@ -157,6 +149,22 @@ fun PetCard(
                                 }
                         )
                         Text(clickToChange, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = bubbleIndex >= 0,
+                        enter = fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 },
+                        exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { it / 2 },
+                        modifier = Modifier.align(Alignment.TopCenter).offset(y = (-28).dp).zIndex(1f)
+                    ) {
+                        Text(
+                            speechBubbles[bubbleIndex],
+                            color = DeepBlue,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .background(Gold.copy(alpha = 0.85f), RoundedCornerShape(8.dp))
+                                .padding(horizontal = 6.dp, vertical = 3.dp)
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
