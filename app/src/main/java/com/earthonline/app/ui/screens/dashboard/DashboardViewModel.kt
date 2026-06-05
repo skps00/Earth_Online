@@ -45,6 +45,8 @@ class DashboardViewModel @Inject constructor(
     private val _unlockEvent = MutableSharedFlow<UnlockedAchievementEvent>(replay = 0)
     val unlockEvent: SharedFlow<UnlockedAchievementEvent> = _unlockEvent.asSharedFlow()
 
+    private var previousLevel = 1
+
     init {
         initialize()
     }
@@ -227,6 +229,11 @@ class DashboardViewModel @Inject constructor(
         val level = repository.computePlayerLevel(totalPoints)
         val progress = repository.computeLevelProgress(totalPoints)
         val xpNext = repository.computeXpToNext(totalPoints)
+
+        if (level > previousLevel) {
+            setPetDialogue("level_up")
+            previousLevel = level
+        }
         repository.computeAndSavePetStats()
         val petEntity = repository.getPet()
         val pet = repository.petToUiState(petEntity)
@@ -285,6 +292,18 @@ class DashboardViewModel @Inject constructor(
                 Manifest.permission.CAMERA -> it.copy(cameraPermissionGranted = granted)
                 else -> it
             }
+        }
+    }
+
+    fun setPetDialogue(trigger: String) {
+        _uiState.update {
+            it.copy(pet = it.pet.copy(dialogueTrigger = trigger))
+        }
+    }
+
+    fun clearPetDialogue() {
+        _uiState.update {
+            it.copy(pet = it.pet.copy(dialogueTrigger = null))
         }
     }
 

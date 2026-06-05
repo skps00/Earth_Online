@@ -133,6 +133,8 @@ fun DashboardScreen(
             unlockEvent = null
             unlockEventKey++
             unlockEvent = event
+            val trigger = petDialogueForAchievement(event.achievement.achievementId)
+            if (trigger != null) viewModel.setPetDialogue(trigger)
         }
     }
 
@@ -648,4 +650,19 @@ private fun ScreenTimePermissionDialog(
         containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp)
     )
+}
+private fun petDialogueForAchievement(achievementId: String): String? {
+    return when (achievementId) {
+        "epic_earthquake" -> "earthquake"
+        "weather_storm" -> "storm"
+        "weather_rain" -> "rain"
+        "weather_extreme_heat" -> "extreme_heat"
+        "weather_lightning" -> "lightning"
+        "explore_japan" -> "explore_japan"
+        "daily_earlybird" -> "earlybird"
+        "daily_allnighter" -> "allnighter"
+        "daily_no_phone" -> "no_phone"
+        "transport_bike", "transport_bike_100" -> "biking"
+        else -> null
+    }
 }

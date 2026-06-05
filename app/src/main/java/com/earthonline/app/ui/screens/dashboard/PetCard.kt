@@ -106,9 +106,24 @@ fun PetCard(
     )
 
     var bubbleIndex by remember { mutableStateOf(-1) }
+    var scriptedBubble by remember { mutableStateOf<String?>(null) }
+    val isScripted = scriptedBubble != null
+
+    LaunchedEffect(pet.dialogueTrigger) {
+        val trigger = pet.dialogueTrigger ?: return@LaunchedEffect
+        val lines = scriptedDialogueLines(trigger)
+        for (line in lines) {
+            scriptedBubble = line
+            delay(2000)
+        }
+        scriptedBubble = null
+    }
+
+    // Random dialogue loop — paused when scripted dialogue is active
     LaunchedEffect(Unit) {
         while (true) {
             delay(AppConstants.SPEECH_BUBBLE_MIN_INTERVAL_MS + Random.nextLong(AppConstants.SPEECH_BUBBLE_MAX_EXTRA_MS))
+            if (isScripted) continue  // wait again if scripted is playing
             bubbleIndex = Random.nextInt(speechBubbles.size)
             delay(AppConstants.SPEECH_BUBBLE_DISPLAY_MS)
             bubbleIndex = -1
@@ -151,13 +166,14 @@ fun PetCard(
                         Text(clickToChange, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
                     }
                     androidx.compose.animation.AnimatedVisibility(
-                        visible = bubbleIndex >= 0,
+                        visible = bubbleIndex >= 0 || scriptedBubble != null,
                         enter = fadeIn(tween(300)) + slideInVertically(tween(300)) { it / 2 },
                         exit = fadeOut(tween(200)) + slideOutVertically(tween(200)) { it / 2 },
                         modifier = Modifier.align(Alignment.TopCenter).offset(y = (-28).dp).zIndex(1f)
                     ) {
+                        val text = scriptedBubble ?: speechBubbles[bubbleIndex]
                         Text(
-                            speechBubbles[bubbleIndex],
+                            text,
                             color = DeepBlue,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
@@ -304,5 +320,22 @@ private fun StatBar(label: String, value: Int, max: Int, color: Color) {
             trackColor = color.copy(alpha = 0.15f)
         )
         Spacer(modifier = Modifier.height(4.dp))
+    }
+}
+
+private fun scriptedDialogueLines(trigger: String): List<String> {
+    return when (trigger) {
+        "earthquake" -> listOf("剛剛有地震？！", "我在這裡陪你", "不用擔心，我們很安全")
+        "storm" -> listOf("暴風雨來了...", "躲在家裡最安全！", "記得關好窗戶喔")
+        "rain" -> listOf("下雨了耶～", "我喜歡雨天的味道", "記得帶傘！")
+        "extreme_heat" -> listOf("熱死了！！！", "快喝水！", "冷氣開到最強～")
+        "lightning" -> listOf("打雷了！", "轟隆隆——", "我在這不怕")
+        "level_up" -> listOf("升級了！", "我們一起變強吧！", "繼續加油～")
+        "explore_japan" -> listOf("日本耶！", "帶我去吃拉麵！", "幫我拍富士山～")
+        "earlybird" -> listOf("早起的鳥兒～", "你今天好早起！", "充滿活力！")
+        "allnighter" -> listOf("通宵了？", "要注意身體喔", "早點休息～")
+        "no_phone" -> listOf("一整天沒用手機？", "好厲害的數位排毒！", "繼續保持！")
+        "biking" -> listOf("風在呼嘯！", "你騎得好快！", "注意安全喔～")
+        else -> listOf("哇！新成就！", "太厲害了！", "我就知道你辦得到")
     }
 }

@@ -20,7 +20,8 @@ data class PetUiState(
     val agility: Int = 0,           // 敏捷屬性
     val intelligence: Int = 0,      // 智力屬性
     val charisma: Int = 0,          // 魅力屬性
-    val vitality: Int = 0           // 活力屬性
+    val vitality: Int = 0,          // 活力屬性
+    val dialogueTrigger: String? = null  // 觸發式對話金鑰（非 null 時優先於隨機對話）
 )
 
 // 儀表板完整 UI 狀態，包含簽到統計、等級進度、成就列表與各對話框顯示旗標
